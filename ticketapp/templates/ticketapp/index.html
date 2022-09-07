@@ -15,5 +15,13 @@
 <div>
     
     <strong>Name of movie here...?</strong>
+    <p>showings</p>
+    {% for i in showings %}
+    <span  style="display:inline-block;">
+    {{i.movie.film}}
+    <img style="width: 300px;"src="{{i.movie.preview}}"></img>
+    {{i.time}}
+</span>
+    {% endfor %}
 </div>
 {% endblock %}

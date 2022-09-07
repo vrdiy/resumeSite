@@ -17,8 +17,21 @@ from django.shortcuts import render
 # Create your views here.
 from django.http import HttpResponse
 
+from ticketapp.models import Showing, Movie, User, Ticket
+
 def home(request):
-    return render(request,'ticketapp/index.html', {})
+    movieObjs = Movie.objects.all()
+    print(movieObjs)
+    allShowings = []
+    for title in movieObjs:
+        #allShowings.append(Showing.objects.filter(movie=title))
+        for showing in Showing.objects.filter(movie=title):
+            allShowings.append(showing)
+    #showings = Showing.objects.filter(movie=movieObj)
+    
+    return render(request,'ticketapp/index.html', {
+        "showings" : allShowings
+    })
 
 
 def login_view(request):
