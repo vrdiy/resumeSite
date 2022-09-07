@@ -4,28 +4,37 @@ let overBox = false;
 let numCols = 8;
 let numRows = 10;
 let mouseDown = false;
-let canvasWidth = window.innerWidth*0.3;
-let canvasHeight = window.innerHeight*0.53;
+let canvasHeight = window.innerHeight*0.7;
+let canvasWidth = canvasHeight*0.5;
 let boxRadius = canvasWidth/numCols*0.35;
 let theaterSeats = canvasHeight*0.6;
 let theaterScreen;
 let button;
 let playing = false;
+let vidLoaded = false;
 
 function setup() {
-  createCanvas(canvasWidth, canvasHeight);
+  let canv = createCanvas(canvasWidth, canvasHeight);
+  canv.parent('p5app');
+  canvdiv = document.querySelector('#p5app');
+  //canv.style('background-image',curtainsimg);
+  canv.style('top','0px');
+  canv.style('border','5px solid red');
   rectMode(RADIUS);
   strokeWeight(2);
-  theaterScreen = createVideo(video);
+  theaterScreen = createVideo([video],vidLoad);
+  //theaterScreen.size(canvasWidth-15,canvasWidth*9/16);
+  //theaterScreen.size(100,100);
+  theaterScreen.parent('p5app');
   theaterScreen.hide();
-  button = createButton('play');
-  button.mousePressed(toggleVid); // attach button listener
-  //img = loadImage('https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.iconsdb.com%2Ficons%2Fdownload%2Fred%2Fcar-26-256.png&f=1&nofb=1');
+  
 }
 function mousePressed() {
   mouseDown = true;
-  theaterScreen.loop();
-  
+  if(vidLoaded){
+    theaterScreen.loop();
+    theaterScreen.volume(0);
+  }
 }
 
 
@@ -34,7 +43,7 @@ function mouseReleased() {
   mouseDown = false;
 }
 function draw() {
-  background(220);
+  background(80);
   frameRate(300);
   noCursor();
   
@@ -54,22 +63,26 @@ function draw() {
           overBox = true;
           if (mouseDown) {
             stroke(0,255,0);
-            fill(244, 122, 158);
+            fill(83, 83, 158);
           }
           else{
             stroke(255);
-            fill(244, 122, 158);
+            fill(0, 0, 158);
           }
         }else {
-          stroke(156, 39, 176);
-          fill(244, 122, 158);
+          stroke(0, 39, 176);
+          fill(244, 255, 255);
           overBox = false;
         }
         rect(sx,sy,boxRadius,boxRadius);
       }
     }
     fill(255,0,0);
-    image(theaterScreen,0,0);
+    if(vidLoaded){
+      
+      //image(theaterScreen,0,0).resize(canvasWidth-15,canvasWidth*9/16);
+    }
+    image(theaterScreen,7.5,7.5,canvasWidth-15,canvasWidth*9/16);
     rect(mouseX, mouseY, boxRadius/2, boxRadius/2);
   }
   
@@ -77,15 +90,9 @@ function draw() {
   
 
 // plays or pauses the video depending on current state
-function toggleVid() {
-  if (playing) {
-    fingers.pause();
-    button.html('play');
-  } else {
-    fingers.loop();
-    button.html('pause');
-  }
-  playing = !playing;
+function vidLoad() {
+    vidLoaded = true;
+    
 }
   
   

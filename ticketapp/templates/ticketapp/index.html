@@ -1,12 +1,19 @@
+{% extends "ticketapp/layout.html"%}
 {%load static%}
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <script> var video = "{% static 'ticketapp/gamma2.mov' %}";</script>
-        <script src="https://cdn.jsdelivr.net/npm/p5@1.4.2/lib/p5.js"></script>
-        <script src="{% static 'ticketapp/sketch.js' %}"></script>
-    </head>
-    <body>
-
-    </body>
-</html>
+{% block script %}
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.4.2/lib/p5.js"></script>
+    <script> var video = "{% static 'ticketapp/gamma2.mov' %}";
+    </script>
+    <script src="{% static 'ticketapp/sketch.js' %}"></script>
+{% endblock %}
+{% block body %}
+<div>
+    <strong>Theater View</strong>
+</div>
+<div id="p5app" style="background-image: url('../../static/ticketapp/curtains.jpg'); background-size: cover; user-select: none;">
+</div>
+<div>
+    
+    <strong>Name of movie here...?</strong>
+</div>
+{% endblock %}
