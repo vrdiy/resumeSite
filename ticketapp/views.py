@@ -26,13 +26,16 @@ def home(request):
     for title in movieObjs:
         #allShowings.append(Showing.objects.filter(movie=title))
         for showing in Showing.objects.filter(movie=title):
-            allShowings.append(showing)
+            allShowings.append(showing.serialize())
     #showings = Showing.objects.filter(movie=movieObj)
     
     return render(request,'ticketapp/index.html', {
         "showings" : allShowings
     })
 
+def get_showing(request,id):
+    showing = Showing.objects.get(id=id)
+    return JsonResponse(showing.serialize(), status = 201)
 
 def login_view(request):
     if request.method == "POST":

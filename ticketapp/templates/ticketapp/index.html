@@ -3,6 +3,7 @@
 {% block script %}
     <script src="https://cdn.jsdelivr.net/npm/p5@1.4.2/lib/p5.js"></script>
     <script> var video = "{% static 'ticketapp/gamma2.mov' %}";
+    var showings = "{{showings}}";
     </script>
     <script src="{% static 'ticketapp/sketch.js' %}"></script>
 {% endblock %}
@@ -17,10 +18,10 @@
     <strong>Name of movie here...?</strong>
     <p>showings</p>
     {% for i in showings %}
-    <span  style="display:inline-block;">
+    <span class="showingselect" id="{{i.id}}" style="display:inline-block;">
     {{i.movie.film}}
     <img style="width: 300px;"src="{{i.movie.preview}}"></img>
-    {{i.time}}
+    <p>{{i.time}}</p>
 </span>
     {% endfor %}
 </div>
