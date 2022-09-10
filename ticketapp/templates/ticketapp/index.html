@@ -1,28 +1,35 @@
 {% extends "ticketapp/layout.html"%}
 {%load static%}
+
 {% block script %}
     <script src="https://cdn.jsdelivr.net/npm/p5@1.4.2/lib/p5.js"></script>
     <script> var video = "{% static 'ticketapp/gamma2.mov' %}";
+    var ticketicon = "{% static 'ticketapp/ticketicon.png' %}";
     var showings = "{{showings}}";
     </script>
     <script src="{% static 'ticketapp/sketch.js' %}"></script>
 {% endblock %}
+
 {% block body %}
 <div>
     <strong>Theater View</strong>
 </div>
-<div id="p5app" style="background-image: url('../../static/ticketapp/curtains.jpg'); background-size: cover; user-select: none;">
-</div>
 <div>
     
     <strong>Name of movie here...?</strong>
-    <p>showings</p>
+    <p>Showings for {{currentdatetime.date}}</p>
     {% for i in showings %}
-    <span class="showingselect" id="{{i.id}}" style="display:inline-block;">
-    {{i.movie.film}}
-    <img style="width: 300px;"src="{{i.movie.preview}}"></img>
-    <p>{{i.time}}</p>
+    <span style="display:inline-block; border: 1px solid black; margin-left: 15px; padding: 5px;">
+    <img style="width: 200px; height: 300px;"src="{{i.preview}}" alt="{{i.film}}"></img>
+    
+    {% for j in i.showings.all %}
+    {% if j.time.date == currentdatetime.date %}
+    <button class="showingselect" id="{{j.id}}" style="user-select: none; border-radius: 3px;">{{j.showingTime.time}}</button>
+    {% endif %}
+    {%endfor%}
 </span>
     {% endfor %}
+</div>
+<div id="p5app" style="filter: grayscale(100%); background-image: url('../../static/ticketapp/curtains.jpg'); background-size: cover; user-select: none;">
 </div>
 {% endblock %}

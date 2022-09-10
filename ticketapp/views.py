@@ -1,4 +1,5 @@
 
+from datetime import datetime
 import json
 from telnetlib import STATUS
 from django import forms
@@ -24,13 +25,11 @@ def home(request):
     print(movieObjs)
     allShowings = []
     for title in movieObjs:
-        #allShowings.append(Showing.objects.filter(movie=title))
-        for showing in Showing.objects.filter(movie=title):
-            allShowings.append(showing.serialize())
-    #showings = Showing.objects.filter(movie=movieObj)
+            allShowings.append(title.serialize())
     
     return render(request,'ticketapp/index.html', {
-        "showings" : allShowings
+        "showings" : movieObjs,
+        "currentdatetime" : datetime.now()
     })
 
 def get_showing(request,id):

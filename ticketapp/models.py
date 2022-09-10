@@ -45,8 +45,16 @@ class Showing(models.Model):
 
         return{
             "id" : self.id,
-            "movie" : self.movie.serialize(),
+            "movie" : self.movie.film,
             "time" : self.time.strftime("%b %d %Y, %I:%M %p"),
             "seats_taken": seats_taken
             }
+        
+    def showingTime(self):
+        #get rid of leading zero and just return hour/minute of showing
+        if(self.time.strftime("%I:%M %p")[:1] == '0'):
+            return { "time" : self.time.strftime("%I:%M %p")[1:] }
+        else:
+            return  { "time" : self.time.strftime("%I:%M %p") }
+        
 

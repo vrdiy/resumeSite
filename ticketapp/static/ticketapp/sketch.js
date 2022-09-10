@@ -2,13 +2,43 @@
 
 
 document.addEventListener('DOMContentLoaded', function() {
-	test = document.querySelectorAll(".showingselect");
+
+  test = document.querySelectorAll(".showingselect");
+  let buttonSelected = ''
 	test.forEach((element) => {
 		console.log((element).getAttribute("id"));
-		element.addEventListener('click', ()=> get_showing(parseInt((element).getAttribute("id"))));
-	});
-	//console.log(test);
-})
+		element.addEventListener('click', ()=> {
+      buttonSelected = (element).getAttribute("id");
+      get_showing(parseInt((element).getAttribute("id")));
+      element.style.textDecoration = "underline";
+      element.style.backgroundColor = "#AACCCC";
+      element.style.fontWeight = "bolder";
+    });
+    element.addEventListener('mouseover', ()=> {
+      if((element).getAttribute("id") != buttonSelected){
+      element.style.backgroundColor = "#AAAAAA";
+      }
+    });
+    element.addEventListener('mouseout', ()=> {
+      if((element).getAttribute("id") != buttonSelected){
+      element.style.backgroundColor = "";
+      }
+    });
+    
+    //console.log(test);
+  });
+
+  document.addEventListener('click', ()=> {
+    test.forEach((element) => {
+    if((element).getAttribute("id") != buttonSelected){
+    element.style.textDecoration = "none";
+    element.style.backgroundColor = "";
+    element.style.fontWeight = "";
+
+    }
+  });
+  });
+});
 
 
 let img;
@@ -35,11 +65,13 @@ function setup() {
   canv.parent('p5app');
   canvdiv = document.querySelector('#p5app');
   //canv.style('background-image',curtainsimg);
-  canv.style('top','0px');
-  canv.style('border','5px solid red');
+  canv.style('top','5px');
+  canv.style('border','5px solid grey');
+  canv.style('border-radius', '3px');
   rectMode(RADIUS);
   strokeWeight(2);
   theaterScreen = createVideo([video],vidLoad);
+  mouseicon = loadImage(ticketicon);
   //theaterScreen.size(canvasWidth-15,canvasWidth*9/16);
   //theaterScreen.size(100,100);
   theaterScreen.parent('p5app');
@@ -67,10 +99,9 @@ function mouseReleased() {
   mouseDown = false;
 }
 function draw() {
-  background(80);
-  frameRate(300);
+  background(255);
+  //frameRate(300);
   noCursor();
-  
   for (let i = 1; i <= numCols; i++){
     w = canvasWidth/numCols;
     sx = w*(i) - w/2;
@@ -111,12 +142,14 @@ function draw() {
       }
     }
     fill(255,0,0);
+    filter(OPAQUE);
     if(vidLoaded){
-      
-      //image(theaterScreen,0,0).resize(canvasWidth-15,canvasWidth*9/16);
+      image(theaterScreen,7.5,7.5,canvasWidth-15,canvasWidth*9/16);
+      filter(POSTERIZE,4);
+      //filter(GRAY);
     }
-    image(theaterScreen,7.5,7.5,canvasWidth-15,canvasWidth*9/16);
-    rect(mouseX, mouseY, boxRadius/2, boxRadius/2);
+    //rect(mouseX, mouseY, boxRadius/2, boxRadius/2);
+    image(mouseicon,mouseX,mouseY);
   }
   
   
