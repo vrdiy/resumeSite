@@ -4,9 +4,8 @@
 document.addEventListener('DOMContentLoaded', function() {
   timeselect = document.querySelector("#timeselect");
   timeselect.addEventListener('change', ()=>{
-
-    console.log(timeselect.value);
-    get_showings_by_date(timeselect.value);
+    let date = String(timeselect.value).split("-");
+    get_showings_by_date(new Date(parseInt(date[0]),parseInt(date[1]-1),parseInt(date[2])));
   });
 
   test = document.querySelectorAll(".showingselect");
@@ -193,9 +192,10 @@ function get_showing(showingid){
 
 }
 
-function get_showings_by_date(date = new Date()){
+function get_showings_by_date(date){
 
-  fetch(`/showings?day=${date.getDate()}?month=${date.getMonth()}?year=${date.getFullYear()}`)
+  console.log(date);
+  fetch(`/showings?day=${date.getDate()}&month=${date.getMonth()+1}&year=${date.getFullYear()}`)
   .then(response => {
     if(response.status != 201){return false;}
 		else{

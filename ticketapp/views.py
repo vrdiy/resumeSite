@@ -36,7 +36,17 @@ def get_showings_by_date(request):
     showings = []
     allshowings = Showing.objects.all()
     for i in allshowings:
+        print(i.time.day)
+        print("day to compare")
+        print(request.GET.get('day'))
+        print(i.time.month)
+        print("month to compare")
+        print(request.GET.get('month'))
+        print(i.time.year)
+        print("year to compare")
+        print(request.GET.get('year'))
         if((i.time.day == request.GET.get('day')) and (i.time.month == request.GET.get('month')) and (i.time.year == request.GET.get('year'))):
+            print("got here")
             showings.append(i.serialize())
     return JsonResponse(showings,safe = False,status = 201)
 
