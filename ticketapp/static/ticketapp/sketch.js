@@ -2,6 +2,12 @@
 
 
 document.addEventListener('DOMContentLoaded', function() {
+  timeselect = document.querySelector("#timeselect");
+  timeselect.addEventListener('change', ()=>{
+
+    console.log(timeselect.value);
+    get_showings_by_date(timeselect.value);
+  });
 
   test = document.querySelectorAll(".showingselect");
   let buttonSelected = ''
@@ -185,4 +191,18 @@ function get_showing(showingid){
 		seatsUpdated = true;
 	})
 
+}
+
+function get_showings_by_date(date = new Date()){
+
+  fetch(`/showings?day=${date.getDate()}?month=${date.getMonth()}?year=${date.getFullYear()}`)
+  .then(response => {
+    if(response.status != 201){return false;}
+		else{
+			return response.json();
+		}
+  })
+  .then(response =>{
+    console.log(response);
+  })
 }

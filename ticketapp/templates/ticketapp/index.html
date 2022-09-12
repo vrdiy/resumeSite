@@ -5,7 +5,7 @@
     <script src="https://cdn.jsdelivr.net/npm/p5@1.4.2/lib/p5.js"></script>
     <script> var video = "{% static 'ticketapp/gamma2.mov' %}";
     var ticketicon = "{% static 'ticketapp/ticketicon.png' %}";
-    var showings = "{{showings}}";
+    var movies = "{{movies}}";
     </script>
     <script src="{% static 'ticketapp/sketch.js' %}"></script>
 {% endblock %}
@@ -14,11 +14,11 @@
 <div>
     <strong>Theater View</strong>
 </div>
-<div>
+<div id="movies">
     
-    <strong>Name of movie here...?</strong>
-    <p>Showings for {{currentdatetime.date}}</p>
-    {% for i in showings %}
+    <p>movies for {{currentdatetime.date}}</p>
+    <input type="date" id="timeselect">
+    {% for i in movies %}
     <span style="display:inline-block; border: 1px solid black; margin-left: 15px; padding: 5px;">
     <img style="width: 200px; height: 300px;"src="{{i.preview}}" alt="{{i.film}}"></img>
     

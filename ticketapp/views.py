@@ -28,9 +28,19 @@ def home(request):
             allShowings.append(title.serialize())
     
     return render(request,'ticketapp/index.html', {
-        "showings" : movieObjs,
+        "movies" : movieObjs,
         "currentdatetime" : datetime.now()
     })
+
+def get_showings_by_date(request):
+    showings = []
+    allshowings = Showing.objects.all()
+    for i in allshowings:
+        if((i.time.day == request.GET.get('day')) and (i.time.month == request.GET.get('month')) and (i.time.year == request.GET.get('year'))):
+            showings.append(i.serialize())
+    return JsonResponse(showings,safe = False,status = 201)
+
+
 
 def get_showing(request,id):
     showing = Showing.objects.get(id=id)
