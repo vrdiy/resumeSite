@@ -203,6 +203,36 @@ function get_showings_by_date(date){
 		}
   })
   .then(response =>{
+
+    let moviesOnScreen = [];
+    moviesdiv = document.querySelector("#movies");
+
+    console.log(response);
+    response.forEach(showing =>{
+      if (!moviesOnScreen.includes(showing.movie)){
+        moviesOnScreen.append(showing.movie);
+        span = document.createElement("span");
+        span.setAttribute('id',`mov-${showing.movie.id}`);
+        span.setAttribute('style','display:inline-block; border: 1px solid black; margin-left: 15px; padding: 5px;');
+
+        movimg = document.createElement("image");
+        movimg.setAttribute('style',"width: 200px; height: 300px;");
+        movimg.setAttribute('src', showing.movie.preview);
+        movimg.setAttribute('alt', showing.movie.film);
+        span.append(movimg);
+      }else{
+        span = document.querySelector(`#mov-${showing.movie.id}`);
+      }
+       showing.forEach(showingtime => {
+        button = document.createElement("button");
+        button.setAttribute('class','showingselect');
+        button.setAttribute('style', "user-select: none; border-radius: 3px;");
+        button.setAttribute('id',showing.id);
+        span.append(button);
+      })
+    moviesdiv.append(span);
+    })
+    
     console.log(response);
   })
 }

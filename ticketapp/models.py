@@ -30,6 +30,7 @@ class Movie(models.Model):
 
     def serialize(self):
         return {
+            "id" : self.id,
             "film" : self.film,
             "preview" : self.preview
         }
@@ -45,7 +46,7 @@ class Showing(models.Model):
 
         return{
             "id" : self.id,
-            "movie" : self.movie.film,
+            "movie" : self.movie.serialize(),
             "time" : self.time.strftime("%b %d %Y, %I:%M %p"),
             "seats_taken": seats_taken
             }

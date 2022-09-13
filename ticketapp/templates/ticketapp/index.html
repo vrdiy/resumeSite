@@ -12,12 +12,14 @@
 
 {% block body %}
 <div>
-    <strong>Theater View</strong>
+    <span>
+        <strong>Theater View</strong>
+        <input type="date" id="timeselect">
+    </span>
 </div>
 <div id="movies">
     
     <p>movies for {{currentdatetime.date}}</p>
-    <input type="date" id="timeselect">
     {% for i in movies %}
     <span style="display:inline-block; border: 1px solid black; margin-left: 15px; padding: 5px;">
     <img style="width: 200px; height: 300px;"src="{{i.preview}}" alt="{{i.film}}"></img>
