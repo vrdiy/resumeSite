@@ -7,14 +7,20 @@ document.addEventListener('DOMContentLoaded', function() {
     let date = String(timeselect.value).split("-");
     get_showings_by_date(new Date(parseInt(date[0]),parseInt(date[1]-1),parseInt(date[2])));
   });
+  setButtonEvents();
+});
 
+
+function setButtonEvents(){
+  
   test = document.querySelectorAll(".showingselect");
   let buttonSelected = ''
-	test.forEach((element) => {
-		console.log((element).getAttribute("id"));
-		element.addEventListener('click', ()=> {
+  test.forEach((element) => {
+    console.log((element).getAttribute("id"));
+    element.addEventListener('click', ()=> {
       buttonSelected = (element).getAttribute("id");
-      get_showing(parseInt((element).getAttribute("id")));
+      
+      get_showing(parseInt((element).getAttribute("id").slice(8)));
       element.style.textDecoration = "underline";
       element.style.backgroundColor = "#AACCCC";
       element.style.fontWeight = "bolder";
@@ -32,19 +38,17 @@ document.addEventListener('DOMContentLoaded', function() {
     
     //console.log(test);
   });
-
+  
   document.addEventListener('click', ()=> {
     test.forEach((element) => {
     if((element).getAttribute("id") != buttonSelected){
     element.style.textDecoration = "none";
     element.style.backgroundColor = "";
     element.style.fontWeight = "";
-
+  
     }
   });
-  });
-});
-
+})}
 
 let img;
 let overBox = false;
@@ -206,33 +210,53 @@ function get_showings_by_date(date){
 
     let moviesOnScreen = [];
     moviesdiv = document.querySelector("#movies");
-
+    moviesdiv.innerHTML = '';
+    currentmovs = document.querySelectorAll('[id^=mov-]');
+    currentmovs.forEach(element =>{
+      console.log(String(element.id).slice(4));
+      moviesOnScreen.push(String(element.id).slice(4));
+    })
+    let appendSpanFlag = false;
     console.log(response);
     response.forEach(showing =>{
-      if (!moviesOnScreen.includes(showing.movie)){
-        moviesOnScreen.append(showing.movie);
+      console.log(showing.movie.id);
+      if ((moviesOnScreen.filter(elem => {return elem == (String(showing.movie.id).slice(4)); })== true) || moviesOnScreen.length == 0 ){
+        moviesOnScreen.push(showing.movie.id);
+        console.log("-------");
+        console.log(moviesOnScreen);
+        console.log("-------");
         span = document.createElement("span");
         span.setAttribute('id',`mov-${showing.movie.id}`);
         span.setAttribute('style','display:inline-block; border: 1px solid black; margin-left: 15px; padding: 5px;');
 
-        movimg = document.createElement("image");
+        movimg = document.createElement("img");
         movimg.setAttribute('style',"width: 200px; height: 300px;");
         movimg.setAttribute('src', showing.movie.preview);
         movimg.setAttribute('alt', showing.movie.film);
         span.append(movimg);
+        appendSpanFlag = true;
+
       }else{
         span = document.querySelector(`#mov-${showing.movie.id}`);
       }
-       showing.forEach(showingtime => {
+       
         button = document.createElement("button");
         button.setAttribute('class','showingselect');
         button.setAttribute('style', "user-select: none; border-radius: 3px;");
-        button.setAttribute('id',showing.id);
-        span.append(button);
-      })
-    moviesdiv.append(span);
+        button.setAttribute('id',`showing-${showing.id}`);
+        button.innerHTML = `${showing.time}`;
+        if(span != undefined){
+
+          span.append(button);
+        }
+
+      if(appendSpanFlag){
+        moviesdiv.append(span);
+        appendSpanFlag = false;
+      }
     })
     
     console.log(response);
+    setButtonEvents();
   })
 }

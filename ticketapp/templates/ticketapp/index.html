@@ -21,12 +21,12 @@
     
     <p>movies for {{currentdatetime.date}}</p>
     {% for i in movies %}
-    <span style="display:inline-block; border: 1px solid black; margin-left: 15px; padding: 5px;">
+    <span id="mov-{{i.id}}"style="display:inline-block; border: 1px solid black; margin-left: 15px; padding: 5px;">
     <img style="width: 200px; height: 300px;"src="{{i.preview}}" alt="{{i.film}}"></img>
     
     {% for j in i.showings.all %}
     {% if j.time.date == currentdatetime.date %}
-    <button class="showingselect" id="{{j.id}}" style="user-select: none; border-radius: 3px;">{{j.showingTime.time}}</button>
+    <button class="showingselect" id="showing-{{j.id}}" style="user-select: none; border-radius: 3px;">{{j.showingTime.time}}</button>
     {% endif %}
     {%endfor%}
 </span>
