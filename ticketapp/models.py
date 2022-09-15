@@ -39,23 +39,28 @@ class Showing(models.Model):
     movie = models.ForeignKey(Movie,on_delete=models.CASCADE,related_name="showings")
     time = models.DateTimeField()
 
-    def serialize(self):
-        seats_taken = []
-        for seat in self.seats_taken.all():
-            seats_taken.append(seat.anonymizedSeat())
-
-        return{
-            "id" : self.id,
-            "movie" : self.movie.serialize(),
-            "time" : self.time.strftime("%b %d %Y, %I:%M %p"),
-            "seats_taken": seats_taken
-            }
-        
     def showingTime(self):
         #get rid of leading zero and just return hour/minute of showing
         if(self.time.strftime("%I:%M %p")[:1] == '0'):
-            return { "time" : self.time.strftime("%I:%M %p")[1:] }
+            return { "ftime" : self.time.strftime("%I:%M %p")[1:] }
         else:
-            return  { "time" : self.time.strftime("%I:%M %p") }
+            return  { "ftime" : self.time.strftime("%I:%M %p") }
+
+    def serialize(self):
+        return{
+            "id" : self.id,
+            "movie" : self.movie.serialize(),
+            "time" : self.showingTime()
+            }
+            
+        #split from serialize to be more scalable and only send seats when requested
+    def seats(self):
+        seats_taken = []
+        for seat in self.seats_taken.all():
+            seats_taken.append(seat.anonymizedSeat())
+        return{
+            "seats_taken" : seats_taken
+        }
+
         
 

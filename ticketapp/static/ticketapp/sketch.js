@@ -4,36 +4,41 @@
 document.addEventListener('DOMContentLoaded', function() {
   timeselect = document.querySelector("#timeselect");
   let now = new Date();
-  //ternary operators are cool
+  //Date function doesn't have leading zeros for single digits so I add them:
   let formattedDate = `${now.getFullYear()}-${now.getMonth()+1 < 10 ? `0${now.getMonth()+1}`:now.getMonth()+1}-${now.getDate() < 10 ? `0${now.getDate()}`:now.getDate()}`
   timeselect.setAttribute('min',formattedDate);
   let oneWeekFromNow = now.getTime() + 604800000; // One week in ms
   now.setTime(oneWeekFromNow);
   let formattedDatePlusAWeek = `${now.getFullYear()}-${now.getMonth()+1 < 10 ? `0${now.getMonth()+1}`:now.getMonth()+1}-${now.getDate() < 10 ? `0${now.getDate()}`:now.getDate()}`
   timeselect.setAttribute('max', formattedDatePlusAWeek);
+
+  //handle date selection
   timeselect.addEventListener('change', ()=>{
     let date = String(timeselect.value).split("-");
-    //need to validate this date as well on the server
     get_showings_by_date(new Date(parseInt(date[0]),parseInt(date[1]-1),parseInt(date[2])));
   });
+  //call default which is the current day
   get_showings_by_date();
-  setButtonEvents();
+  //buttons are setup by the above function, once they've been dynamically created for each showing
 });
 
+//global, only allow one button at a time.
+let buttonSelected = ''
 
+function setButtonSelected(element){
+  buttonSelected = (element).getAttribute("id");
+  element.style.textDecoration = "underline";
+  element.style.backgroundColor = "#AACCCC";
+  element.style.fontWeight = "bolder";
+}
+//function for stylizing and event handling for buttons
 function setButtonEvents(){
   
   test = document.querySelectorAll(".showingselect");
-  let buttonSelected = ''
   test.forEach((element) => {
-    console.log((element).getAttribute("id"));
     element.addEventListener('click', ()=> {
-      buttonSelected = (element).getAttribute("id");
-      
-      get_showing(parseInt((element).getAttribute("id").slice(8)));
-      element.style.textDecoration = "underline";
-      element.style.backgroundColor = "#AACCCC";
-      element.style.fontWeight = "bolder";
+      setButtonSelected(element);
+      get_seats(parseInt((element).getAttribute("id").slice(8)));
     });
     element.addEventListener('mouseover', ()=> {
       if((element).getAttribute("id") != buttonSelected){
@@ -46,7 +51,6 @@ function setButtonEvents(){
       }
     });
     
-    //console.log(test);
   });
   
   document.addEventListener('click', ()=> {
@@ -59,6 +63,8 @@ function setButtonEvents(){
     }
   });
 })}
+
+//----------------------- P5 CANVAS STARTS HERE -----------------------------------------------
 
 let img;
 let overBox = false;
@@ -73,13 +79,14 @@ let theaterScreen;
 let button;
 let playing = false;
 let vidLoaded = false;
+
+//init 2d array
 let occupiedSeats = new Array(numCols); //Depending on which showing the user selects, this variable gets updated for the p5 canvas to use
+for (let i = 0; i < numCols; i++){occupiedSeats[i] = new Array(numRows).fill(false);}
+
 let seatsUpdated = false;
 
 function setup() {
-  for (let i = 0; i < numCols; i++){
-    occupiedSeats[i] = new Array(numRows).fill(false);
-  }
   let canv = createCanvas(canvasWidth, canvasHeight);
   canv.parent('p5app');
   canvdiv = document.querySelector('#p5app');
@@ -95,13 +102,6 @@ function setup() {
   //theaterScreen.size(100,100);
   theaterScreen.parent('p5app');
   theaterScreen.hide();
-  
-  
-    
-  
-
-  
-  
 }
 function mousePressed() {
   mouseDown = true;
@@ -109,7 +109,7 @@ function mousePressed() {
     theaterScreen.loop();
     theaterScreen.volume(0);
   }
-  console.log(occupiedSeats);
+  
 }
 
 
@@ -171,23 +171,34 @@ function draw() {
     image(mouseicon,mouseX,mouseY);
   }
   
-  
-  
-
 // plays or pauses the video depending on current state
 function vidLoad() {
     vidLoaded = true;
-    //get_showing(1);
+    
 }
-  
 
+//-------------------------------- P5 ENDS HERE ------------------------------------------------------
 
-function get_showing(showingid){
+//The js .includes function doesn't work like I expect it to so this does what I figured .includes would do
+function isValueInArray(arr,val){
+  let flag = false;
+  arr.forEach(elem =>{
+    if(elem == val){
+      flag = true;}
+  })
+  return flag;
+}
+
+/* Deprecated, should use the results of get_showings_by_date, or remove seats_taken from get_showings_by_date
+and to save on initial amount of data loaded. Either more data upfront and more responsive ui, or the inverse.
+For the sake of 'complexity' and scalability I will probably keep this function and change get_showings_by_date.
+*/
+function get_seats(showingid){
 
 	
-	fetch(`/showing/${showingid}`)
+	fetch(`/seats/${showingid}`)
 	.then(response => {
-		if(response.status != 201){return false;}
+		if(response.status != 200){return false;}
 		else{
 			return response.json();
 		}
@@ -209,7 +220,7 @@ function get_showing(showingid){
 
 function get_showings_by_date(date= new Date()){
 
-  console.log(date);
+  
   fetch(`/showings?day=${date.getDate()}&month=${date.getMonth()+1}&year=${date.getFullYear()}`)
   .then(response => {
     //if(response.status != 201){return false;}
@@ -222,26 +233,17 @@ function get_showings_by_date(date= new Date()){
     let moviesOnScreen = [];
     moviesdiv = document.querySelector("#movies");
     moviesdiv.innerHTML = '';
-    currentmovs = document.querySelectorAll('[id^=mov-]');
-    currentmovs.forEach(element =>{
-      console.log(String(element.id).slice(4));
-      moviesOnScreen.push(String(element.id).slice(4));
-    })
-    let appendSpanFlag = false;
-    console.log(response);
+    
     response.forEach(showing =>{
-      console.log(showing.movie.id);
-      if ((moviesOnScreen.filter(elem => {return elem == (String(showing.movie.id).slice(4)); })== true) || moviesOnScreen.length == 0 ){
+      let appendSpanFlag = false;
+      if (!isValueInArray(moviesOnScreen,showing.movie.id)){
         moviesOnScreen.push(showing.movie.id);
-        console.log("-------");
-        console.log(moviesOnScreen);
-        console.log("-------");
         span = document.createElement("span");
         span.setAttribute('id',`mov-${showing.movie.id}`);
         span.setAttribute('style','display:inline-block; border: 1px solid black; margin-left: 15px; padding: 5px;');
 
         movimg = document.createElement("img");
-        movimg.setAttribute('style',"width: 200px; height: 300px;");
+        movimg.setAttribute('style',"width: 200px; height: 300px; filter: grayscale(100%);");
         movimg.setAttribute('src', showing.movie.preview);
         movimg.setAttribute('alt', showing.movie.film);
         span.append(movimg);
@@ -255,7 +257,7 @@ function get_showings_by_date(date= new Date()){
         button.setAttribute('class','showingselect');
         button.setAttribute('style', "user-select: none; border-radius: 3px;");
         button.setAttribute('id',`showing-${showing.id}`);
-        button.innerHTML = `${showing.time.slice(13)}`;
+        button.innerHTML = `${showing.time.ftime}`;
         if(span != undefined){
 
           span.append(button);
@@ -267,7 +269,9 @@ function get_showings_by_date(date= new Date()){
       }
     })
     
-    console.log(response);
     setButtonEvents();
+    pickfirstshowing = document.querySelector(`[id^=showing-]`);
+    setButtonSelected(pickfirstshowing);
+    get_seats(String(pickfirstshowing.id).slice(8));
   })
 }

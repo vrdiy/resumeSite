@@ -61,9 +61,9 @@ def get_showings_by_date(request):
 
 
 
-def get_showing(request,id):
+def get_seats(request,id):
     showing = Showing.objects.get(id=id)
-    return JsonResponse(showing.serialize(), status = 201)
+    return JsonResponse(showing.seats(), status = 200)
 
 def login_view(request):
     if request.method == "POST":
