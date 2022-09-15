@@ -1,5 +1,5 @@
 
-from datetime import datetime
+from datetime import datetime, timedelta
 import json
 from telnetlib import STATUS
 from django import forms
@@ -33,12 +33,31 @@ def home(request):
     })
 
 def get_showings_by_date(request):
+    today = datetime.now()
+    print(today)
+    weekfromtoday = today + timedelta(days=7)
+
+    rday = int(request.GET.get('day'))
+    rmonth = int(request.GET.get('month'))
+    ryear = int(request.GET.get('year'))
+    date = datetime(ryear,rmonth,rday)
+
     showings = []
     allshowings = Showing.objects.all()
-    for i in allshowings:
-        if((i.time.day == int(request.GET.get('day'))) and (i.time.month == int(request.GET.get('month'))) and (i.time.year == int(request.GET.get('year')))):
-            showings.append(i.serialize())
-    return JsonResponse(showings,safe = False,status = 201)
+
+    if today.day <= date.day <= weekfromtoday.day:
+        for i in allshowings:
+            if((i.time.day == int(request.GET.get('day'))) and (i.time.month == int(request.GET.get('month'))) and (i.time.year == int(request.GET.get('year')))):
+                showings.append(i.serialize())
+        return JsonResponse(showings,safe = False,status = 200)
+    else:
+        for i in allshowings:
+            if((i.time.day == today.day) and (i.time.month == today.month) and (i.time.year == today.year)):
+                showings.append(i.serialize())
+        return JsonResponse(showings,safe = False,status = 400)
+        
+
+
 
 
 

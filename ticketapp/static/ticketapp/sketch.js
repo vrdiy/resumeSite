@@ -3,10 +3,20 @@
 
 document.addEventListener('DOMContentLoaded', function() {
   timeselect = document.querySelector("#timeselect");
+  let now = new Date();
+  //ternary operators are cool
+  let formattedDate = `${now.getFullYear()}-${now.getMonth()+1 < 10 ? `0${now.getMonth()+1}`:now.getMonth()+1}-${now.getDate() < 10 ? `0${now.getDate()}`:now.getDate()}`
+  timeselect.setAttribute('min',formattedDate);
+  let oneWeekFromNow = now.getTime() + 604800000; // One week in ms
+  now.setTime(oneWeekFromNow);
+  let formattedDatePlusAWeek = `${now.getFullYear()}-${now.getMonth()+1 < 10 ? `0${now.getMonth()+1}`:now.getMonth()+1}-${now.getDate() < 10 ? `0${now.getDate()}`:now.getDate()}`
+  timeselect.setAttribute('max', formattedDatePlusAWeek);
   timeselect.addEventListener('change', ()=>{
     let date = String(timeselect.value).split("-");
+    //need to validate this date as well on the server
     get_showings_by_date(new Date(parseInt(date[0]),parseInt(date[1]-1),parseInt(date[2])));
   });
+  get_showings_by_date();
   setButtonEvents();
 });
 
@@ -167,7 +177,7 @@ function draw() {
 // plays or pauses the video depending on current state
 function vidLoad() {
     vidLoaded = true;
-    get_showing(1);
+    //get_showing(1);
 }
   
 
@@ -186,25 +196,26 @@ function get_showing(showingid){
 		for (let i = 0; i < numCols; i++){
 			occupiedSeats[i] = new Array(numRows).fill(false);
 		  }
+    if(showing.seats_taken != undefined){
 		for(let k =0; k < showing.seats_taken.length; k++){
 			occupiedSeats[showing.seats_taken[k].column-1][showing.seats_taken[k].row-1] = true;
 			
-	}})
+	}}})
 	.then(result => {
 		seatsUpdated = true;
 	})
 
 }
 
-function get_showings_by_date(date){
+function get_showings_by_date(date= new Date()){
 
   console.log(date);
   fetch(`/showings?day=${date.getDate()}&month=${date.getMonth()+1}&year=${date.getFullYear()}`)
   .then(response => {
-    if(response.status != 201){return false;}
-		else{
+    //if(response.status != 201){return false;}
+		//else{
 			return response.json();
-		}
+		//}
   })
   .then(response =>{
 
@@ -244,7 +255,7 @@ function get_showings_by_date(date){
         button.setAttribute('class','showingselect');
         button.setAttribute('style', "user-select: none; border-radius: 3px;");
         button.setAttribute('id',`showing-${showing.id}`);
-        button.innerHTML = `${showing.time}`;
+        button.innerHTML = `${showing.time.slice(13)}`;
         if(span != undefined){
 
           span.append(button);

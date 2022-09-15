@@ -14,23 +14,10 @@
 <div>
     <span>
         <strong>Theater View</strong>
-        <input type="date" id="timeselect">
+        <input type="date" id="timeselect" min="{{currentdatetime.year}}-{{currentdatetime.month}}-{{currentdatetime.day}}" max="{{currentdatetime.year}}-{{currentdatetime.month}}-20">
     </span>
 </div>
 <div id="movies">
-    
-    <p>movies for {{currentdatetime.date}}</p>
-    {% for i in movies %}
-    <span id="mov-{{i.id}}"style="display:inline-block; border: 1px solid black; margin-left: 15px; padding: 5px;">
-    <img style="width: 200px; height: 300px;"src="{{i.preview}}" alt="{{i.film}}"></img>
-    
-    {% for j in i.showings.all %}
-    {% if j.time.date == currentdatetime.date %}
-    <button class="showingselect" id="showing-{{j.id}}" style="user-select: none; border-radius: 3px;">{{j.showingTime.time}}</button>
-    {% endif %}
-    {%endfor%}
-</span>
-    {% endfor %}
 </div>
 <div id="p5app" style="filter: grayscale(100%); background-image: url('../../static/ticketapp/curtains.jpg'); background-size: cover; user-select: none;">
 </div>
