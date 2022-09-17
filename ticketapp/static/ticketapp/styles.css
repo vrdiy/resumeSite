@@ -8,11 +8,33 @@ body {
     border-radius: 5px;
     
 }
-
+#movies{
+    top: 5px;
+}
 div img{
-    display: block;
-    width: 100%;
-    position: relative;
+    align-self: center;
     
 }
+span{
+    
+    float:inline-start;
+}
 
+#banner{
+    text-align: center;
+    font-family: 'Palatino';
+    color: #FFFFFF;
+    font-size: large;
+}
+
+.navbar{
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+input{
+    text-align: center;
+    font-family: 'Palatino';
+    background-color: beige;
+    font-size: large;
+    border-radius: 3px;
+}

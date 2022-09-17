@@ -2,8 +2,10 @@
 
 
 document.addEventListener('DOMContentLoaded', function() {
-  timeselect = document.querySelector("#timeselect");
   let now = new Date();
+  timeselect = document.querySelector("#timeselect");
+  timeselect.valueAsNumber = now.getTime(); //pre-fill the value
+  document.querySelector('#banner').innerHTML = timeselect.value;
   //Date function doesn't have leading zeros for single digits so I add them:
   let formattedDate = `${now.getFullYear()}-${now.getMonth()+1 < 10 ? `0${now.getMonth()+1}`:now.getMonth()+1}-${now.getDate() < 10 ? `0${now.getDate()}`:now.getDate()}`
   timeselect.setAttribute('min',formattedDate);
@@ -14,6 +16,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
   //handle date selection
   timeselect.addEventListener('change', ()=>{
+    let now1 = new Date();
+    let oneWeekFromNow1 = new Date();
+    oneWeekFromNow1.setTime(now1.getTime() + 604800000); // One week in ms
+    if((timeselect.valueAsNumber < now1.getTime())||(timeselect.valueAsNumber > oneWeekFromNow1.getTime())){
+      timeselect.valueAsNumber = now1.getTime();
+    }
+    document.querySelector('#banner').innerHTML = timeselect.value;
     let date = String(timeselect.value).split("-");
     get_showings_by_date(new Date(parseInt(date[0]),parseInt(date[1]-1),parseInt(date[2])));
   });
@@ -80,9 +89,15 @@ let button;
 let playing = false;
 let vidLoaded = false;
 
-//init 2d array
+//init 2d arrays
 let occupiedSeats = new Array(numCols); //Depending on which showing the user selects, this variable gets updated for the p5 canvas to use
 for (let i = 0; i < numCols; i++){occupiedSeats[i] = new Array(numRows).fill(false);}
+
+
+let selectedSeats = new Array(numCols); //Depending on which showing the user selects, this variable gets updated for the p5 canvas to use
+for (let i = 0; i < numCols; i++){selectedSeats[i] = new Array(numRows).fill(false);}
+let currentSelection;
+let canSelect = false;
 
 let seatsUpdated = false;
 
@@ -109,13 +124,14 @@ function mousePressed() {
     theaterScreen.loop();
     theaterScreen.volume(0);
   }
-  
+  console.log(selectedSeats);
 }
 
 
 
 function mouseReleased() {
   mouseDown = false;
+  canSelect = true;
 }
 function draw() {
   background(255);
@@ -138,8 +154,16 @@ function draw() {
           if (mouseDown) {
             stroke(0,255,0);
             fill(83, 83, 158);
+
+              if(canSelect){
+                selectedSeats[i-1][j-1] = !selectedSeats[i-1][j-1];
+                canSelect = false;
+              }
+            
+            //selectedSeats[i-1][j-1] = !selectedSeats[i-1][j-1];
           }
           else{
+            
             stroke(255);
             fill(0, 0, 158);
           }
@@ -147,6 +171,10 @@ function draw() {
           stroke(0, 39, 176);
           fill(244, 255, 255);
           overBox = false;
+        }
+        if(selectedSeats[i-1][j-1] == true){
+          stroke(0, 0, 255);
+          fill(255, 0, 0);
         }
           //checks if seat is taken
           if(seatsUpdated){
@@ -161,10 +189,10 @@ function draw() {
       }
     }
     fill(255,0,0);
-    filter(OPAQUE);
+    //filter(OPAQUE);
     if(vidLoaded){
       image(theaterScreen,7.5,7.5,canvasWidth-15,canvasWidth*9/16);
-      filter(POSTERIZE,4);
+      //filter(POSTERIZE,4);
       //filter(GRAY);
     }
     //rect(mouseX, mouseY, boxRadius/2, boxRadius/2);
@@ -240,10 +268,12 @@ function get_showings_by_date(date= new Date()){
         moviesOnScreen.push(showing.movie.id);
         span = document.createElement("span");
         span.setAttribute('id',`mov-${showing.movie.id}`);
-        span.setAttribute('style','display:inline-block; border: 1px solid black; margin-left: 15px; padding: 5px;');
+        span.setAttribute('style','display:inline-block; width: 30vw; height: auto; top: 15px; border: 1px solid black; margin: 5px;text-align: center;');
 
         movimg = document.createElement("img");
-        movimg.setAttribute('style',"width: 200px; height: 300px; filter: grayscale(100%);");
+        movimg.setAttribute('style',"width: 80%; height: auto; padding-top: 5px;");
+
+        
         movimg.setAttribute('src', showing.movie.preview);
         movimg.setAttribute('alt', showing.movie.film);
         span.append(movimg);
@@ -255,7 +285,7 @@ function get_showings_by_date(date= new Date()){
        
         button = document.createElement("button");
         button.setAttribute('class','showingselect');
-        button.setAttribute('style', "user-select: none; border-radius: 3px;");
+        button.setAttribute('style', " user-select: none; border-radius: 3px;");
         button.setAttribute('id',`showing-${showing.id}`);
         button.innerHTML = `${showing.time.ftime}`;
         if(span != undefined){
@@ -268,10 +298,11 @@ function get_showings_by_date(date= new Date()){
         appendSpanFlag = false;
       }
     })
-    
     setButtonEvents();
     pickfirstshowing = document.querySelector(`[id^=showing-]`);
-    setButtonSelected(pickfirstshowing);
-    get_seats(String(pickfirstshowing.id).slice(8));
+    if(pickfirstshowing != null){
+      setButtonSelected(pickfirstshowing);
+      get_seats(String(pickfirstshowing.id).slice(8));
+    }
   })
 }
