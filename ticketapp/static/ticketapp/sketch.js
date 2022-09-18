@@ -96,7 +96,6 @@ for (let i = 0; i < numCols; i++){occupiedSeats[i] = new Array(numRows).fill(fal
 
 let selectedSeats = new Array(numCols); //Depending on which showing the user selects, this variable gets updated for the p5 canvas to use
 for (let i = 0; i < numCols; i++){selectedSeats[i] = new Array(numRows).fill(false);}
-let currentSelection;
 let canSelect = false;
 
 let seatsUpdated = false;
@@ -154,11 +153,11 @@ function draw() {
           if (mouseDown) {
             stroke(0,255,0);
             fill(83, 83, 158);
-
-              if(canSelect){
-                selectedSeats[i-1][j-1] = !selectedSeats[i-1][j-1];
-                canSelect = false;
-              }
+            
+            if(canSelect){
+              selectedSeats[i-1][j-1] = !selectedSeats[i-1][j-1];
+              canSelect = false;
+            }
             
             //selectedSeats[i-1][j-1] = !selectedSeats[i-1][j-1];
           }
@@ -176,14 +175,14 @@ function draw() {
           stroke(0, 0, 255);
           fill(255, 0, 0);
         }
-          //checks if seat is taken
-          if(seatsUpdated){
-			
-            if(occupiedSeats[i-1][j-1]){
-              stroke(0,0,0);
-                fill(0, 0, 0);
-            }
+        //checks if seat is taken
+        if(seatsUpdated){
+          
+          if(occupiedSeats[i-1][j-1]){
+            stroke(0,0,0);
+            fill(0, 0, 0);
           }
+        }
         
         rect(sx,sy,boxRadius,boxRadius);
       }
@@ -197,6 +196,7 @@ function draw() {
     }
     //rect(mouseX, mouseY, boxRadius/2, boxRadius/2);
     image(mouseicon,mouseX,mouseY);
+    rect(0, canvasWidth*9/16 +15, canvasWidth, 40);
   }
   
 // plays or pauses the video depending on current state
@@ -217,10 +217,12 @@ function isValueInArray(arr,val){
   return flag;
 }
 
-/* Deprecated, should use the results of get_showings_by_date, or remove seats_taken from get_showings_by_date
-and to save on initial amount of data loaded. Either more data upfront and more responsive ui, or the inverse.
-For the sake of 'complexity' and scalability I will probably keep this function and change get_showings_by_date.
-*/
+function go_checkout(tickets){
+  
+
+}
+
+
 function get_seats(showingid){
 
 	

@@ -32,6 +32,16 @@ def home(request):
         "currentdatetime" : datetime.now()
     })
 
+def checkout(request):
+    
+    if request.method == "POST":
+        
+        tickets = request.POST["tickets"]
+        return render(request,'ticketapp/checkout.html',{
+            "tickets": tickets
+        })
+
+
 def get_showings_by_date(request):
     today = datetime.now()
     print(today)
