@@ -218,7 +218,13 @@ function isValueInArray(arr,val){
 }
 
 function go_checkout(tickets){
-  
+  fetch(`/seats/${showingid}`)
+	.then(response => {
+		if(response.status != 200){return false;}
+		else{
+			return response.json();
+		}
+	})
 
 }
 
