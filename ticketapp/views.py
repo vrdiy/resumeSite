@@ -38,8 +38,9 @@ def checkout(request):
     if request.method == "POST":
         
         tickets = request.POST["tickets"]
-        return JsonResponse(tickets,safe=False,status=200)
-        
+        return render(request,'ticketapp/checkout.html',{
+            "tickets": tickets
+        })
 
 
 def get_showings_by_date(request):
