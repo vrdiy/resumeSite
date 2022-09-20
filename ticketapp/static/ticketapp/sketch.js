@@ -218,7 +218,12 @@ function isValueInArray(arr,val){
 }
 
 function go_checkout(tickets){
-  fetch(`/seats/${showingid}`)
+  fetch(`/checkout`,{
+    method: "POST",
+    body: JSON.stringify({
+      tickets: tickets
+    })
+  })
 	.then(response => {
 		if(response.status != 200){return false;}
 		else{

@@ -20,6 +20,7 @@ from django.http import HttpResponse
 
 from ticketapp.models import Showing, Movie, User, Ticket
 
+
 def home(request):
     movieObjs = Movie.objects.all()
     print(movieObjs)
@@ -37,9 +38,8 @@ def checkout(request):
     if request.method == "POST":
         
         tickets = request.POST["tickets"]
-        return render(request,'ticketapp/checkout.html',{
-            "tickets": tickets
-        })
+        return JsonResponse(tickets,safe=False,status=200)
+        
 
 
 def get_showings_by_date(request):
