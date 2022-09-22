@@ -41,7 +41,9 @@ def checkout(request):
         return render(request,'ticketapp/checkout.html',{
             "tickets": tickets
         })
-    return render(request,"ticketapp/checkout.html")
+    return render(request,"ticketapp/checkout.html",{
+        "ticketss" : tickets
+    })
 
 
 def get_showings_by_date(request):
