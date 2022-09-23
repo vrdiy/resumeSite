@@ -85,6 +85,7 @@ let canvasWidth = canvasHeight*0.5;
 let boxRadius = canvasWidth/numCols*0.35;
 let theaterSeats = canvasHeight*0.6;
 let theaterScreen;
+let THEATERSCREENPADDING = 7.5; //pixels
 let button;
 let playing = false;
 let vidLoaded = false;
@@ -109,7 +110,7 @@ function setup() {
   canv.style('border','5px solid grey');
   canv.style('border-radius', '3px');
   rectMode(RADIUS);
-  strokeWeight(2);
+  strokeWeight(1);
   theaterScreen = createVideo([video],vidLoad);
   mouseicon = loadImage(ticketicon);
   //theaterScreen.size(canvasWidth-15,canvasWidth*9/16);
@@ -190,13 +191,14 @@ function draw() {
     fill(255,0,0);
     //filter(OPAQUE);
     if(vidLoaded){
-      image(theaterScreen,7.5,7.5,canvasWidth-15,canvasWidth*9/16);
+      image(theaterScreen,THEATERSCREENPADDING,THEATERSCREENPADDING,canvasWidth-15,canvasWidth*9/16);
       //filter(POSTERIZE,4);
       //filter(GRAY);
     }
-    //rect(mouseX, mouseY, boxRadius/2, boxRadius/2);
+    //rect( x, y, w, h, tl, tr, br, bl )
+    //rectangles are also drawn from the center
     image(mouseicon,mouseX,mouseY);
-    rect(0, canvasWidth*9/16 +15, canvasWidth, 40);
+    rect(0, (canvasWidth*9/16)+50-THEATERSCREENPADDING, canvasWidth, 25);
   }
   
 // plays or pauses the video depending on current state

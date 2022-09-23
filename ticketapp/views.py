@@ -42,7 +42,7 @@ def checkout(request):
             "tickets": tickets
         })
     return render(request,"ticketapp/checkout.html",{
-        "ticketss" : tickets
+        "tickets" : tickets
     })
 
 
