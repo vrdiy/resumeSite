@@ -86,7 +86,10 @@ let boxRadius = canvasWidth/numCols*0.35;
 let theaterSeats = canvasHeight*0.6;
 let theaterScreen;
 let THEATERSCREENPADDING = 7.5; //pixels
-let button;
+function buttonz(){
+  this.height = ((canvasHeight- theaterSeats)-canvasWidth*9/16)
+}
+let button = new buttonz();
 let playing = false;
 let vidLoaded = false;
 
@@ -198,7 +201,7 @@ function draw() {
     //rect( x, y, w, h, tl, tr, br, bl )
     //rectangles are also drawn from the center
     image(mouseicon,mouseX,mouseY);
-    rect(0, (canvasWidth*9/16)+50-THEATERSCREENPADDING, canvasWidth, 25);
+    rect(0,canvasWidth*9/16 + button.height + THEATERSCREENPADDING, canvasWidth, button.height/2);
   }
   
 // plays or pauses the video depending on current state
