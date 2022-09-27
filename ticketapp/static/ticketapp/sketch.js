@@ -86,13 +86,18 @@ let boxRadius = canvasWidth/numCols*0.35;
 let theaterSeats = canvasHeight*0.6;
 let theaterScreen;
 let THEATERSCREENPADDING = 7.5; //pixels
-function buttonz(){
-  this.height = ((canvasHeight- theaterSeats)-canvasWidth*9/16)
-}
-let button = new buttonz();
+
+let buttonHeight = parseFloat(((canvasHeight- theaterSeats)-canvasWidth*9/16));
 let playing = false;
 let vidLoaded = false;
 
+let p5font;
+let p5fontsize = 40;
+
+function preload() {
+  p5font = loadFont('/static/ticketapp/MovieBill-M86w.ttf');
+  
+}
 //init 2d arrays
 let occupiedSeats = new Array(numCols); //Depending on which showing the user selects, this variable gets updated for the p5 canvas to use
 for (let i = 0; i < numCols; i++){occupiedSeats[i] = new Array(numRows).fill(false);}
@@ -104,10 +109,14 @@ let canSelect = false;
 
 let seatsUpdated = false;
 
+
 function setup() {
   let canv = createCanvas(canvasWidth, canvasHeight);
   canv.parent('p5app');
   canvdiv = document.querySelector('#p5app');
+  textFont(p5font);
+  textSize(p5fontsize);
+ // textAlign(CENTER, CENTER);
   //canv.style('background-image',curtainsimg);
   canv.style('top','5px');
   canv.style('border','5px solid grey');
@@ -198,12 +207,41 @@ function draw() {
       //filter(POSTERIZE,4);
       //filter(GRAY);
     }
-    //rect( x, y, w, h, tl, tr, br, bl )
-    //rectangles are also drawn from the center
+    
+    submitRect();
     image(mouseicon,mouseX,mouseY);
-    rect(0,canvasWidth*9/16 + button.height + THEATERSCREENPADDING, canvasWidth, button.height/2);
+    //rect(0,canvasWidth*9/16 + button.height/2 + THEATERSCREENPADDING, canvasWidth, button.height/2.5);
   }
   
+  
+  function submitRect(){
+  //rect( x, y, w, h, tl, tr, br, bl )
+  //rectangles are also drawn from the center
+  this.x = 0;
+  this.y = (canvasWidth*9/16) + (buttonHeight/2) + THEATERSCREENPADDING;
+  this.w = canvasWidth;
+  this.h = buttonHeight/2.5;
+  console.log(this.x);
+  console.log(this.y);
+  console.log(this.w);
+  console.log(this.h);
+  if (
+    mouseX > this.x - 0 &&
+    mouseX < this.x + this.w &&
+    mouseY > this.y - this.h &&
+    mouseY < this.y + this.h
+    ){
+      fill(0,255,0);
+    }
+    else{
+      fill(255,255,255);
+    }
+    console.log("should draw rect");
+    rect(this.x,this.y, this.w, this.h);
+    fill(0,0,0);
+    text('Buy Ticket(s)',this.x+this.w/2,this.y+ this.h/2);
+
+}
 // plays or pauses the video depending on current state
 function vidLoad() {
     vidLoaded = true;
