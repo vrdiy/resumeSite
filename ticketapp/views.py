@@ -33,11 +33,13 @@ def home(request):
         "currentdatetime" : datetime.now()
     })
 
+@csrf_exempt
 def checkout(request):
     
     if request.method == "POST":
         
         tickets = request.POST["tickets"]
+        print(tickets)
         return render(request,'ticketapp/checkout.html',{
             "tickets": tickets
         })

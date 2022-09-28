@@ -86,6 +86,7 @@ let boxRadius = canvasWidth/numCols*0.35;
 let theaterSeats = canvasHeight*0.6;
 let theaterScreen;
 let THEATERSCREENPADDING = 7.5; //pixels
+let submitted = false;
 
 let buttonHeight = parseFloat(((canvasHeight- theaterSeats)-canvasWidth*9/16));
 let playing = false;
@@ -146,6 +147,7 @@ function mouseReleased() {
   canSelect = true;
 }
 function draw() {
+  if(!submitted){
   background(255);
   //frameRate(300);
   noCursor();
@@ -212,6 +214,7 @@ function draw() {
     image(mouseicon,mouseX,mouseY);
     //rect(0,canvasWidth*9/16 + button.height/2 + THEATERSCREENPADDING, canvasWidth, button.height/2.5);
   }
+  }
   
   
   function submitRect(){
@@ -221,10 +224,6 @@ function draw() {
   this.y = (canvasWidth*9/16) + (buttonHeight/2) + THEATERSCREENPADDING;
   this.w = canvasWidth;
   this.h = buttonHeight/2.5;
-  console.log(this.x);
-  console.log(this.y);
-  console.log(this.w);
-  console.log(this.h);
   if (
     mouseX > this.x - 0 &&
     mouseX < this.x + this.w &&
@@ -232,11 +231,14 @@ function draw() {
     mouseY < this.y + this.h
     ){
       fill(0,255,0);
+      if(mouseDown){
+        go_checkout(selectedSeats);
+        submitted = true;
+      }
     }
     else{
       fill(255,255,255);
     }
-    console.log("should draw rect");
     rect(this.x,this.y, this.w, this.h);
     fill(0,0,0);
     text('Buy Ticket(s)',this.x+this.w/2,this.y+ this.h/2);
