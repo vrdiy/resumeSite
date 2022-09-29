@@ -37,15 +37,13 @@ def home(request):
 def checkout(request):
     
     if request.method == "POST":
+        print(request)
+        data = json.loads(request.body)
+        tickets1 = data.get("tickets",None)
+        print(tickets1)
         
-        tickets = request.POST["tickets"]
-        print(tickets)
-        return render(request,'ticketapp/checkout.html',{
-            "tickets": tickets
-        })
-    return render(request,"ticketapp/checkout.html",{
-        "tickets" : tickets
-    })
+        return JsonResponse(tickets1,safe = False,status = 200)
+    return JsonResponse(tickets1,safe = False,status = 200)
 
 
 def get_showings_by_date(request):

@@ -106,7 +106,7 @@ for (let i = 0; i < numCols; i++){occupiedSeats[i] = new Array(numRows).fill(fal
 
 let selectedSeats = new Array(numCols); //Depending on which showing the user selects, this variable gets updated for the p5 canvas to use
 for (let i = 0; i < numCols; i++){selectedSeats[i] = new Array(numRows).fill(false);}
-let canSelect = false;
+let canSelect = true;
 
 let seatsUpdated = false;
 
@@ -263,11 +263,27 @@ function isValueInArray(arr,val){
 }
 
 function go_checkout(tickets){
+  let counter = 0;
+  //console.log(tickets);
+  selectedTickets = {};
+  
+  for(let i = 0; i < numCols; i++){
+    for(let j = 0; j < numRows; j++){
+      
+      if (tickets[i][j]){
+        let entry = {"column" : i+1, "row" : j+1};
+        selectedTickets[counter] = (entry);
+      }
+      counter++;
+    }
+  }
+      console.log(JSON.stringify({'tickets': selectedTickets}));
   fetch(`/checkout`,{
     method: "POST",
-    body: JSON.stringify({
-      tickets: tickets
-    })
+    credentials: 'omit',
+    body: JSON.stringify(
+      {tickets: selectedTickets}
+    )
   })
 	.then(response => {
 		if(response.status != 200){return false;}
