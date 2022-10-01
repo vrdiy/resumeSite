@@ -40,7 +40,16 @@ def checkout(request):
         print(request)
         data = json.loads(request.body)
         tickets1 = data.get("tickets",None)
-        print(tickets1)
+        showing1 = data.get("showingid",0)
+        print(showing1)
+        showing = Showing.objects.get(id=7)
+        if (tickets1):
+            for ticket in tickets1:
+                print("------")
+                print(ticket)
+                print("---------")
+                hold = Ticket(holder = request.user,showing = showing, tcolumn = ticket.column,trow = ticket.row)
+                hold.save()
         
         return JsonResponse(tickets1,safe = False,status = 200)
     return JsonResponse(tickets1,safe = False,status = 200)

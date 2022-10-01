@@ -32,7 +32,8 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 //global, only allow one button at a time.
-let buttonSelected = ''
+let buttonSelected = '';
+let showingSelectedID = 0;
 
 function setButtonSelected(element){
   buttonSelected = (element).getAttribute("id");
@@ -47,7 +48,8 @@ function setButtonEvents(){
   test.forEach((element) => {
     element.addEventListener('click', ()=> {
       setButtonSelected(element);
-      get_seats(parseInt((element).getAttribute("id").slice(8)));
+      showingSelectedID = parseInt((element).getAttribute("id").slice(8));
+      get_seats(showingSelectedID);
     });
     element.addEventListener('mouseover', ()=> {
       if((element).getAttribute("id") != buttonSelected){
@@ -232,7 +234,7 @@ function draw() {
     ){
       fill(0,255,0);
       if(mouseDown){
-        go_checkout(selectedSeats);
+        go_checkout(selectedSeats,showingSelectedID);
         submitted = true;
       }
     }
@@ -262,17 +264,17 @@ function isValueInArray(arr,val){
   return flag;
 }
 
-function go_checkout(tickets){
+function go_checkout(tickets, showingid = 0){
   let counter = 0;
   //console.log(tickets);
-  selectedTickets = {};
+  selectedTickets = [];
   
   for(let i = 0; i < numCols; i++){
     for(let j = 0; j < numRows; j++){
       
       if (tickets[i][j]){
         let entry = {"column" : i+1, "row" : j+1};
-        selectedTickets[counter] = (entry);
+        selectedTickets.push(entry);
       }
       counter++;
     }
@@ -282,7 +284,8 @@ function go_checkout(tickets){
     method: "POST",
     credentials: 'omit',
     body: JSON.stringify(
-      {tickets: selectedTickets}
+      {tickets: selectedTickets,
+      showingid : showingid}
     )
   })
 	.then(response => {
@@ -295,7 +298,7 @@ function go_checkout(tickets){
 }
 
 
-function get_seats(showingid){
+function get_seats(showingid = 0){
 
 	
 	fetch(`/seats/${showingid}`)
