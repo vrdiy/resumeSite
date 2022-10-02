@@ -140,6 +140,7 @@ function mousePressed() {
     theaterScreen.volume(0);
   }
   console.log(selectedSeats);
+
 }
 
 
@@ -267,14 +268,14 @@ function isValueInArray(arr,val){
 function go_checkout(tickets, showingid = 0){
   let counter = 0;
   //console.log(tickets);
-  selectedTickets = [];
+  selectedTickets = {};
   
   for(let i = 0; i < numCols; i++){
     for(let j = 0; j < numRows; j++){
       
       if (tickets[i][j]){
         let entry = {"column" : i+1, "row" : j+1};
-        selectedTickets.push(entry);
+        selectedTickets[counter]=entry;
       }
       counter++;
     }
