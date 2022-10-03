@@ -275,7 +275,7 @@ function go_checkout(tickets, showingid = 0){
       
       if (tickets[i][j]){
         let entry = {"column" : i+1, "row" : j+1};
-        selectedTickets[counter]=entry;
+        selectedTickets.push(entry);
       }
       counter++;
     }
