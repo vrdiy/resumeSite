@@ -268,7 +268,7 @@ function isValueInArray(arr,val){
 function go_checkout(tickets, showingid = 0){
   let counter = 0;
   //console.log(tickets);
-  selectedTickets = {};
+  selectedTickets = [];
   
   for(let i = 0; i < numCols; i++){
     for(let j = 0; j < numRows; j++){
@@ -283,7 +283,6 @@ function go_checkout(tickets, showingid = 0){
       console.log(JSON.stringify({'tickets': selectedTickets}));
   fetch(`/checkout`,{
     method: "POST",
-    credentials: 'omit',
     body: JSON.stringify(
       {tickets: selectedTickets,
       showingid : showingid}

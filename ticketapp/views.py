@@ -1,6 +1,7 @@
 
 from datetime import datetime, timedelta
 import json
+from re import U
 from telnetlib import STATUS
 from django import forms
 from django.contrib.auth import authenticate, login, logout
@@ -43,13 +44,15 @@ def checkout(request):
         showing1 = data.get("showingid",0)
         print(showing1)
         showing = Showing.objects.get(id=7)
+        user_ = User.objects.get(id=request.user.id)
         if (tickets1):
             for ticket in tickets1:
-                ticket = json.loads(ticket)
                 print("------")
-                print(json.loads(ticket))
+                print(ticket)
+                print(ticket)
                 print("---------")
-                hold = Ticket(holder = request.user,showing = showing, tcolumn = ticket('column'),trow = ticket('row'))
+
+                hold = Ticket(holder = user_,showing = showing, tcolumn = ticket["column"],trow = ticket["row"])
                 hold.save()
         
         return JsonResponse(tickets1,safe = False,status = 200)
