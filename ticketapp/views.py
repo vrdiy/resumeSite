@@ -43,7 +43,7 @@ def checkout(request):
         tickets1 = data.get("tickets",None)
         showing1 = data.get("showingid",0)
         print(showing1)
-        showing = Showing.objects.get(id=7)
+        showing = Showing.objects.get(id=3)
         user_ = User.objects.get(id=request.user.id)
         if (tickets1):
             for ticket in tickets1:
