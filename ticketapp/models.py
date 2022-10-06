@@ -20,6 +20,12 @@ class Ticket(models.Model):
             "column" : self.tcolumn,
             "row" : self.trow
         }
+    def serialize(self):
+        return {
+            "column" : self.tcolumn,
+            "row" : self.trow,
+            "showing" : self.showing.serialize()
+        }
     class Meta:
         unique_together = ('showing','trow','tcolumn')
     
@@ -50,7 +56,8 @@ class Showing(models.Model):
         return{
             "id" : self.id,
             "movie" : self.movie.serialize(),
-            "time" : self.showingTime()
+            "time" : self.showingTime(),
+            "date" : self.time.strftime("%B %e")
             }
             
         #split from serialize to be more scalable and only send seats when requested

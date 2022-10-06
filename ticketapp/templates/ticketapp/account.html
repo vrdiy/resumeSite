@@ -1,0 +1,15 @@
+{% extends "ticketapp/layout.html"%}
+{%load static%}
+
+{% block script %}
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.4.2/lib/p5.js"></script>
+{% endblock %}
+
+{% block body %}
+{% for ticket in ownedTickets %}
+<li class="ticketlist"><i class="moviename">{{ticket.showing.movie.film}}</i>{{ticket.showing.date}}, {{ticket.showing.time.ftime}}<br>
+    <p style="padding-left: 10vw;">Seat: Column {{ticket.column}}, Row {{ticket.row}}</p>
+
+</li>
+{% endfor %}
+{% endblock %}

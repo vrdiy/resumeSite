@@ -2,17 +2,25 @@
 
 
 document.addEventListener('DOMContentLoaded', function() {
+
+  //-----------------------------time selector field initialize values---------------------------------
   let now = new Date();
   timeselect = document.querySelector("#timeselect");
   timeselect.valueAsNumber = now.getTime(); //pre-fill the value
   document.querySelector('#banner').innerHTML = timeselect.value;
+
   //Date function doesn't have leading zeros for single digits so I add them:
   let formattedDate = `${now.getFullYear()}-${now.getMonth()+1 < 10 ? `0${now.getMonth()+1}`:now.getMonth()+1}-${now.getDate() < 10 ? `0${now.getDate()}`:now.getDate()}`
+  //the 'min' attribute needs leading zeros
   timeselect.setAttribute('min',formattedDate);
+
   let oneWeekFromNow = now.getTime() + 604800000; // One week in ms
   now.setTime(oneWeekFromNow);
   let formattedDatePlusAWeek = `${now.getFullYear()}-${now.getMonth()+1 < 10 ? `0${now.getMonth()+1}`:now.getMonth()+1}-${now.getDate() < 10 ? `0${now.getDate()}`:now.getDate()}`
+  //the 'max' attribute needs leading zeros
   timeselect.setAttribute('max', formattedDatePlusAWeek);
+
+  //---------------------------------------------------------------------------------------------------
 
   //handle date selection
   timeselect.addEventListener('change', ()=>{

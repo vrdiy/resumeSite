@@ -34,7 +34,8 @@ def home(request):
         "currentdatetime" : datetime.now()
     })
 
-#@csrf_exempt
+
+@csrf_exempt
 def checkout(request):
     
     if request.method == "POST":
@@ -96,6 +97,21 @@ def get_showings_by_date(request):
 def get_seats(request,id):
     showing = Showing.objects.get(id=id)
     return JsonResponse(showing.seats(), status = 200)
+
+
+def account_view(request):
+    if(request.user.is_authenticated):
+        user_ = User.objects.get(id=request.user.id)
+        ownedTickets = Ticket.objects.filter(holder=user_)
+        ownedTickets = ownedTickets.order_by("-showing")
+        serializedTickets = []
+        for ticket in ownedTickets:
+            serializedTickets.append(ticket.serialize())
+        return render(request, "ticketapp/account.html", {
+            "ownedTickets" : serializedTickets
+        })
+    pass
+
 
 def login_view(request):
     if request.method == "POST":
