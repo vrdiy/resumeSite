@@ -1,5 +1,14 @@
+@font-face {
+    font-family: "M86w";
+    src: url('/static/ticketapp/MovieBill-M86w.ttf');
+}
+
 body {
     background-color: grey;
+    font-family: "M86w";
+    /*font-size: 50px;*/
+    font-size: 5vh;
+    font-weight: bold;
 }
 
 #p5app{
@@ -22,19 +31,24 @@ span{
 
 #banner{
     text-align: center;
-    font-family: 'Palatino';
+    font-family: 'M86w','Palatino';
     color: #FFFFFF;
-    font-size: large;
+    /*font-size: large;*/
+    font-size: 5vh;
 }
 
 .navbar{
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-family: 'M86w','Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
-
+a {
+    
+    font-size: 5vh;
+    font-family: 'M86w','Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
 input{
     text-align: center;
-    font-family: 'Palatino';
+    font-family: 'M86w','Palatino';
     background-color: beige;
-    font-size: large;
+    font-size: 5vh;
     border-radius: 3px;
 }

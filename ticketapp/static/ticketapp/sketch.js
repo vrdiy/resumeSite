@@ -282,6 +282,7 @@ function go_checkout(tickets, showingid = 0){
   }
       console.log(JSON.stringify({'tickets': selectedTickets}));
   fetch(`/checkout`,{
+    credentials : 'same-origin',
     method: "POST",
     body: JSON.stringify(
       {tickets: selectedTickets,

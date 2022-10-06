@@ -34,29 +34,27 @@ def home(request):
         "currentdatetime" : datetime.now()
     })
 
-@csrf_exempt
+#@csrf_exempt
 def checkout(request):
     
     if request.method == "POST":
         print(request)
         data = json.loads(request.body)
-        tickets1 = data.get("tickets",None)
-        showing1 = data.get("showingid",0)
-        print(showing1)
-        showing = Showing.objects.get(id=3)
+        selectedTickets = data.get("tickets",None)
+        selectedShowing = data.get("showingid",0)
+        print(selectedShowing)
+        showing = Showing.objects.get(id=selectedShowing)
         user_ = User.objects.get(id=request.user.id)
-        if (tickets1):
-            for ticket in tickets1:
+        if (selectedTickets):
+            for ticket in selectedTickets:
                 print("------")
                 print(ticket)
-                print(ticket)
-                print("---------")
 
                 hold = Ticket(holder = user_,showing = showing, tcolumn = ticket["column"],trow = ticket["row"])
                 hold.save()
         
-        return JsonResponse(tickets1,safe = False,status = 200)
-    return JsonResponse(tickets1,safe = False,status = 200)
+        return JsonResponse(selectedTickets,safe = False,status = 200)
+    return JsonResponse(selectedTickets,safe = False,status = 200)
 
 
 def get_showings_by_date(request):
