@@ -15,7 +15,7 @@
             <a class="navbar-brand" href="{% url 'index' %}">TicketPal</a>
           
             <div>
-              <ul class="navbar-nav mr-auto">
+              <ul class="navbar-nav" id="navtop">
                 {% if user.is_authenticated %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'account' %}"><strong>My Account</strong></a>

@@ -15,12 +15,14 @@
     <span>
         <strong>Theater View</strong>
         <input type="date" id="timeselect" min="{{currentdatetime.year}}-{{currentdatetime.month}}-{{currentdatetime.day}}" max="{{currentdatetime.year}}-{{currentdatetime.month}}-20">
-        <a href="{% url 'checkout' %}">link</a>
+        
     </span>
     <span id="banner"></span>
 </div>
-<div id="movies">
-</div>
-<div id="p5app" style="background-image: url('../../static/ticketapp/curtains.jpg'); background-size: cover; user-select: none;">
+<div id="container">
+    <div id="subcontainer">
+    </div>
+    <div id="p5app" >
+    </div>
 </div>
 {% endblock %}

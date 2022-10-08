@@ -80,11 +80,13 @@ def get_showings_by_date(request):
             for i in allshowings:
                 if((i.time.day == today.day) and (i.time.month == today.month) and (i.time.year == today.year)):
                     showings.append(i.serialize())
+            showings = {}
             return JsonResponse(showings,safe = False,status = 400)
     except ValueError:
         for i in allshowings:
                 if((i.time.day == today.day) and (i.time.month == today.month) and (i.time.year == today.year)):
                     showings.append(i.serialize())
+        showings = {}
         return JsonResponse(showings,safe = False,status = 400)
 
 

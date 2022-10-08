@@ -24,10 +24,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
   //handle date selection
   timeselect.addEventListener('change', ()=>{
-    let now1 = new Date();
-    let oneWeekFromNow1 = new Date();
-    oneWeekFromNow1.setTime(now1.getTime() + 604800000); // One week in ms
-    
     document.querySelector('#banner').innerHTML = timeselect.value;
     let date = String(timeselect.value).split("-");
     get_showings_by_date(new Date(parseInt(date[0]),parseInt(date[1]-1),parseInt(date[2])));
@@ -54,7 +50,7 @@ function setButtonEvents(){
   test = document.querySelectorAll(".showingselect");
   test.forEach((element) => {
     element.addEventListener('click', ()=> {
-      //setButtonSelected(element);
+      setButtonSelected(element);
       get_seats(showingSelectedID);
     });
     element.addEventListener('mouseover', ()=> {
@@ -336,58 +332,71 @@ function get_showings_by_date(date= new Date()){
   
   fetch(`/showings?day=${date.getDate()}&month=${date.getMonth()+1}&year=${date.getFullYear()}`)
   .then(response => {
-    //if(response.status != 201){return false;}
-		//else{
+    if(response.status == 400){
+      console.log("just use the ui bro....")
+      return false;
+    }
+		else{
 			return response.json();
-		//}
+		}
   })
   .then(response =>{
-
     let moviesOnScreen = [];
-    moviesdiv = document.querySelector("#movies");
+    moviesdiv = document.querySelector("#subcontainer");
     moviesdiv.innerHTML = '';
-    
-    response.forEach(showing =>{
-      let appendSpanFlag = false;
-      if (!isValueInArray(moviesOnScreen,showing.movie.id)){
-        moviesOnScreen.push(showing.movie.id);
-        span = document.createElement("span");
-        span.setAttribute('id',`mov-${showing.movie.id}`);
-        span.setAttribute('style','display:inline-block; width: 30vw; height: auto; top: 15px; border: 1px solid black; margin: 5px;text-align: center;');
+    if(response){
+      
+      response.forEach(showing =>{
+        let appendSpanFlag = false;
+        if (!isValueInArray(moviesOnScreen,showing.movie.id)){
+          moviesOnScreen.push(showing.movie.id);
+          span = document.createElement("span");
+          span.setAttribute('id',`mov-${showing.movie.id}`);
+          span.setAttribute('class',"showings");
+          
 
-        movimg = document.createElement("img");
-        movimg.setAttribute('style',"width: 80%; height: auto; padding-top: 5px;");
+          movimg = document.createElement("img");
+          movimg.setAttribute('class',"posters");
+          movimg.setAttribute('style',"width: auto; height: 80%; margin-top: 5px;text-align: center;");
 
-        
-        movimg.setAttribute('src', showing.movie.preview);
-        movimg.setAttribute('alt', showing.movie.film);
-        span.append(movimg);
-        appendSpanFlag = true;
+          
+          movimg.setAttribute('src', showing.movie.preview);
+          movimg.setAttribute('alt', showing.movie.film);
+          span.append(movimg);
+          appendSpanFlag = true;
 
-      }else{
-        span = document.querySelector(`#mov-${showing.movie.id}`);
-      }
-       
-        button = document.createElement("button");
-        button.setAttribute('class','showingselect');
-        button.setAttribute('style', " user-select: none; border-radius: 3px;");
-        button.setAttribute('id',`showing-${showing.id}`);
-        button.innerHTML = `${showing.time.ftime}`;
-        if(span != undefined){
-
-          span.append(button);
+        }else{
+          span = document.querySelector(`#mov-${showing.movie.id}`);
         }
+        
+          button = document.createElement("button");
+          button.setAttribute('class','showingselect');
+          button.setAttribute('id',`showing-${showing.id}`);
+          button.innerHTML = `${showing.time.ftime}`;
+          if(span != undefined){
 
-      if(appendSpanFlag){
-        moviesdiv.append(span);
-        appendSpanFlag = false;
+            span.append(button);
+          }
+
+        if(appendSpanFlag){
+          moviesdiv.append(span);
+          appendSpanFlag = false;
+        }
+      })
+
+      setButtonEvents();
+
+      //try to pre-select the first showing
+      pickfirstshowing = document.querySelector(`[id^=showing-]`);
+      if(pickfirstshowing != null){
+        setButtonSelected(pickfirstshowing);
+        get_seats(String(pickfirstshowing.id).slice(8));
       }
-    })
-    setButtonEvents();
-    pickfirstshowing = document.querySelector(`[id^=showing-]`);
-    if(pickfirstshowing != null){
-      setButtonSelected(pickfirstshowing);
-      get_seats(String(pickfirstshowing.id).slice(8));
+
+
+    }
+    else{
+      document.querySelector('#banner').innerHTML =''; 
     }
   })
 }
