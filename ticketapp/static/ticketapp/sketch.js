@@ -27,9 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let now1 = new Date();
     let oneWeekFromNow1 = new Date();
     oneWeekFromNow1.setTime(now1.getTime() + 604800000); // One week in ms
-    if((timeselect.valueAsNumber < now1.getTime())||(timeselect.valueAsNumber > oneWeekFromNow1.getTime())){
-      timeselect.valueAsNumber = now1.getTime();
-    }
+    
     document.querySelector('#banner').innerHTML = timeselect.value;
     let date = String(timeselect.value).split("-");
     get_showings_by_date(new Date(parseInt(date[0]),parseInt(date[1]-1),parseInt(date[2])));
@@ -48,6 +46,7 @@ function setButtonSelected(element){
   element.style.textDecoration = "underline";
   element.style.backgroundColor = "#AACCCC";
   element.style.fontWeight = "bolder";
+  showingSelectedID = parseInt((element).getAttribute("id").slice(8));
 }
 //function for stylizing and event handling for buttons
 function setButtonEvents(){
@@ -55,8 +54,7 @@ function setButtonEvents(){
   test = document.querySelectorAll(".showingselect");
   test.forEach((element) => {
     element.addEventListener('click', ()=> {
-      setButtonSelected(element);
-      showingSelectedID = parseInt((element).getAttribute("id").slice(8));
+      //setButtonSelected(element);
       get_seats(showingSelectedID);
     });
     element.addEventListener('mouseover', ()=> {
@@ -159,6 +157,7 @@ function mouseReleased() {
 }
 function draw() {
   if(!submitted){
+    //console.log(showingSelectedID)
   background(255);
   //frameRate(300);
   noCursor();
