@@ -34,7 +34,30 @@ def home(request):
         "currentdatetime" : datetime.now()
     })
 
+def confirmpurchase(request):
+    if request.method == "POST":
+        pass
+        #process tickets and take to account page.
 
+    data = json.loads(request.body)
+    selectedTickets = data.get("tickets",None)
+    selectedShowing = data.get("showingid",0)
+    print(selectedShowing)
+    showing = Showing.objects.get(id=selectedShowing)
+    user_ = User.objects.get(id=request.user.id)
+    if (selectedTickets):
+        return render(request,"ticketapp/confirmation.html",{
+            "tickets" : selectedTickets
+        })
+        for ticket in selectedTickets:
+            print("------")
+            print(ticket)
+
+            hold = Ticket(holder = user_,showing = showing, tcolumn = ticket["column"],trow = ticket["row"])
+            hold.save()
+    
+
+#called from js fetch for ticket validation. then user will be taken to csrf required checkout page to confirm
 @csrf_exempt
 def checkout(request):
     
