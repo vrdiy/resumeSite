@@ -35,6 +35,7 @@ def home(request):
     })
 
 def confirmpurchase(request):
+    return render(request,"ticketapp/confirmation.html")
     if request.method == "POST":
         pass
         #process tickets and take to account page.
@@ -77,7 +78,7 @@ def checkout(request):
                 hold = Ticket(holder = user_,showing = showing, tcolumn = ticket["column"],trow = ticket["row"])
                 hold.save()
         
-        return JsonResponse(selectedTickets,safe = False,status = 200)
+        return HttpResponseRedirect("confirm")
     return JsonResponse(selectedTickets,safe = False,status = 200)
 
 
