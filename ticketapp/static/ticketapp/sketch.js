@@ -247,7 +247,7 @@ function draw() {
     }
     rect(this.x,this.y, this.w, this.h);
     fill(0,0,0);
-    text('Buy Ticket(s)',this.x+this.w/2,this.y+ this.h/2);
+    text('Add Ticket(s) to Cart',this.x,this.y+ this.h/2);
 
 }
 // plays or pauses the video depending on current state

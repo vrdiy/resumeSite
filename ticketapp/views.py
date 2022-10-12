@@ -35,7 +35,13 @@ def home(request):
     })
 
 def confirmpurchase(request):
-    return render(request,"ticketapp/confirmation.html")
+    print(request.session["tickets"])
+    decodedtickets = []
+    for ticket in request.session["tickets"]:
+        decodedtickets.append(json.loads(ticket))
+    #tickets = json.loads(request.session["tickets"])
+    print(decodedtickets)
+    return render(request,"ticketapp/confirmation.html", {'tickets' : decodedtickets})
     if request.method == "POST":
         pass
         #process tickets and take to account page.
@@ -61,7 +67,9 @@ def confirmpurchase(request):
 #called from js fetch for ticket validation. then user will be taken to csrf required checkout page to confirm
 @csrf_exempt
 def checkout(request):
-    
+    request.session["tickets"] = []
+    if('tickets' not in request.session):
+        request.session["tickets"] = []
     if request.method == "POST":
         print(request)
         data = json.loads(request.body)
@@ -74,11 +82,13 @@ def checkout(request):
             for ticket in selectedTickets:
                 print("------")
                 print(ticket)
-
-                hold = Ticket(holder = user_,showing = showing, tcolumn = ticket["column"],trow = ticket["row"])
-                hold.save()
+                tdata = {"showing" : selectedShowing, "column" : ticket['column'], "row" : ticket['row']}
+                #tdata = json.dumps(tdata)
+                request.session["tickets"].append(json.dumps(tdata))
+                #hold = Ticket(holder = user_,showing = showing, tcolumn = ticket["column"],trow = ticket["row"])
+                #hold.save()
         
-        return HttpResponseRedirect("confirm")
+        return HttpResponseRedirect("cart")
     return JsonResponse(selectedTickets,safe = False,status = 200)
 
 
