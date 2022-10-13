@@ -37,7 +37,12 @@ def home(request):
 def confirmpurchase(request):
     print(request.session["tickets"])
     decodedtickets = []
+    showings = Showing.objects.all()
     for ticket in request.session["tickets"]:
+        ticketwithshowingid = json.loads(ticket)
+        showingidsoftickets.append(ticketwithshowingid.showing)
+        
+    
         decodedtickets.append(json.loads(ticket))
     #tickets = json.loads(request.session["tickets"])
     print(decodedtickets)
