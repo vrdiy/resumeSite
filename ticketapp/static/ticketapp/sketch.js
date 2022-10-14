@@ -372,7 +372,7 @@ function get_showings_by_date(date= new Date()){
           button = document.createElement("button");
           button.setAttribute('class','showingselect');
           button.setAttribute('id',`showing-${showing.id}`);
-          button.innerHTML = `${showing.time.ftime}`;
+          button.innerHTML = `${showing.time}`;
           if(span != undefined){
 
             span.append(button);

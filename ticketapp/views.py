@@ -34,16 +34,17 @@ def home(request):
         "currentdatetime" : datetime.now()
     })
 
+
 def confirmpurchase(request):
     print(request.session["tickets"])
     decodedtickets = []
     showings = Showing.objects.all()
+    #fill tickets with actual showing info when viewed in cart
     for ticket in request.session["tickets"]:
-        ticketwithshowingid = json.loads(ticket)
-        showingidsoftickets.append(ticketwithshowingid.showing)
-        
-    
-        decodedtickets.append(json.loads(ticket))
+
+        fullticket = json.loads(ticket)
+        fullticket['showing'] = showings.get(id=fullticket['showing']).serialize()
+        decodedtickets.append(fullticket)
     #tickets = json.loads(request.session["tickets"])
     print(decodedtickets)
     return render(request,"ticketapp/confirmation.html", {'tickets' : decodedtickets})

@@ -47,10 +47,11 @@ class Showing(models.Model):
 
     def showingTime(self):
         #get rid of leading zero and just return hour/minute of showing
+        #there should be a strftime code for this, but it doesn't work on my platform atleast
         if(self.time.strftime("%I:%M %p")[:1] == '0'):
-            return { "ftime" : self.time.strftime("%I:%M %p")[1:] }
+            return self.time.strftime("%I:%M %p")[1:] 
         else:
-            return  { "ftime" : self.time.strftime("%I:%M %p") }
+            return self.time.strftime("%I:%M %p") 
 
     def serialize(self):
         return{
