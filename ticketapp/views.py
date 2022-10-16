@@ -34,6 +34,8 @@ def home(request):
         "currentdatetime" : datetime.now()
     })
 
+def reviews(request,id):
+    return render(request,"ticketapp/review.html")
 
 def confirmpurchase(request):
     print(request.session["tickets"])
