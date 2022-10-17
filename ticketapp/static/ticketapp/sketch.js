@@ -123,9 +123,9 @@ function setup() {
   textSize(p5fontsize);
  // textAlign(CENTER, CENTER);
   //canv.style('background-image',curtainsimg);
-  canv.style('top','5px');
-  canv.style('border','5px solid grey');
-  canv.style('border-radius', '3px');
+  //canv.style('top','5px');
+  //canv.style('border','5px solid grey');
+  //canv.style('border-radius', '3px');
   rectMode(RADIUS);
   strokeWeight(1);
   theaterScreen = createVideo([video],vidLoad);
