@@ -91,6 +91,7 @@ let theaterSeats = canvasHeight*0.6;
 let theaterScreen;
 let THEATERSCREENPADDING = 7.5; //pixels
 let submitted = false;
+let revealUI = false;
 
 let buttonHeight = parseFloat(((canvasHeight- theaterSeats)-canvasWidth*9/16));
 let playing = false;
@@ -110,7 +111,7 @@ for (let i = 0; i < numCols; i++){occupiedSeats[i] = new Array(numRows).fill(fal
 
 let selectedSeats = new Array(numCols); //Depending on which showing the user selects, this variable gets updated for the p5 canvas to use
 for (let i = 0; i < numCols; i++){selectedSeats[i] = new Array(numRows).fill(false);}
-let canSelect = true;
+let canSelect = false;
 
 let seatsUpdated = false;
 
@@ -136,13 +137,15 @@ function setup() {
   theaterScreen.hide();
 }
 function mousePressed() {
-  mouseDown = true;
-  if(vidLoaded){
-    theaterScreen.loop();
-    theaterScreen.volume(0);
+  if(!revealUI){
+    revealUI = true;
   }
-  console.log(selectedSeats);
-
+    mouseDown = true;
+    if(vidLoaded){
+      theaterScreen.loop();
+      theaterScreen.volume(0);
+    }
+    console.log(selectedSeats);
 }
 
 
@@ -152,74 +155,80 @@ function mouseReleased() {
   canSelect = true;
 }
 function draw() {
-  if(!submitted){
-    //console.log(showingSelectedID)
-  background(255);
-  //frameRate(300);
-  noCursor();
-  for (let i = 1; i <= numCols; i++){
-    w = canvasWidth/numCols;
-    sx = w*(i) - w/2;
-    for(let j = 1; j <= numRows; j++){
-      h = theaterSeats/numRows;
-      sy = (canvasHeight-theaterSeats) + h*(j) - h/2;
-      //rect(sx,sy,boxRadius,boxRadius);
-      if (
-        mouseX > sx - boxRadius &&
-        mouseX < sx + boxRadius &&
-        mouseY > sy - boxRadius &&
-        mouseY < sy + boxRadius
-        ){
-          overBox = true;
-          if (mouseDown) {
-            stroke(0,255,0);
-            fill(83, 83, 158);
-            
-            if(canSelect){
-              selectedSeats[i-1][j-1] = !selectedSeats[i-1][j-1];
-              canSelect = false;
-            }
-            
-            //selectedSeats[i-1][j-1] = !selectedSeats[i-1][j-1];
-          }
-          else{
-            
-            stroke(255);
-            fill(0, 0, 158);
-          }
-        }else {
-          stroke(0, 39, 176);
-          fill(244, 255, 255);
-          overBox = false;
-        }
-        if(selectedSeats[i-1][j-1] == true){
-          stroke(0, 0, 255);
-          fill(255, 0, 0);
-        }
-        //checks if seat is taken
-        if(seatsUpdated){
-          
-          if(occupiedSeats[i-1][j-1]){
-            stroke(0,0,0);
-            fill(0, 0, 0);
-          }
-        }
-        
-        rect(sx,sy,boxRadius,boxRadius);
-      }
-    }
-    fill(255,0,0);
-    //filter(OPAQUE);
-    if(vidLoaded){
-      image(theaterScreen,THEATERSCREENPADDING,THEATERSCREENPADDING,canvasWidth-15,canvasWidth*9/16);
-      //filter(POSTERIZE,4);
-      //filter(GRAY);
-    }
-    
-    submitRect();
-    image(mouseicon,mouseX,mouseY);
-    //rect(0,canvasWidth*9/16 + button.height/2 + THEATERSCREENPADDING, canvasWidth, button.height/2.5);
+  if(!revealUI){
+    background(255,0,0);
+    text('Click to select tickets',0,canvasHeight/2);
   }
+  else{
+    if(!submitted){
+      //console.log(showingSelectedID)
+    background(255);
+    //frameRate(300);
+    noCursor();
+    for (let i = 1; i <= numCols; i++){
+      w = canvasWidth/numCols;
+      sx = w*(i) - w/2;
+      for(let j = 1; j <= numRows; j++){
+        h = theaterSeats/numRows;
+        sy = (canvasHeight-theaterSeats) + h*(j) - h/2;
+        //rect(sx,sy,boxRadius,boxRadius);
+        if (
+          mouseX > sx - boxRadius &&
+          mouseX < sx + boxRadius &&
+          mouseY > sy - boxRadius &&
+          mouseY < sy + boxRadius
+          ){
+            overBox = true;
+            if (!mouseDown) {
+              stroke(0,255,0);
+              fill(83, 83, 158);
+              
+              if(canSelect){
+                selectedSeats[i-1][j-1] = !selectedSeats[i-1][j-1];
+                canSelect = false;
+              }
+              
+              //selectedSeats[i-1][j-1] = !selectedSeats[i-1][j-1];
+            }
+            else{
+              
+              stroke(255);
+              fill(0, 0, 158);
+            }
+          }else {
+            stroke(0, 39, 176);
+            fill(244, 255, 255);
+            overBox = false;
+          }
+          if(selectedSeats[i-1][j-1] == true){
+            stroke(0, 0, 255);
+            fill(255, 0, 0);
+          }
+          //checks if seat is taken
+          if(seatsUpdated){
+            
+            if(occupiedSeats[i-1][j-1]){
+              stroke(0,0,0);
+              fill(0, 0, 0);
+            }
+          }
+          
+          rect(sx,sy,boxRadius,boxRadius);
+        }
+      }
+      fill(255,0,0);
+      //filter(OPAQUE);
+      if(vidLoaded){
+        image(theaterScreen,THEATERSCREENPADDING,THEATERSCREENPADDING,canvasWidth-15,canvasWidth*9/16);
+        //filter(POSTERIZE,4);
+        //filter(GRAY);
+      }
+      
+      submitRect();
+      image(mouseicon,mouseX,mouseY);
+      //rect(0,canvasWidth*9/16 + button.height/2 + THEATERSCREENPADDING, canvasWidth, button.height/2.5);
+    }
+  }  
   }
   
   
@@ -238,8 +247,11 @@ function draw() {
     ){
       fill(0,255,0);
       if(mouseDown){
-        go_checkout(selectedSeats,showingSelectedID);
-        submitted = true;
+        if(canSelect){
+          go_checkout(selectedSeats,showingSelectedID);
+          submitted = true;
+          canSelect = false;
+        }
       }
     }
     else{

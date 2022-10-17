@@ -6,6 +6,7 @@
 {% endblock %}
 
 {% block body %}
+<h1>Purchased Tickets</h1>
 {% for ticket in ownedTickets %}
 <li class="ticketlist"><i class="moviename">{{ticket.showing.movie.film}}</i>{{ticket.showing.date}}, {{ticket.showing.time.ftime}}<br>
     <p style="padding-left: 10vw;">Seat: Column {{ticket.column}}, Row {{ticket.row}}</p>

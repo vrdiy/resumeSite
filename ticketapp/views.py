@@ -49,7 +49,7 @@ def confirmpurchase(request):
         decodedtickets.append(fullticket)
     #tickets = json.loads(request.session["tickets"])
     print(decodedtickets)
-    return render(request,"ticketapp/confirmation.html", {'tickets' : decodedtickets})
+    return render(request,"ticketapp/cart.html", {'tickets' : decodedtickets})
     if request.method == "POST":
         pass
         #process tickets and take to account page.
@@ -61,7 +61,7 @@ def confirmpurchase(request):
     showing = Showing.objects.get(id=selectedShowing)
     user_ = User.objects.get(id=request.user.id)
     if (selectedTickets):
-        return render(request,"ticketapp/confirmation.html",{
+        return render(request,"ticketapp/cart.html",{
             "tickets" : selectedTickets
         })
         for ticket in selectedTickets:
