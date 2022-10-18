@@ -46,7 +46,7 @@ def confirmpurchase(request):
 
         fullticket = json.loads(ticket)
         fullticket['showing'] = showings.get(id=fullticket['showing']).serialize()
-        decodedtickets.append(fullticket)
+        decodedtickets.append(json.dumps(fullticket))
     #tickets = json.loads(request.session["tickets"])
     print(decodedtickets)
     return render(request,"ticketapp/cart.html", {'tickets' : decodedtickets})
