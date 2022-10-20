@@ -3,13 +3,7 @@
 
 {% block script %}
     <script src="https://cdn.jsdelivr.net/npm/p5@1.4.2/lib/p5.js"></script>
-    <script>var tickets = [];
-    for( ticket in {{tickets|safe}}){
-        console.log({{tickets|safe}});
-        console.log(ticket["showing"]);
-    tickets.push( ticket);
-    }
-    console.log(tickets);
+    <script>var tickets = {{tickets|safe}};
     
     </script>
     <script src="{% static 'ticketapp/cart.js' %}"></script>
