@@ -35,10 +35,10 @@ function loadTickets(){
                 //delete entry from page and cart
                 console.log("clicked");
                 deleteButton.parentNode.parentNode.animationPlayState = "running";
-            })
-            deleteButton.parentNode.parentNode.addEventListener("animationend", ()=>{
-                //delete entry from page and cart
-                deleteButton.parentNode.parentNode.remove();
+                deleteButton.parentNode.parentNode.addEventListener("animationend", ()=>{
+                    //delete entry from page and cart
+                    deleteButton.parentNode.parentNode.remove();
+                })
             })
             optionsSpan.append(deleteButton);
             li.append(optionsSpan);
