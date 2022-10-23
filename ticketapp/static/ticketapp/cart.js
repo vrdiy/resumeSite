@@ -14,7 +14,7 @@ function loadTickets(){
     //Create tickets from cart, these can be removed in this view
     for (let i = 0; i < tickets.length; i++) {
         formattedTicket = JSON.parse(tickets[i]);
-        li = document.createElement("li");
+        const li = document.createElement("li");
         li.setAttribute("class","ticketlist");
             movieName = document.createElement("i");
             movieName.setAttribute("class","moviename");
@@ -31,14 +31,16 @@ function loadTickets(){
             deleteButton.src = garbageCan;
             deleteButton.type = "image";
             deleteButton.innerHTML = "Remove";
+            li.addEventListener("animationend", ()=>{
+                //delete entry from page and cart
+                li.remove();
+            })
+            
             deleteButton.addEventListener("click", ()=>{
                 //delete entry from page and cart
                 console.log("clicked");
-                deleteButton.parentNode.parentNode.animationPlayState = "running";
-                deleteButton.parentNode.parentNode.addEventListener("animationend", ()=>{
-                    //delete entry from page and cart
-                    deleteButton.parentNode.parentNode.remove();
-                })
+                deleteButton.remove();
+                li.style.animationPlayState = "running";
             })
             optionsSpan.append(deleteButton);
             li.append(optionsSpan);

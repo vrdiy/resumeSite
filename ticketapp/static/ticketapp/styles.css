@@ -6,8 +6,8 @@
 @keyframes shrinkCart {
     0%{
         height: 100%;
-        color: red;
         font-size: 100%;
+        opacity: 100%;
     }
     50%{
         height: 80%;
@@ -15,8 +15,9 @@
     }
     100%{
         height: 0%;
-        color: blue;
+        background-color: red;
         font-size: 0%;
+        opacity: 10%;
     }
 }
 
@@ -102,11 +103,11 @@ input{
 }
 .ticketlist{
     background-color: #c0cac0;
-    border-bottom: 1px solid black;
+    border-bottom: 2px solid black;
     padding-left: 10vw;
     padding-right: 10vw;
     animation-name: shrinkCart;
-	animation-duration: 2s;
+	animation-duration: 0.7s;
 	animation-fill-mode:forwards;
 	animation-play-state: paused;
 }
