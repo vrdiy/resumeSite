@@ -27,7 +27,7 @@ function loadTickets(){
             const deleteButton = document.createElement("input");
             deleteButton.style.paddingBottom = "4px";
             deleteButton.style.backgroundColor = "#FF0000"
-            deleteButton.style.width = "32px";
+            deleteButton.style.width = "5vh";
             deleteButton.src = garbageCan;
             deleteButton.type = "image";
             deleteButton.innerHTML = "Remove";
