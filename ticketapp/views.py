@@ -113,18 +113,20 @@ def get_showings_by_date(request):
         rmonth = int(request.GET.get('month'))
         ryear = int(request.GET.get('year'))
         date = datetime(ryear,rmonth,rday)
-        if today.day <= date.day <= weekfromtoday.day:
+        if today.date() <= date.date() <= weekfromtoday.date():
             for i in allshowings:
                 if((i.time.day == int(request.GET.get('day'))) and (i.time.month == int(request.GET.get('month'))) and (i.time.year == int(request.GET.get('year')))):
                     showings.append(i.serialize())
             return JsonResponse(showings,safe = False,status = 200)
         else:
+            print("date out of range")
             for i in allshowings:
                 if((i.time.day == today.day) and (i.time.month == today.month) and (i.time.year == today.year)):
                     showings.append(i.serialize())
             showings = {}
             return JsonResponse(showings,safe = False,status = 400)
     except ValueError:
+        print("valueERROR")
         for i in allshowings:
                 if((i.time.day == today.day) and (i.time.month == today.month) and (i.time.year == today.year)):
                     showings.append(i.serialize())

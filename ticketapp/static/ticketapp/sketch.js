@@ -92,6 +92,7 @@ let theaterScreen;
 let THEATERSCREENPADDING = 7.5; //pixels
 let submitted = false;
 let revealUI = false;
+let mouseDownOverButton = false;
 
 let buttonHeight = parseFloat(((canvasHeight- theaterSeats)-canvasWidth*9/16));
 let playing = false;
@@ -145,7 +146,6 @@ function mousePressed() {
       theaterScreen.loop();
       theaterScreen.volume(0);
     }
-    console.log(selectedSeats);
 }
 
 
@@ -177,11 +177,13 @@ function draw() {
         mouseY > sy - boxRadius &&
         mouseY < sy + boxRadius
         ){
-          overBox = true;
-          if (!mouseDown) {
+          if(mouseDown){
+            mouseDownOverButton = true;
+          }
+          if (!mouseDown && mouseDownOverButton) {
             stroke(0,255,0);
             fill(83, 83, 158);
-
+            mouseDownOverButton = false;
             if(canSelect){
               selectedSeats[i-1][j-1] = !selectedSeats[i-1][j-1];
               canSelect = false;
@@ -196,7 +198,6 @@ function draw() {
         }else {
           stroke(0, 39, 176);
           fill(244, 255, 255);
-          overBox = false;
         }
         if(selectedSeats[i-1][j-1] == true){
           stroke(0, 0, 255);
