@@ -1,6 +1,8 @@
 
 from datetime import datetime, timedelta
 import json
+from msilib.schema import Error
+from queue import Empty
 from re import U
 from telnetlib import STATUS
 from django import forms
@@ -71,6 +73,19 @@ def confirmpurchase(request):
             hold = Ticket(holder = user_,showing = showing, tcolumn = ticket["column"],trow = ticket["row"])
             hold.save()
     
+def removeFromCart(request):
+    #try:
+        print(request.session["tickets"])
+        tempCart = request.session["tickets"]
+        del tempCart[int(request.GET.get("index"))]
+        request.session["tickets"] = tempCart
+        message = "success"
+        return JsonResponse(message,safe = False,status = 200)
+    #except TypeError:
+        message = "TypeError"
+        return JsonResponse(message,safe = False,status = 400)
+
+
 
 #called from js fetch for ticket validation. then user will be taken to csrf required checkout page to confirm
 @csrf_exempt

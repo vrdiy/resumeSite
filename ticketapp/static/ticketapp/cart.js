@@ -10,6 +10,8 @@ document.addEventListener('DOMContentLoaded', function() {
     loadTickets();
 })
 
+let deleteMeQueue = [];
+
 function loadTickets(){
     //Create tickets from cart, these can be removed in this view
     for (let i = 0; i < tickets.length; i++) {
@@ -40,6 +42,7 @@ function loadTickets(){
                 //delete entry from page and cart
                 console.log("clicked");
                 deleteButton.remove();
+                deleteMeQueue.push(i);
                 li.style.animationPlayState = "running";
             })
             optionsSpan.append(deleteButton);
