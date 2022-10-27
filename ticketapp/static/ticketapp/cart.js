@@ -3,20 +3,20 @@
 
 document.addEventListener('DOMContentLoaded', function() {
     cartlist = document.querySelector("#cart");
-    
     cartlist.innerHTML = ''
+    
     console.log(tickets);
-    console.log(document.cookie)
     loadTickets();
 })
 
-let deleteMeQueue = [];
 
 function loadTickets(){
     //Create tickets from cart, these can be removed in this view
+    document.querySelector("#cart").innerHTML = '';
     for (let i = 0; i < tickets.length; i++) {
         formattedTicket = JSON.parse(tickets[i]);
         const li = document.createElement("li");
+        const cartIndex = i;
         li.setAttribute("class","ticketlist");
             movieName = document.createElement("i");
             movieName.setAttribute("class","moviename");
@@ -33,18 +33,17 @@ function loadTickets(){
             deleteButton.src = garbageCan;
             deleteButton.type = "image";
             deleteButton.innerHTML = "Remove";
+
+            deleteButton.addEventListener("click", ()=>{
+                deleteButton.remove();
+                li.style.animationPlayState = "running";
+            })
             li.addEventListener("animationend", ()=>{
                 //delete entry from page and cart
                 li.remove();
+                removeCartIndex(cartIndex);
             })
             
-            deleteButton.addEventListener("click", ()=>{
-                //delete entry from page and cart
-                console.log("clicked");
-                deleteButton.remove();
-                deleteMeQueue.push(i);
-                li.style.animationPlayState = "running";
-            })
             optionsSpan.append(deleteButton);
             li.append(optionsSpan);
 
@@ -56,4 +55,17 @@ function loadTickets(){
         cartlist.append(li);
     };
     
+}
+function removeCartIndex(index){
+
+    fetch(`cart/remove?index=${index}`)
+    .then(response => {
+        return response.json();
+    })
+    .then(result =>{
+        console.log("cartraw:");
+        console.log(result);
+        tickets = result;
+        loadTickets();
+    })
 }

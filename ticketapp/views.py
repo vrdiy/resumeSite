@@ -39,17 +39,23 @@ def home(request):
 def reviews(request,id):
     return render(request,"ticketapp/review.html")
 
-def confirmpurchase(request):
-    print(request.session["tickets"])
+#only called by other view functions
+def sessionTicketsWithInfo(request):
     decodedtickets = []
     showings = Showing.objects.all()
-    #fill tickets with actual showing info when viewed in cart
     for ticket in request.session["tickets"]:
 
         fullticket = json.loads(ticket)
         fullticket['showing'] = showings.get(id=fullticket['showing']).serialize()
         decodedtickets.append(json.dumps(fullticket))
-    #tickets = json.loads(request.session["tickets"])
+    return decodedtickets
+
+
+
+def confirmpurchase(request):
+    #print(request.session["tickets"])
+    #fill tickets with actual showing info when viewed in cart
+    decodedtickets = sessionTicketsWithInfo(request)
     print(decodedtickets)
     return render(request,"ticketapp/cart.html", {'tickets' : decodedtickets})
     if request.method == "POST":
@@ -72,17 +78,17 @@ def confirmpurchase(request):
 
             hold = Ticket(holder = user_,showing = showing, tcolumn = ticket["column"],trow = ticket["row"])
             hold.save()
-    
+
+ 
 def removeFromCart(request):
-    #try:
-        print(request.session["tickets"])
+    try:
         tempCart = request.session["tickets"]
         del tempCart[int(request.GET.get("index"))]
         request.session["tickets"] = tempCart
-        message = "success"
-        return JsonResponse(message,safe = False,status = 200)
-    #except TypeError:
-        message = "TypeError"
+        return JsonResponse(sessionTicketsWithInfo(request),safe = False,status = 200)
+        
+    except (TypeError, IndexError):
+        message = "Error"
         return JsonResponse(message,safe = False,status = 400)
 
 
@@ -111,7 +117,7 @@ def checkout(request):
                 #hold = Ticket(holder = user_,showing = showing, tcolumn = ticket["column"],trow = ticket["row"])
                 #hold.save()
         
-        return HttpResponseRedirect("cart")
+       # return HttpResponseRedirect("cart")
     return JsonResponse(selectedTickets,safe = False,status = 200)
 
 
