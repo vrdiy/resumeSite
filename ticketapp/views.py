@@ -26,7 +26,7 @@ from ticketapp.models import Showing, Movie, User, Ticket
 
 def home(request):
     movieObjs = Movie.objects.all()
-    print(movieObjs)
+    #print(movieObjs)
     allShowings = []
     for title in movieObjs:
             allShowings.append(title.serialize())
@@ -43,20 +43,44 @@ def reviews(request,id):
 def sessionTicketsWithInfo(request):
     decodedtickets = []
     showings = Showing.objects.all()
-    for ticket in request.session["tickets"]:
+    try:
+        for ticket in request.session["tickets"]:
 
-        fullticket = json.loads(ticket)
-        fullticket['showing'] = showings.get(id=fullticket['showing']).serialize()
-        decodedtickets.append(json.dumps(fullticket))
-    return decodedtickets
-
+            fullticket = json.loads(ticket)
+            fullticket['showing'] = showings.get(id=fullticket['showing']).serialize()
+            decodedtickets.append(json.dumps(fullticket))
+        return decodedtickets
+    except:
+        return decodedtickets
 
 
 def confirmpurchase(request):
+    message = ""
+    if request.method == "POST":
+        if not request.user.is_authenticated:
+            message = "You must login to purchase tickets"
+            return HttpResponseRedirect(reverse('login'))
+        else:
+            tickets = request.session["tickets"]
+            user_ = User.objects.get(id=request.user.id)
+            for ticket in tickets:
+                ticket = json.loads(ticket)
+                try:
+                    showing_ = Showing.objects.get(id=ticket["showing"])
+                    newTicket = Ticket(holder = user_,showing = showing_,tcolumn = ticket["column"],trow = ticket["row"])
+                    newTicket.save()
+                except:
+                    pass
+        return HttpResponseRedirect(reverse('index'))
+
     #print(request.session["tickets"])
     #fill tickets with actual showing info when viewed in cart
     decodedtickets = sessionTicketsWithInfo(request)
-    print(decodedtickets)
+   # print(decodedtickets)
+    #print("$$$$$$$$$$$")
+    #print(request.session["tickets"])
+    #print("$$$$$$$$$$$")
+
     return render(request,"ticketapp/cart.html", {'tickets' : decodedtickets})
     if request.method == "POST":
         pass
@@ -67,7 +91,6 @@ def confirmpurchase(request):
     selectedShowing = data.get("showingid",0)
     print(selectedShowing)
     showing = Showing.objects.get(id=selectedShowing)
-    user_ = User.objects.get(id=request.user.id)
     if (selectedTickets):
         return render(request,"ticketapp/cart.html",{
             "tickets" : selectedTickets
@@ -96,17 +119,17 @@ def removeFromCart(request):
 #called from js fetch for ticket validation. then user will be taken to csrf required checkout page to confirm
 @csrf_exempt
 def checkout(request):
-    request.session["tickets"] = []
-    if('tickets' not in request.session):
-        request.session["tickets"] = []
+    #request.session["tickets"] = []
+    #if('tickets' not in request.session):
+        #request.session["tickets"] = []
     if request.method == "POST":
-        print(request)
+       # print(request)
         data = json.loads(request.body)
         selectedTickets = data.get("tickets",None)
         selectedShowing = data.get("showingid",0)
-        print(selectedShowing)
-        showing = Showing.objects.get(id=selectedShowing)
-        user_ = User.objects.get(id=request.user.id)
+       # print(selectedShowing)
+       # showing = Showing.objects.get(id=selectedShowing)
+        #user_ = User.objects.get(id=request.user.id)
         if (selectedTickets):
             for ticket in selectedTickets:
                 print("------")
@@ -123,7 +146,7 @@ def checkout(request):
 
 def get_showings_by_date(request):
     today = datetime.now()
-    print(today)
+    #print(today)
     weekfromtoday = today + timedelta(days=7)
     showings = []
     allshowings = Showing.objects.all()

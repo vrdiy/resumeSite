@@ -2,8 +2,6 @@
 
 
 document.addEventListener('DOMContentLoaded', function() {
-    cartlist = document.querySelector("#cart");
-    cartlist.innerHTML = ''
     
     console.log(tickets);
     loadTickets();
@@ -12,7 +10,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function loadTickets(){
     //Create tickets from cart, these can be removed in this view
-    document.querySelector("#cart").innerHTML = '';
+    const cartlist = document.querySelector("#cart");
+    cartlist.innerHTML = ''
+    if(tickets.length === 0){
+        const emptyCart = document.createElement("li")
+        emptyCart.setAttribute("class","ticketlist");
+        emptyCart.innerHTML = "Oh no! Your cart is empty!";
+        cartlist.append(emptyCart);
+        return
+    }
     for (let i = 0; i < tickets.length; i++) {
         formattedTicket = JSON.parse(tickets[i]);
         const li = document.createElement("li");

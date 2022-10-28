@@ -11,15 +11,16 @@
 {% endblock %}
 
 {% block body %}
+
+<form action="{% url 'confirmpurchase' %}" method="post">
+    {% csrf_token %}
+    
+<input type="submit" value="Purchase">
+</form>
+
 <h1>Your Cart</h1>
 <p style="padding-left: 10px;" class="warning">These tickets are not reserved until purchased, purchase soon to ensure your seat</p>
 <ol id="cart">
 
-    {% for ticket in tickets %}
-    <li class="ticketlist"><i class="moviename">{{ticket.showing.movie.film}}</i>{{ticket.showing.date}}, {{ticket.showing.time}}<br>
-        <span style="float: right;"><button>$5.00</button></span>
-        <p style="padding-left: 10vw;">Seat: Column {{ticket.column}}, Row {{ticket.row}}</p>
-    </li>
-    {% endfor %}
 </ol>
 {% endblock %}
