@@ -1,5 +1,6 @@
 
 from datetime import datetime, timedelta
+from email.policy import default
 import json
 from msilib.schema import Error
 from queue import Empty
@@ -55,10 +56,8 @@ def sessionTicketsWithInfo(request):
 
 
 def confirmpurchase(request):
-    message = ""
     if request.method == "POST":
         if not request.user.is_authenticated:
-            message = "You must login to purchase tickets"
             return HttpResponseRedirect(reverse('login'))
         else:
             tickets = request.session["tickets"]
@@ -70,83 +69,48 @@ def confirmpurchase(request):
                     newTicket = Ticket(holder = user_,showing = showing_,tcolumn = ticket["column"],trow = ticket["row"])
                     newTicket.save()
                 except:
-                    pass
+                    print("ticket probably already exists")
         return HttpResponseRedirect(reverse('index'))
 
-    #print(request.session["tickets"])
-    #fill tickets with actual showing info when viewed in cart
     decodedtickets = sessionTicketsWithInfo(request)
-   # print(decodedtickets)
-    #print("$$$$$$$$$$$")
-    #print(request.session["tickets"])
-    #print("$$$$$$$$$$$")
-
     return render(request,"ticketapp/cart.html", {'tickets' : decodedtickets})
-    if request.method == "POST":
-        pass
-        #process tickets and take to account page.
 
-    data = json.loads(request.body)
-    selectedTickets = data.get("tickets",None)
-    selectedShowing = data.get("showingid",0)
-    print(selectedShowing)
-    showing = Showing.objects.get(id=selectedShowing)
-    if (selectedTickets):
-        return render(request,"ticketapp/cart.html",{
-            "tickets" : selectedTickets
-        })
-        for ticket in selectedTickets:
-            print("------")
-            print(ticket)
 
-            hold = Ticket(holder = user_,showing = showing, tcolumn = ticket["column"],trow = ticket["row"])
-            hold.save()
-
- 
 def removeFromCart(request):
+    message = 'success'
     try:
         tempCart = request.session["tickets"]
         del tempCart[int(request.GET.get("index"))]
         request.session["tickets"] = tempCart
-        return JsonResponse(sessionTicketsWithInfo(request),safe = False,status = 200)
-        
-    except (TypeError, IndexError):
-        message = "Error"
-        return JsonResponse(message,safe = False,status = 400)
+        return JsonResponse(message,safe = False,status = 200)    
+    except TypeError:
+        message = "TypeError"
+    except IndexError:
+        message = "IndexError"
+
+    return JsonResponse(message,safe = False,status = 400)
 
 
 
-#called from js fetch for ticket validation. then user will be taken to csrf required checkout page to confirm
+#Adds tickets from P5 sketch to cart
 @csrf_exempt
-def checkout(request):
-    #request.session["tickets"] = []
-    #if('tickets' not in request.session):
-        #request.session["tickets"] = []
+def addToCart(request):
+    if request.session["tickets"] == None:
+        request.session["tickets"] = []
     if request.method == "POST":
-       # print(request)
         data = json.loads(request.body)
         selectedTickets = data.get("tickets",None)
         selectedShowing = data.get("showingid",0)
-       # print(selectedShowing)
-       # showing = Showing.objects.get(id=selectedShowing)
-        #user_ = User.objects.get(id=request.user.id)
         if (selectedTickets):
             for ticket in selectedTickets:
-                print("------")
-                print(ticket)
                 tdata = {"showing" : selectedShowing, "column" : ticket['column'], "row" : ticket['row']}
-                #tdata = json.dumps(tdata)
                 request.session["tickets"].append(json.dumps(tdata))
-                #hold = Ticket(holder = user_,showing = showing, tcolumn = ticket["column"],trow = ticket["row"])
-                #hold.save()
-        
-       # return HttpResponseRedirect("cart")
+                request.session.modified = True
     return JsonResponse(selectedTickets,safe = False,status = 200)
 
 
 def get_showings_by_date(request):
     today = datetime.now()
-    #print(today)
     weekfromtoday = today + timedelta(days=7)
     showings = []
     allshowings = Showing.objects.all()
@@ -163,14 +127,14 @@ def get_showings_by_date(request):
                     showings.append(i.serialize())
             return JsonResponse(showings,safe = False,status = 200)
         else:
-            print("date out of range")
+            #date out of range
             for i in allshowings:
                 if((i.time.day == today.day) and (i.time.month == today.month) and (i.time.year == today.year)):
                     showings.append(i.serialize())
             showings = {}
             return JsonResponse(showings,safe = False,status = 400)
-    except ValueError:
-        print("valueERROR")
+    except (ValueError, TypeError):
+        #arguments either missing or not 'integers'
         for i in allshowings:
                 if((i.time.day == today.day) and (i.time.month == today.month) and (i.time.year == today.year)):
                     showings.append(i.serialize())
@@ -178,12 +142,7 @@ def get_showings_by_date(request):
         return JsonResponse(showings,safe = False,status = 400)
 
 
-        
-
-
-
-
-
+ 
 def get_seats(request,id):
     showing = Showing.objects.get(id=id)
     return JsonResponse(showing.seats(), status = 200)

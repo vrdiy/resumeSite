@@ -95,6 +95,13 @@ span{
     -webkit-text-stroke-color: rgb(39, 182, 122);
     padding-right: 15px;
 }
+.form-control{
+    font-size: 2.5vh;
+    text-align: left;
+}
+.btn{
+    font-size: 2.5vh;
+}
 input{
     text-align: center;
     font-family: 'M86w','Palatino';

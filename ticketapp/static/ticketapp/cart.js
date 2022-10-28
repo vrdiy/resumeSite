@@ -66,12 +66,9 @@ function removeCartIndex(index){
 
     fetch(`cart/remove?index=${index}`)
     .then(response => {
+        if(response.status == 200){
+            tickets.splice(index);
+        }
         return response.json();
-    })
-    .then(result =>{
-        console.log("cartraw:");
-        console.log(result);
-        tickets = result;
-        loadTickets();
     })
 }

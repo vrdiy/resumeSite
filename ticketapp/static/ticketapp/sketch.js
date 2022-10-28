@@ -245,7 +245,7 @@ function draw() {
       fill(0,255,0);
       if(mouseDown){
         if(canSelect){
-          go_checkout(selectedSeats,showingSelectedID);
+          addToCart(selectedSeats,showingSelectedID);
           submitted = true;
           canSelect = false;
         }
@@ -277,7 +277,7 @@ function isValueInArray(arr,val){
   return flag;
 }
 
-function go_checkout(tickets, showingid = 0){
+function addToCart(tickets, showingid = 0){
   let counter = 0;
   //console.log(tickets);
   selectedTickets = [];
@@ -293,7 +293,7 @@ function go_checkout(tickets, showingid = 0){
     }
   }
       console.log(JSON.stringify({'tickets': selectedTickets}));
-  fetch(`/checkout`,{
+  fetch(`/cart/add`,{
     credentials : 'same-origin',
     method: "POST",
     body: JSON.stringify(
