@@ -61,6 +61,8 @@ def confirmpurchase(request):
             return HttpResponseRedirect(reverse('login'))
         else:
             tickets = request.session["tickets"]
+            #try to create all tickets
+            tempTicketArr = []
             user_ = User.objects.get(id=request.user.id)
             for ticket in tickets:
                 ticket = json.loads(ticket)

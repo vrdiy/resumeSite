@@ -161,7 +161,7 @@ function draw() {
     return;
   }
   if(submitted){
-    return;
+    //return;
   }
   background(255);
   noCursor();
@@ -186,7 +186,7 @@ function draw() {
             mouseDownOverButton = false;
             if(canSelect){
               selectedSeats[i-1][j-1] = !selectedSeats[i-1][j-1];
-              canSelect = false;
+              //canSelect = false;
             }
           }
           else{

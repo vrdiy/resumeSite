@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
     loadTickets();
 })
 
-
+canDelete = true;
 function loadTickets(){
     //Create tickets from cart, these can be removed in this view
     const cartlist = document.querySelector("#cart");
@@ -41,8 +41,11 @@ function loadTickets(){
             deleteButton.innerHTML = "Remove";
 
             deleteButton.addEventListener("click", ()=>{
-                deleteButton.remove();
-                li.style.animationPlayState = "running";
+                if(canDelete){
+                    canDelete = false;
+                    deleteButton.remove();
+                    li.style.animationPlayState = "running";
+                }
             })
             li.addEventListener("animationend", ()=>{
                 //delete entry from page and cart
@@ -67,7 +70,9 @@ function removeCartIndex(index){
     fetch(`cart/remove?index=${index}`)
     .then(response => {
         if(response.status == 200){
-            tickets.splice(index);
+            tickets.splice(index,1);
+            loadTickets();
+            canDelete = true;
         }
         return response.json();
     })
