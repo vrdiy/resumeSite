@@ -6,6 +6,7 @@
     <script> var video = "{% static 'ticketapp/gamma2.mov' %}";
     var ticketicon = "{% static 'ticketapp/ticketicon.png' %}";
     var movies = "{{movies}}";
+    var tickets = {{tickets|safe}};
     </script>
     <script src="{% static 'ticketapp/sketch.js' %}"></script>
 {% endblock %}

@@ -31,10 +31,11 @@ def home(request):
     allShowings = []
     for title in movieObjs:
             allShowings.append(title.serialize())
-    
+    decodedtickets = sessionTicketsWithInfo(request)
     return render(request,'ticketapp/index.html', {
         "movies" : movieObjs,
-        "currentdatetime" : datetime.now()
+        "currentdatetime" : datetime.now(),
+        'tickets' : decodedtickets
     })
 
 def reviews(request,id):
