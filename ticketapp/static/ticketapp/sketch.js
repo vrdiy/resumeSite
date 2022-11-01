@@ -105,13 +105,23 @@ function preload() {
   p5font = loadFont('/static/ticketapp/MovieBill-M86w.ttf');
   
 }
-//init 2d arrays
-let occupiedSeats = new Array(numCols); //Depending on which showing the user selects, this variable gets updated for the p5 canvas to use
+//init 2d arrays, these are updated to match whichever showing the user has selected
+let occupiedSeats = new Array(numCols);
 for (let i = 0; i < numCols; i++){occupiedSeats[i] = new Array(numRows).fill(false);}
 
+let cartSeats = new Array(numCols);
+for (let i = 0; i < numCols; i++){cartSeats[i] = new Array(numRows).fill(false);}
 
-let selectedSeats = new Array(numCols); //Depending on which showing the user selects, this variable gets updated for the p5 canvas to use
+let selectedSeats = new Array(numCols); 
 for (let i = 0; i < numCols; i++){selectedSeats[i] = new Array(numRows).fill(false);}
+
+function flushArrs(){
+  for (let i = 0; i < numCols; i++){
+    occupiedSeats[i] = new Array(numRows).fill(false);
+    cartSeats[i] = new Array(numRows).fill(false);
+    selectedSeats[i] = new Array(numRows).fill(false);
+    }
+}
 let canSelect = false;
 
 let seatsUpdated = false;
@@ -199,6 +209,10 @@ function draw() {
           stroke(0, 39, 176);
           fill(244, 255, 255);
         }
+        if(cartSeats[i-1][j-1] == true){
+          stroke(0,0,80);
+          fill(220,220,4);
+        }
         if(selectedSeats[i-1][j-1] == true){
           stroke(0, 0, 255);
           fill(255, 0, 0);
@@ -277,7 +291,7 @@ function isValueInArray(arr,val){
   return flag;
 }
 
-function addToCart(tickets, showingid = 0){
+function addToCart(tickets_, showingid = 0){
   let counter = 0;
   //console.log(tickets);
   selectedTickets = [];
@@ -285,25 +299,39 @@ function addToCart(tickets, showingid = 0){
   for(let i = 0; i < numCols; i++){
     for(let j = 0; j < numRows; j++){
       
-      if (tickets[i][j]){
+      if (tickets_[i][j]){
         let entry = {"column" : i+1, "row" : j+1};
         selectedTickets.push(entry);
       }
       counter++;
     }
   }
-      console.log(JSON.stringify({'tickets': selectedTickets}));
+      console.log(JSON.stringify({'selectedTickets_': selectedTickets}));
   fetch(`/cart/add`,{
     credentials : 'same-origin',
     method: "POST",
     body: JSON.stringify(
-      {tickets: selectedTickets,
+      {selectedTickets_: selectedTickets,
       showingid : showingid}
     )
   })
 	.then(response => {
 		if(response.status != 200){return false;}
 		else{
+      
+        fetch('/cart/data')
+        .then(data =>{
+          return data.json();
+        }
+        )
+        .then(cartTickets =>{
+          console.log(cartTickets.cartTickets)
+          console.log(tickets)
+          tickets = cartTickets.cartTickets;
+        })
+        .then(result =>{
+          get_seats(showingid);
+        })
 			return response.json();
 		}
 	})
@@ -322,14 +350,23 @@ function get_seats(showingid = 0){
 		}
 	})
 	.then(showing => {
-		for (let i = 0; i < numCols; i++){
-			occupiedSeats[i] = new Array(numRows).fill(false);
-		  }
+		flushArrs();
     if(showing.seats_taken != undefined){
-		for(let k =0; k < showing.seats_taken.length; k++){
-			occupiedSeats[showing.seats_taken[k].column-1][showing.seats_taken[k].row-1] = true;
-			
-	}}})
+      for(let k =0; k < showing.seats_taken.length; k++){
+        occupiedSeats[showing.seats_taken[k].column-1][showing.seats_taken[k].row-1] = true;
+      }
+    }
+    for (let i = 0; i < tickets.length; i++) {
+      formattedTicket = JSON.parse(tickets[i]);
+      console.log(formattedTicket.showing.id);
+      console.log(showingid);
+      if(parseInt( formattedTicket.showing.id) === parseInt(showingid)){
+        console.log("matching")
+        cartSeats[formattedTicket.column-1][formattedTicket.row-1] = true;
+      }
+    }
+  }
+  )
 	.then(result => {
 		seatsUpdated = true;
 	})

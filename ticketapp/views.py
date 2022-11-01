@@ -55,6 +55,13 @@ def sessionTicketsWithInfo(request):
     except:
         return decodedtickets
 
+#called from fetch api for p5 cart data.
+def cartTickets(request):
+    return JsonResponse({'cartTickets': sessionTicketsWithInfo(request)},safe=False,status=200)
+
+def validateCartTickets(request):
+    #loop through all cart tickets and make sure there are no duplicates. And that they are all available.
+    pass
 
 def confirmpurchase(request):
     if request.method == "POST":
@@ -70,6 +77,8 @@ def confirmpurchase(request):
                 try:
                     showing_ = Showing.objects.get(id=ticket["showing"])
                     newTicket = Ticket(holder = user_,showing = showing_,tcolumn = ticket["column"],trow = ticket["row"])
+                    test = Ticket(holder = user_,showing = showing_,tcolumn = ticket["column"],trow = ticket["row"])
+                    test2 = Ticket(holder = user_,showing = showing_,tcolumn = ticket["column"],trow = ticket["row"])
                     newTicket.save()
                 except:
                     print("ticket probably already exists")
@@ -94,6 +103,13 @@ def removeFromCart(request):
     return JsonResponse(message,safe = False,status = 400)
 
 
+def emptyCart(request):
+    if request.method == "POST":
+        if not request.user.is_authenticated:
+            return HttpResponseRedirect(reverse('login'))
+        else:
+            request.session["tickets"] = []
+            return HttpResponseRedirect(reverse('confirmpurchase'))
 
 #Adds tickets from P5 sketch to cart
 @csrf_exempt
@@ -102,7 +118,7 @@ def addToCart(request):
         request.session["tickets"] = []
     if request.method == "POST":
         data = json.loads(request.body)
-        selectedTickets = data.get("tickets",None)
+        selectedTickets = data.get("selectedTickets_",None)
         selectedShowing = data.get("showingid",0)
         if (selectedTickets):
             for ticket in selectedTickets:

@@ -18,6 +18,12 @@
 <input type="submit" value="Purchase">
 </form>
 
+<form action="{% url 'emptyCart' %}" method="post">
+    {% csrf_token %}
+    
+<input type="submit" value="Empty Cart" style="background-color: red;">
+</form>
+
 <h1>Your Cart</h1>
 <p style="padding-left: 10px;" class="warning">These tickets are not reserved until purchased, purchase soon to ensure your seat</p>
 <ol id="cart">
