@@ -61,13 +61,58 @@ def cartTickets(request):
 
 def validateCartTickets(request):
     #loop through all cart tickets and make sure there are no duplicates. And that they are all available.
-    pass
+    tickets = request.session["tickets"]
+    showings_ = Showing.objects.all()
+    #try to create all tickets
+    validTickets = []
+    invalidTickets = []
+    user_ = User.objects.get(id=request.user.id)
+    for ticket in tickets:
+        ticket_ = json.loads(ticket)
+        try:
+            showing_ = Showing.objects.get(id=ticket_["showing"])
+            # get_or_create() is almost a great solution but it saves the entry it creates...
+            # which isn't wanted because you may only want to buy a set of seats if you can get them all
+            # if a user wants to buy two seats side by side, and one is taken. They probably don't want the one available seat anymore.
+
+            #tempTicket, newTicketWasCreated = Ticket.objects.get_or_create(holder = user_,showing = showing_,tcolumn = ticket_["column"],trow = ticket_["row"])
+            newTicketWasCreated = True
+            try:
+                tempTicket = Ticket.objects.get(holder = user_,showing = showing_,tcolumn = ticket_["column"],trow = ticket_["row"])
+                newTicketWasCreated = False
+            except Ticket.DoesNotExist:
+                tempTicket = Ticket(holder = user_,showing = showing_,tcolumn = ticket_["column"],trow = ticket_["row"])
+                newTicketWasCreated = True
+
+            if(newTicketWasCreated):
+                isDuplicate = False
+                for i in validTickets:
+                    if(i.showing != tempTicket.showing):
+                        if(i.tcolumn != tempTicket.tcolumn):
+                            if(i.trow != tempTicket.trow):
+                                isDuplicate = True       
+                if(not isDuplicate):
+                    validTickets.append(tempTicket.serialize())
+            else:
+                invalidTickets.append(tempTicket.serialize())
+
+        except:
+            print("failed because idk")
+    return JsonResponse({'invalidTickets': invalidTickets, 'validTickets': validTickets},safe=False,status=200)
+
+    
+
 
 def confirmpurchase(request):
     if request.method == "POST":
         if not request.user.is_authenticated:
             return HttpResponseRedirect(reverse('login'))
         else:
+            response = validateCartTickets(request)
+            print("666666666666666666")
+            print(json.loads(response.content)['invalidTickets'])
+            print("5555555555555555")
+            print(json.loads(response.content)['validTickets'])
             tickets = request.session["tickets"]
             #try to create all tickets
             tempTicketArr = []
@@ -77,8 +122,6 @@ def confirmpurchase(request):
                 try:
                     showing_ = Showing.objects.get(id=ticket["showing"])
                     newTicket = Ticket(holder = user_,showing = showing_,tcolumn = ticket["column"],trow = ticket["row"])
-                    test = Ticket(holder = user_,showing = showing_,tcolumn = ticket["column"],trow = ticket["row"])
-                    test2 = Ticket(holder = user_,showing = showing_,tcolumn = ticket["column"],trow = ticket["row"])
                     newTicket.save()
                 except:
                     print("ticket probably already exists")
