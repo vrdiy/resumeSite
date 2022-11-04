@@ -5,13 +5,16 @@
     <script src="https://cdn.jsdelivr.net/npm/p5@1.4.2/lib/p5.js"></script>
     <script>
         var tickets = {{tickets|safe}};
+        var badTickets = {{invalidTickets|safe}};
         var garbageCan = '{% static "ticketapp/garbagecan.png" %}';
     </script>
     <script src="{% static 'ticketapp/cart.js' %}"></script>
 {% endblock %}
 
 {% block body %}
-
+{% for ticket in invalidTickets %}
+<h1>{{ticket}}</h1>
+{% endfor %}
 <form action="{% url 'confirmpurchase' %}" method="post">
     {% csrf_token %}
     

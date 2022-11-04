@@ -66,6 +66,7 @@ def validateCartTickets(request):
     #try to create all tickets
     validTickets = []
     invalidTickets = []
+    invalidAdjacentTickets = []
     user_ = User.objects.get(id=request.user.id)
     for ticket in tickets:
         ticket_ = json.loads(ticket)
@@ -95,39 +96,30 @@ def validateCartTickets(request):
                     validTickets.append(tempTicket.serialize())
             else:
                 invalidTickets.append(tempTicket.serialize())
-
         except:
-            print("failed because idk")
+            print("validation failed")
+        
     return JsonResponse({'invalidTickets': invalidTickets, 'validTickets': validTickets},safe=False,status=200)
 
     
 
 
 def confirmpurchase(request):
+    decodedtickets = sessionTicketsWithInfo(request)
     if request.method == "POST":
         if not request.user.is_authenticated:
             return HttpResponseRedirect(reverse('login'))
         else:
             response = validateCartTickets(request)
-            print("666666666666666666")
-            print(json.loads(response.content)['invalidTickets'])
-            print("5555555555555555")
-            print(json.loads(response.content)['validTickets'])
-            tickets = request.session["tickets"]
-            #try to create all tickets
-            tempTicketArr = []
-            user_ = User.objects.get(id=request.user.id)
-            for ticket in tickets:
-                ticket = json.loads(ticket)
-                try:
-                    showing_ = Showing.objects.get(id=ticket["showing"])
-                    newTicket = Ticket(holder = user_,showing = showing_,tcolumn = ticket["column"],trow = ticket["row"])
-                    newTicket.save()
-                except:
-                    print("ticket probably already exists")
+            if(len(json.loads(response.content)['invalidTickets'])):
+                print("invalidtickets")
+                return render(request,"ticketapp/cart.html", {'invalidTickets' : json.loads(response.content)['invalidTickets'], 'tickets' : decodedtickets})
+            else:
+                ticketObjs = json.loads(response.content)['validTickets']
+                for ticket in ticketObjs:
+                    ticket.save()
         return HttpResponseRedirect(reverse('index'))
 
-    decodedtickets = sessionTicketsWithInfo(request)
     return render(request,"ticketapp/cart.html", {'tickets' : decodedtickets})
 
 
