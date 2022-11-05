@@ -198,8 +198,12 @@ def get_showings_by_date(request):
 
  
 def get_seats(request,id):
-    showing = Showing.objects.get(id=id)
-    return JsonResponse(showing.seats(), status = 200)
+    try:
+        showing = Showing.objects.get(id=id)
+        return JsonResponse(showing.seats(), status = 200)
+    except Showing.DoesNotExist:
+        return JsonResponse("showing does not exist",safe=False,status=400)
+        
 
 
 def account_view(request):
