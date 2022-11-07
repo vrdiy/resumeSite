@@ -51,8 +51,13 @@ def sessionTicketsWithInfo(request):
             fullticket = json.loads(ticket)
             fullticket['showing'] = showings.get(id=fullticket['showing']).serialize()
             decodedtickets.append(json.dumps(fullticket))
+        print('decoded tickes')
+        print(decodedtickets)
+        print('decoded tickes')
+
         return decodedtickets
     except:
+        print("exception sessionTicketsWithInfo")
         return decodedtickets
 
 #called from fetch api for p5 cart data.

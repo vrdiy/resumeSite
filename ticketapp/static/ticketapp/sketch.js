@@ -325,11 +325,12 @@ function addToCart(tickets_, showingid = 0){
         }
         )
         .then(cartTickets =>{
-          console.log(cartTickets.cartTickets)
+          console.log(cartTickets["cartTickets"])
           console.log(tickets)
-          tickets = cartTickets.cartTickets;
+         // tickets = cartTickets["cartTickets"];
         })
         .then(result =>{
+          console.log(`get seats for showing: ${showingid}`);
           get_seats(showingid);
         })
 			return response.json();
@@ -350,6 +351,7 @@ function get_seats(showingid = 0){
 		}
 	})
 	.then(showing => {
+    console.log(showing)
 		flushArrs();
     if(showing.seats_taken != undefined){
       for(let k =0; k < showing.seats_taken.length; k++){
