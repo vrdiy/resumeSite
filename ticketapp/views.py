@@ -46,16 +46,17 @@ def sessionTicketsWithInfo(request):
     decodedtickets = []
     showings = Showing.objects.all()
     try:
-        for ticket in request.session["tickets"]:
+        if(request.user.is_authenticated):
+            for ticket in request.session["tickets"]:
 
-            fullticket = json.loads(ticket)
-            fullticket['showing'] = showings.get(id=fullticket['showing']).serialize()
-            decodedtickets.append(json.dumps(fullticket))
-        print('decoded tickes')
-        print(decodedtickets)
-        print('decoded tickes')
+                fullticket = json.loads(ticket)
+                fullticket['showing'] = showings.get(id=fullticket['showing']).serialize()
+                decodedtickets.append(json.dumps(fullticket))
+            print('decoded tickes')
+            print(decodedtickets)
+            print('decoded tickes')
 
-        return decodedtickets
+            return decodedtickets
     except:
         print("exception sessionTicketsWithInfo")
         return decodedtickets
@@ -154,8 +155,11 @@ def emptyCart(request):
 #Adds tickets from P5 sketch to cart
 @csrf_exempt
 def addToCart(request):
-    if request.session["tickets"] == None:
-        request.session["tickets"] = []
+    try:
+        if request.session["tickets"] == None:
+            request.session["tickets"] = []
+    except:
+            request.session["tickets"] = []
     if request.method == "POST":
         data = json.loads(request.body)
         selectedTickets = data.get("selectedTickets_",None)
