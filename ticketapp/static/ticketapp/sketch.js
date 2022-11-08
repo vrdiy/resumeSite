@@ -325,9 +325,9 @@ function addToCart(tickets_, showingid = 0){
         }
         )
         .then(cartTickets =>{
-          console.log(cartTickets["cartTickets"])
+          console.log(cartTickets.cartTickets)
           console.log(tickets)
-         // tickets = cartTickets["cartTickets"];
+          tickets = cartTickets["cartTickets"];
         })
         .then(result =>{
           console.log(`get seats for showing: ${showingid}`);
