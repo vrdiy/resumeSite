@@ -46,17 +46,16 @@ def sessionTicketsWithInfo(request):
     decodedtickets = []
     showings = Showing.objects.all()
     try:
-        if(request.user.is_authenticated):
-            for ticket in request.session["tickets"]:
+        for ticket in request.session["tickets"]:
 
-                fullticket = json.loads(ticket)
-                fullticket['showing'] = showings.get(id=fullticket['showing']).serialize()
-                decodedtickets.append(json.dumps(fullticket))
-            print('decoded tickes')
-            print(decodedtickets)
-            print('decoded tickes')
+            fullticket = json.loads(ticket)
+            fullticket['showing'] = showings.get(id=fullticket['showing']).serialize()
+            decodedtickets.append(json.dumps(fullticket))
+        print('decoded tickes')
+        print(decodedtickets)
+        print('decoded tickes')
 
-            return decodedtickets
+        return decodedtickets
     except:
         print("exception sessionTicketsWithInfo")
         return decodedtickets
@@ -123,6 +122,7 @@ def confirmpurchase(request):
             else:
                 ticketObjs = json.loads(response.content)['validTickets']
                 for ticket in ticketObjs:
+                    
                     ticket.save()
         return HttpResponseRedirect(reverse('index'))
 
@@ -169,6 +169,7 @@ def addToCart(request):
                 tdata = {"showing" : selectedShowing, "column" : ticket['column'], "row" : ticket['row']}
                 request.session["tickets"].append(json.dumps(tdata))
                 request.session.modified = True
+        print(request.session["tickets"])
     return JsonResponse(selectedTickets,safe = False,status = 200)
 
 

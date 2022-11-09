@@ -358,13 +358,15 @@ function get_seats(showingid = 0){
         occupiedSeats[showing.seats_taken[k].column-1][showing.seats_taken[k].row-1] = true;
       }
     }
-    for (let i = 0; i < tickets.length; i++) {
-      formattedTicket = JSON.parse(tickets[i]);
-      console.log(formattedTicket.showing.id);
-      console.log(showingid);
-      if(parseInt( formattedTicket.showing.id) === parseInt(showingid)){
-        console.log("matching")
-        cartSeats[formattedTicket.column-1][formattedTicket.row-1] = true;
+    if(tickets){
+      for (let i = 0; i < tickets.length; i++) {
+        formattedTicket = JSON.parse(tickets[i]);
+        console.log(formattedTicket.showing.id);
+        console.log(showingid);
+        if(parseInt( formattedTicket.showing.id) === parseInt(showingid)){
+          console.log("matching")
+          cartSeats[formattedTicket.column-1][formattedTicket.row-1] = true;
+        }
       }
     }
   }
