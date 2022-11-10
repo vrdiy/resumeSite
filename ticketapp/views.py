@@ -120,9 +120,13 @@ def confirmpurchase(request):
                 print("invalidtickets")
                 return render(request,"ticketapp/cart.html", {'invalidTickets' : json.loads(response.content)['invalidTickets'], 'tickets' : decodedtickets})
             else:
+                
+                showings_ = Showing.objects.all()
+                user_ = User.objects.get(id=request.user.id)
                 ticketObjs = json.loads(response.content)['validTickets']
                 for ticket in ticketObjs:
-                    
+                    showing_ = Showing.objects.get(id=ticket["showing"]["id"])
+                    ticket = Ticket(holder = user_,showing = showing_,tcolumn = ticket["column"],trow = ticket["row"])
                     ticket.save()
         return HttpResponseRedirect(reverse('index'))
 
