@@ -37,13 +37,15 @@ h1{
     color: rgb(113, 113, 17);
 }
 #p5app{
+    padding: 15px;
+    height: 86vh;
 }
 #container{
     background-image: url('../../static/ticketapp/curtains.jpg');
     background-size: cover;
     
     width:100vw;
-    height:70vh;
+    height:75vh;
     user-select: none;
     grid-template-columns: 50vw 1fr;
     grid-template-rows: 70vh;

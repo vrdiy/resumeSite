@@ -1,5 +1,6 @@
 
 
+let isAnyShowings = false;
 
 document.addEventListener('DOMContentLoaded', function() {
 
@@ -31,6 +32,10 @@ document.addEventListener('DOMContentLoaded', function() {
   //call default which is the current day
   get_showings_by_date();
   //buttons are setup by the above function, once they've been dynamically created for each showing
+
+  window.addEventListener('resize', ()=>{
+    p5resize();
+  })
 });
 
 //global, only allow one button at a time.
@@ -99,7 +104,7 @@ let playing = false;
 let vidLoaded = false;
 
 let p5font;
-let p5fontsize = 40;
+let p5fontsize = canvasHeight/20;
 
 function preload() {
   p5font = loadFont('/static/ticketapp/MovieBill-M86w.ttf');
@@ -136,7 +141,7 @@ function setup() {
  // textAlign(CENTER, CENTER);
   //canv.style('background-image',curtainsimg);
   //canv.style('top','5px');
-  //canv.style('border','5px solid grey');
+  canv.style('border','5px solid grey');
   //canv.style('border-radius', '3px');
   rectMode(RADIUS);
   strokeWeight(1);
@@ -158,16 +163,34 @@ function mousePressed() {
     }
 }
 
-
-
 function mouseReleased() {
   mouseDown = false;
   canSelect = true;
 }
+
+function p5resize(){
+  canvasHeight = window.innerHeight*0.7;
+  canvasWidth = canvasHeight*0.5;
+  boxRadius = canvasWidth/numCols*0.35;
+  theaterSeats = canvasHeight*0.6
+  buttonHeight = parseFloat(((canvasHeight- theaterSeats)-canvasWidth*9/16))
+  p5fontsize = canvasHeight/20;
+  textSize(p5fontsize);
+  resizeCanvas(canvasWidth,canvasHeight,false);
+}
 function draw() {
+  if(!isAnyShowings){
+    background(100,40,21);
+    textSize(p5fontsize*1.5);
+
+    text('No Showings on this date!',(canvasWidth/6),canvasHeight/2);
+    return;
+  }
   if(!revealUI){
-    background(255,0,0);
-    text('Click to select tickets',0,canvasHeight/2);
+    background(86,5,12); //#41041e
+    textSize(p5fontsize*1.5);
+
+    text('Click to select tickets',(canvasWidth/6),canvasHeight/2);
     return;
   }
   if(submitted){
@@ -270,6 +293,7 @@ function draw() {
     }
     rect(this.x,this.y, this.w, this.h);
     fill(0,0,0);
+    textSize(p5fontsize);
     text('Add Ticket(s) to Cart',this.x,this.y+ this.h/2);
 
 }
@@ -395,7 +419,6 @@ function get_showings_by_date(date= new Date()){
     moviesdiv = document.querySelector("#subcontainer");
     moviesdiv.innerHTML = '';
     if(response){
-      
       response.forEach(showing =>{
         let appendSpanFlag = false;
         if (!isValueInArray(moviesOnScreen,showing.movie.id)){
@@ -445,8 +468,13 @@ function get_showings_by_date(date= new Date()){
 
 
     }
+    if(response.length === 0){
+      print("why false")
+      isAnyShowings = false;
+    }
     else{
-      document.querySelector('#banner').innerHTML =''; 
+      
+      isAnyShowings = true;
     }
   })
 }
