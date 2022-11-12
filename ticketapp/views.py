@@ -45,6 +45,11 @@ def reviews(request,id):
 def sessionTicketsWithInfo(request):
     decodedtickets = []
     showings = Showing.objects.all()
+    try:
+        if request.session["tickets"] == None:
+            request.session["tickets"] = []
+    except:
+            request.session["tickets"] = []
     #try:
     for ticket in request.session["tickets"]:
         try:
@@ -78,6 +83,10 @@ def validateCartTickets(request):
     user_ = User.objects.get(id=request.user.id)
     for ticket in tickets:
         ticket_ = json.loads(ticket)
+        #print("session---------")
+       # print(request.session["tickets"])
+       # print("session---------")
+
         #try:
         showing_ = Showing.objects.get(id=ticket_["showing"])
         # get_or_create() is almost a great solution but it saves the entry it creates...
@@ -96,11 +105,13 @@ def validateCartTickets(request):
         if(newTicketWasCreated):
             isDuplicate = False
             for i in validTickets:
-                if(i["showing"] != tempTicket.showing):
-                    if(i["column"] != tempTicket.tcolumn):
-                        if(i["row"] != tempTicket.trow):
+                print(f'{i["showing"]["id"]} === {tempTicket.showing.id}')
+                if(i["showing"]["id"] == tempTicket.showing.id):
+                    if(i["column"] == tempTicket.tcolumn):
+                        if(i["row"] == tempTicket.trow):
                             isDuplicate = True       
             if(not isDuplicate):
+                print(tempTicket.serialize())
                 validTickets.append(tempTicket.serialize())
         else:
             invalidTickets.append(tempTicket.serialize())
@@ -127,15 +138,16 @@ def confirmpurchase(request):
                 showings_ = Showing.objects.all()
                 user_ = User.objects.get(id=request.user.id)
                 ticketObjs = json.loads(response.content)['validTickets']
-                print("--------")
-                print(ticketObjs)
-                print("--------")
+                #print("--------")
+                #print(ticketObjs)
+               # print("--------")
 
                 for ticket in ticketObjs:
                     showing_ = Showing.objects.get(id=ticket["showing"]["id"])
                     ticket = Ticket(holder = user_,showing = showing_,tcolumn = ticket["column"],trow = ticket["row"])
                     ticket.save()
                     request.session["tickets"] = []
+                    request.session.modified = True
         return HttpResponseRedirect(reverse('index'))
 
     return render(request,"ticketapp/cart.html", {'tickets' : decodedtickets})
