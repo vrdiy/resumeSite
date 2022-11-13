@@ -218,6 +218,7 @@ function draw() {
             fill(83, 83, 158);
             mouseDownOverButton = false;
             if(canSelect){
+              if(!cartSeats[i-1][j-1])
               selectedSeats[i-1][j-1] = !selectedSeats[i-1][j-1];
               //canSelect = false;
             }
@@ -401,10 +402,10 @@ function get_seats(showingid = 0){
 
 }
 
-function get_showings_by_date(date= new Date()){
+function get_showings_by_date(date= new Date(), pagenum = 1){
 
   
-  fetch(`/showings?day=${date.getDate()}&month=${date.getMonth()+1}&year=${date.getFullYear()}`)
+  fetch(`/showings?day=${date.getDate()}&month=${date.getMonth()+1}&year=${date.getFullYear()}&page=${pagenum}`)
   .then(response => {
     if(response.status == 400){
       console.log("just use the ui bro....")
@@ -415,6 +416,7 @@ function get_showings_by_date(date= new Date()){
 		}
   })
   .then(response =>{
+    response.pop();
     let moviesOnScreen = [];
     moviesdiv = document.querySelector("#subcontainer");
     moviesdiv.innerHTML = '';

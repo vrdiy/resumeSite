@@ -209,23 +209,36 @@ def get_showings_by_date(request):
         rmonth = int(request.GET.get('month'))
         ryear = int(request.GET.get('year'))
         date = datetime(ryear,rmonth,rday)
+
+        try:
+            pagenum = request.GET.get('page')
+        except KeyError: 
+            pagenum = 1
+
         if today.date() <= date.date() <= weekfromtoday.date():
             for i in allshowings:
                 if((i.time.day == int(request.GET.get('day'))) and (i.time.month == int(request.GET.get('month'))) and (i.time.year == int(request.GET.get('year')))):
                     showings.append(i.serialize())
-            return JsonResponse(showings,safe = False,status = 200)
+                    paginator = Paginator(showings,4)
+                    currentpage = paginator.get_page(pagenum)
+                    page = list(currentpage)
+
+                    pagemeta = {}
+                    pagemeta['count']= paginator.count
+                    pagemeta['num_pages']= paginator.num_pages
+                    pagemeta['has_next']= currentpage.has_next()
+                    pagemeta['has_previous']= currentpage.has_previous()
+                    pagemeta['page_num'] = pagenum
+                    page.append(pagemeta)
+                    print(page)
+            return JsonResponse(page,safe = False,status = 200)
         else:
             #date out of range
-            for i in allshowings:
-                if((i.time.day == today.day) and (i.time.month == today.month) and (i.time.year == today.year)):
-                    showings.append(i.serialize())
             showings = {}
             return JsonResponse(showings,safe = False,status = 400)
+
     except (ValueError, TypeError):
         #arguments either missing or not 'integers'
-        for i in allshowings:
-                if((i.time.day == today.day) and (i.time.month == today.month) and (i.time.year == today.year)):
-                    showings.append(i.serialize())
         showings = {}
         return JsonResponse(showings,safe = False,status = 400)
 
