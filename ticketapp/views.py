@@ -204,7 +204,6 @@ def get_showings_by_date(request):
     allshowings = Showing.objects.all()
     allshowings = allshowings.order_by('time').all()
     movies = Movie.objects.all()
-    movieGifs = {}
 
     try:
         rday = int(request.GET.get('day'))
@@ -220,13 +219,13 @@ def get_showings_by_date(request):
         if today.date() <= date.date() <= weekfromtoday.date():
 
             for movie in movies:
-                movieGifs[f"{movie.id}"] = movie.gif
                 showingsForThisMovieToday = []
                 thisMoviesShowings = movie.showings.all()
                 for showing in thisMoviesShowings:
                     if((showing.time.day == int(request.GET.get('day'))) and (showing.time.month == int(request.GET.get('month'))) and (showing.time.year == int(request.GET.get('year')))):
                         showingsForThisMovieToday.append(showing.serialize())
-                showings.append(showingsForThisMovieToday)
+                if(len(showingsForThisMovieToday)):
+                    showings.append(showingsForThisMovieToday)
             #for i in allshowings:
                # if((i.time.day == int(request.GET.get('day'))) and (i.time.month == int(request.GET.get('month'))) and (i.time.year == int(request.GET.get('year')))):
                     #showings.append(i.serialize())
@@ -241,7 +240,6 @@ def get_showings_by_date(request):
             pagemeta['has_previous']= currentpage.has_previous()
             pagemeta['page_num'] = pagenum
             page.append(pagemeta)
-            page.append(movieGifs)
             print(page)
             return JsonResponse(page,safe = False,status = 200)
         else:

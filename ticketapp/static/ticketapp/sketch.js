@@ -155,9 +155,15 @@ function setup() {
   //theaterScreen.parent('p5app');
   //theaterScreen.hide();
 }
-function reloadTheaterScreen(gif_url){
+
+let gif_url = undefined;
+function reloadTheaterScreen(){
+  console.log("reloadgif")
   try{
-  theaterScreen = loadImage(gif_url);}
+    if(gif_url != undefined){
+      theaterScreen = loadImage(gif_url);
+    }
+  }
   catch (error){
     theaterScreen = loadImage(video);
   }
@@ -201,6 +207,13 @@ function draw() {
     textSize(p5fontsize*1.5);
 
     text('Click to select tickets',(canvasWidth/6),canvasHeight/2);
+    return;
+  }
+  if(!seatsUpdated){
+    background(255,255,255);
+    textSize(p5fontsize*1.5);
+
+    text('Loading...',(canvasWidth/6),canvasHeight/2);
     return;
   }
   if(submitted){
@@ -390,7 +403,8 @@ function get_seats(showingid = 0){
 	.then(showing => {
     console.log(showing)
     if(showing.gif != null){
-      reloadTheaterScreen(showing.gif);
+      gif_url = showing.gif;
+      //reloadTheaterScreen(showing.gif);
     }
     showing = showing.seats;
 		flushArrs();
@@ -410,10 +424,12 @@ function get_seats(showingid = 0){
         }
       }
     }
+    return true;
   }
   )
 	.then(result => {
 		seatsUpdated = true;
+    reloadTheaterScreen();
 	})
 
 }
@@ -432,17 +448,17 @@ function get_showings_by_date(date= new Date(), pagenum = 1){
 		}
   })
   .then(response =>{
-    movieGifs = response[response.length-1];
-    pageMeta = response[response.length-2];
-    response.pop();
+    pageMeta = response[response.length-1];
     response.pop();
     let moviesOnScreen = [];
     moviesdiv = document.querySelector("#subcontainer");
     moviesdiv.innerHTML = '';
-    console.log(movieGifs[5])
+    //console.log(movieGifs[5])
+    console.log(response)
     if(response){
       response.forEach(showings =>{
           showings.forEach(showing =>{
+            
             let appendSpanFlag = false;
             if (!isValueInArray(moviesOnScreen,showing.movie.id)){
               moviesOnScreen.push(showing.movie.id);
