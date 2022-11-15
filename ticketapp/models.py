@@ -33,12 +33,14 @@ class Ticket(models.Model):
 class Movie(models.Model):
     film = models.TextField(default="Missing Film Name" ,max_length=100)
     preview = models.URLField(max_length=250)
+    gif = models.URLField(max_length=250, null=True)
 
     def serialize(self):
         return {
             "id" : self.id,
             "film" : self.film,
-            "preview" : self.preview
+            "preview" : self.preview,
+            "gif" : self.gif
         }
 
 class Showing(models.Model):

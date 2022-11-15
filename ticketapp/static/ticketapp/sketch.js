@@ -1,28 +1,27 @@
 
 
-let isAnyShowings = false;
 
 document.addEventListener('DOMContentLoaded', function() {
-
+  
   //-----------------------------time selector field initialize values---------------------------------
   let now = new Date();
   timeselect = document.querySelector("#timeselect");
   timeselect.valueAsNumber = now.getTime(); //pre-fill the value
   document.querySelector('#banner').innerHTML = timeselect.value;
-
+  
   //Date function doesn't have leading zeros for single digits so I add them:
   let formattedDate = `${now.getFullYear()}-${now.getMonth()+1 < 10 ? `0${now.getMonth()+1}`:now.getMonth()+1}-${now.getDate() < 10 ? `0${now.getDate()}`:now.getDate()}`
   //the 'min' attribute needs leading zeros
   timeselect.setAttribute('min',formattedDate);
-
+  
   let oneWeekFromNow = now.getTime() + 604800000; // One week in ms
   now.setTime(oneWeekFromNow);
   let formattedDatePlusAWeek = `${now.getFullYear()}-${now.getMonth()+1 < 10 ? `0${now.getMonth()+1}`:now.getMonth()+1}-${now.getDate() < 10 ? `0${now.getDate()}`:now.getDate()}`
   //the 'max' attribute needs leading zeros
   timeselect.setAttribute('max', formattedDatePlusAWeek);
-
+  
   //---------------------------------------------------------------------------------------------------
-
+  
   //handle date selection
   timeselect.addEventListener('change', ()=>{
     document.querySelector('#banner').innerHTML = timeselect.value;
@@ -32,15 +31,18 @@ document.addEventListener('DOMContentLoaded', function() {
   //call default which is the current day
   get_showings_by_date();
   //buttons are setup by the above function, once they've been dynamically created for each showing
-
+  
   window.addEventListener('resize', ()=>{
     p5resize();
   })
 });
 
 //global, only allow one button at a time.
+let isAnyShowings = false;
 let buttonSelected = '';
 let showingSelectedID = 0;
+let movieGifs = {};
+let pageMeta = {};
 
 function setButtonSelected(element){
   buttonSelected = (element).getAttribute("id");
@@ -101,7 +103,7 @@ let mouseDownOverButton = false;
 
 let buttonHeight = parseFloat(((canvasHeight- theaterSeats)-canvasWidth*9/16));
 let playing = false;
-let vidLoaded = false;
+let vidLoaded = true;
 
 let p5font;
 let p5fontsize = canvasHeight/20;
@@ -145,12 +147,20 @@ function setup() {
   //canv.style('border-radius', '3px');
   rectMode(RADIUS);
   strokeWeight(1);
-  theaterScreen = createVideo([video],vidLoad);
+  //theaterScreen = createVideo([video],vidLoad);
+  theaterScreen = loadImage(video)
   mouseicon = loadImage(ticketicon);
   //theaterScreen.size(canvasWidth-15,canvasWidth*9/16);
   //theaterScreen.size(100,100);
-  theaterScreen.parent('p5app');
-  theaterScreen.hide();
+  //theaterScreen.parent('p5app');
+  //theaterScreen.hide();
+}
+function reloadTheaterScreen(gif_url){
+  try{
+  theaterScreen = loadImage(gif_url);}
+  catch (error){
+    theaterScreen = loadImage(video);
+  }
 }
 function mousePressed() {
   if(!revealUI){
@@ -158,8 +168,8 @@ function mousePressed() {
   }
     mouseDown = true;
     if(vidLoaded){
-      theaterScreen.loop();
-      theaterScreen.volume(0);
+      //theaterScreen.loop();
+      //theaterScreen.volume(0);
     }
 }
 
@@ -257,6 +267,8 @@ function draw() {
       //filter(OPAQUE);
       if(vidLoaded){
         image(theaterScreen,THEATERSCREENPADDING,THEATERSCREENPADDING,canvasWidth-15,canvasWidth*9/16);
+        image(theaterScreen,THEATERSCREENPADDING,THEATERSCREENPADDING,canvasWidth-15,canvasWidth*9/16);
+
         //filter(POSTERIZE,4);
         //filter(GRAY);
       }
@@ -377,6 +389,10 @@ function get_seats(showingid = 0){
 	})
 	.then(showing => {
     console.log(showing)
+    if(showing.gif != null){
+      reloadTheaterScreen(showing.gif);
+    }
+    showing = showing.seats;
 		flushArrs();
     if(showing.seats_taken != undefined){
       for(let k =0; k < showing.seats_taken.length; k++){
@@ -416,47 +432,53 @@ function get_showings_by_date(date= new Date(), pagenum = 1){
 		}
   })
   .then(response =>{
+    movieGifs = response[response.length-1];
+    pageMeta = response[response.length-2];
+    response.pop();
     response.pop();
     let moviesOnScreen = [];
     moviesdiv = document.querySelector("#subcontainer");
     moviesdiv.innerHTML = '';
+    console.log(movieGifs[5])
     if(response){
-      response.forEach(showing =>{
-        let appendSpanFlag = false;
-        if (!isValueInArray(moviesOnScreen,showing.movie.id)){
-          moviesOnScreen.push(showing.movie.id);
-          span = document.createElement("span");
-          span.setAttribute('id',`mov-${showing.movie.id}`);
-          span.setAttribute('class',"showings");
-          
+      response.forEach(showings =>{
+          showings.forEach(showing =>{
+            let appendSpanFlag = false;
+            if (!isValueInArray(moviesOnScreen,showing.movie.id)){
+              moviesOnScreen.push(showing.movie.id);
+              span = document.createElement("span");
+              span.setAttribute('id',`mov-${showing.movie.id}`);
+              span.setAttribute('class',"showings");
+              
 
-          movimg = document.createElement("img");
-          movimg.setAttribute('class',"posters");
-          movimg.setAttribute('style',"width: auto; height: 80%; margin-top: 5px;text-align: center;");
+              movimg = document.createElement("img");
+              movimg.setAttribute('class',"posters");
+              movimg.setAttribute('style',"width: auto; height: 80%; margin-top: 5px;text-align: center;");
 
-          
-          movimg.setAttribute('src', showing.movie.preview);
-          movimg.setAttribute('alt', showing.movie.film);
-          span.append(movimg);
-          appendSpanFlag = true;
+              
+              movimg.setAttribute('src', showing.movie.preview);
+              movimg.setAttribute('alt', showing.movie.film);
+              span.append(movimg);
+              appendSpanFlag = true;
 
-        }else{
-          span = document.querySelector(`#mov-${showing.movie.id}`);
-        }
-        
-          button = document.createElement("button");
-          button.setAttribute('class','showingselect');
-          button.setAttribute('id',`showing-${showing.id}`);
-          button.innerHTML = `${showing.time}`;
-          if(span != undefined){
+            }else{
+              span = document.querySelector(`#mov-${showing.movie.id}`);
+            }
+            
+              button = document.createElement("button");
+              button.setAttribute('class','showingselect');
+              button.setAttribute('id',`showing-${showing.id}`);
+              button.innerHTML = `${showing.time}`;
+              if(span != undefined){
 
-            span.append(button);
-          }
+                span.append(button);
+              }
 
-        if(appendSpanFlag){
-          moviesdiv.append(span);
-          appendSpanFlag = false;
-        }
+            if(appendSpanFlag){
+              moviesdiv.append(span);
+              appendSpanFlag = false;
+            }
+          })
       })
 
       setButtonEvents();

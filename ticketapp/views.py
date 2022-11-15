@@ -203,6 +203,8 @@ def get_showings_by_date(request):
     showings = []
     allshowings = Showing.objects.all()
     allshowings = allshowings.order_by('time').all()
+    movies = Movie.objects.all()
+    movieGifs = {}
 
     try:
         rday = int(request.GET.get('day'))
@@ -216,28 +218,39 @@ def get_showings_by_date(request):
             pagenum = 1
 
         if today.date() <= date.date() <= weekfromtoday.date():
-            for i in allshowings:
-                if((i.time.day == int(request.GET.get('day'))) and (i.time.month == int(request.GET.get('month'))) and (i.time.year == int(request.GET.get('year')))):
-                    showings.append(i.serialize())
-                    paginator = Paginator(showings,4)
-                    currentpage = paginator.get_page(pagenum)
-                    page = list(currentpage)
 
-                    pagemeta = {}
-                    pagemeta['count']= paginator.count
-                    pagemeta['num_pages']= paginator.num_pages
-                    pagemeta['has_next']= currentpage.has_next()
-                    pagemeta['has_previous']= currentpage.has_previous()
-                    pagemeta['page_num'] = pagenum
-                    page.append(pagemeta)
-                    print(page)
+            for movie in movies:
+                movieGifs[f"{movie.id}"] = movie.gif
+                showingsForThisMovieToday = []
+                thisMoviesShowings = movie.showings.all()
+                for showing in thisMoviesShowings:
+                    if((showing.time.day == int(request.GET.get('day'))) and (showing.time.month == int(request.GET.get('month'))) and (showing.time.year == int(request.GET.get('year')))):
+                        showingsForThisMovieToday.append(showing.serialize())
+                showings.append(showingsForThisMovieToday)
+            #for i in allshowings:
+               # if((i.time.day == int(request.GET.get('day'))) and (i.time.month == int(request.GET.get('month'))) and (i.time.year == int(request.GET.get('year')))):
+                    #showings.append(i.serialize())
+            paginator = Paginator(showings,4)
+            currentpage = paginator.get_page(pagenum)
+            page = list(currentpage)
+
+            pagemeta = {}
+            pagemeta['count']= paginator.count
+            pagemeta['num_pages']= paginator.num_pages
+            pagemeta['has_next']= currentpage.has_next()
+            pagemeta['has_previous']= currentpage.has_previous()
+            pagemeta['page_num'] = pagenum
+            page.append(pagemeta)
+            page.append(movieGifs)
+            print(page)
             return JsonResponse(page,safe = False,status = 200)
         else:
             #date out of range
             showings = {}
             return JsonResponse(showings,safe = False,status = 400)
 
-    except (ValueError, TypeError):
+    except Exception as exception:
+        print(exception)
         #arguments either missing or not 'integers'
         showings = {}
         return JsonResponse(showings,safe = False,status = 400)
@@ -247,7 +260,7 @@ def get_showings_by_date(request):
 def get_seats(request,id):
     try:
         showing = Showing.objects.get(id=id)
-        return JsonResponse(showing.seats(), status = 200)
+        return JsonResponse({"seats" :showing.seats(), "gif" : showing.movie.gif}, status = 200)
     except Showing.DoesNotExist:
         return JsonResponse("showing does not exist",safe=False,status=400)
         
