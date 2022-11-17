@@ -35,13 +35,34 @@ class Movie(models.Model):
     preview = models.URLField(max_length=250)
     gif = models.URLField(max_length=250, null=True)
 
+    def getRating(self):
+        rating = 0
+        if(len(self.reviews.all())):
+            for i in self.reviews.all():
+                rating += i.rating
+            
+            return rating/len(self.reviews.all())
+        else:
+            return 0
+
+
     def serialize(self):
         return {
             "id" : self.id,
             "film" : self.film,
             "preview" : self.preview,
-            "gif" : self.gif
+            "gif" : self.gif,
+            "rating" : self.getRating()
         }
+
+
+class Review(models.Model):
+    user = models.ForeignKey(User,on_delete=models.CASCADE,related_name="reviews")
+    movie = models.ForeignKey(Movie,on_delete=models.CASCADE,related_name="reviews")
+    film = models.TextField(default="Missing Film Name" ,max_length=100)
+    rating = models.IntegerField(validators=[MaxValueValidator(5),MinValueValidator(0)])
+
+
 
 class Showing(models.Model):
     movie = models.ForeignKey(Movie,on_delete=models.CASCADE,related_name="showings")

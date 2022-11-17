@@ -39,7 +39,7 @@ def home(request):
     })
 
 def reviews(request,id):
-    return render(request,"ticketapp/review.html")
+    return render(request,"ticketapp/reviews.html")
 
 #only called by other view functions
 def sessionTicketsWithInfo(request):
