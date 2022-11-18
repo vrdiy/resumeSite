@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Movie, Showing, Ticket
+from .models import Movie, Showing, Ticket, Review
 # Register your models here.
 
 @admin.register(Movie)
@@ -12,4 +12,8 @@ class ShowingAdmin(admin.ModelAdmin):
 
 @admin.register(Ticket)
 class TicketAdmin(admin.ModelAdmin):
+    pass
+
+@admin.register(Review)
+class ReviewAdmin(admin.ModelAdmin):
     pass

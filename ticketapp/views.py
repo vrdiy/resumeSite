@@ -38,8 +38,14 @@ def home(request):
         'tickets' : decodedtickets
     })
 
-def reviews(request,id):
-    return render(request,"ticketapp/reviews.html")
+def reviews(request):
+    movies = Movie.objects.all()
+    serializedMovies = []
+    for movie in movies:
+        serializedMovies.append(movie.serialize())
+    return render(request,"ticketapp/reviews.html",{
+        "movies" : serializedMovies
+    })
 
 #only called by other view functions
 def sessionTicketsWithInfo(request):
