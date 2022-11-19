@@ -22,7 +22,7 @@ from django.shortcuts import render
 # Create your views here.
 from django.http import HttpResponse
 
-from ticketapp.models import Showing, Movie, User, Ticket
+from ticketapp.models import Showing, Movie, User, Ticket, Review
 
 
 def home(request):
@@ -39,6 +39,14 @@ def home(request):
     })
 
 def reviews(request):
+    if request.method == "POST":
+        if not request.user.is_authenticated:
+            return HttpResponseRedirect(reverse('login'))
+        print(request.POST["comment"])
+        user_ = User.objects.get(id=request.user.id)
+        review = Review(user = user_,content = request.POST["comment"])
+        return HttpResponseRedirect(reverse('reviews'))
+
     movies = Movie.objects.all()
     serializedMovies = []
     for movie in movies:

@@ -27,9 +27,9 @@
                 </li>
             {%endfor%}
     </div>
-    <form id="post-form">
-        <p hidden>{{csrf_token}}</p>
-        <textarea id="text-content" type="textarea" placeholder="How was the movie?" name="comment" style="font-size: 5vw; height: 11vw; width: 80vh; text-align: center; display: block; margin-left: auto; margin-right: auto;"></textarea>
+    <form id="post-form" method="post">
+        <p hidden>{% csrf_token %}</p>
+        <textarea id="text-content" type="textarea" placeholder="How was the movie?" name="comment" maxlength="499" style="font-size: 5vw; height: 11vw; width: 80vh; text-align: center; display: block; margin-left: auto; margin-right: auto;"></textarea>
         <input id="submit-post" type="submit" value="Post Review" style="font-size: 5vw; width: 80vh; text-align: center; display: block; margin-left: auto; margin-right: auto;">
     </form>
 </div>
