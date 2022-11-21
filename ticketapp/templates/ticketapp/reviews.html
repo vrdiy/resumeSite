@@ -29,6 +29,13 @@
     </div>
     <form id="post-form" method="post">
         <p hidden>{% csrf_token %}</p>
+        <select name="rating">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+        </select>
         <textarea id="text-content" type="textarea" placeholder="How was the movie?" name="comment" maxlength="499" style="font-size: 5vw; height: 11vw; width: 80vh; text-align: center; display: block; margin-left: auto; margin-right: auto;"></textarea>
         <input id="submit-post" type="submit" value="Post Review" style="font-size: 5vw; width: 80vh; text-align: center; display: block; margin-left: auto; margin-right: auto;">
     </form>
