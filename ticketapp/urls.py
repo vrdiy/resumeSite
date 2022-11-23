@@ -6,6 +6,7 @@ urlpatterns = [
     path("seats/<int:id>",views.get_seats, name="get_seats"),
     path("showings", views.get_showings_by_date, name ="getshowingsbydate"),
     path("reviews",views.reviews, name="reviews"),
+    path("reviews/<int:pagenum>",views.moviesRatings,name="moviesratings"),
     path("cart",views.confirmpurchase, name="confirmpurchase"),
     path("cart/add",views.addToCart, name="addToCart"),
     path("cart/remove",views.removeFromCart, name="removeFromCart"),

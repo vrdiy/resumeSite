@@ -38,13 +38,38 @@ def home(request):
         'tickets' : decodedtickets
     })
 
+def moviesRatings(request,pagenum):
+    movies = Movie.objects.all()
+    serializedMovies = []
+    for movie in movies:
+        serializedMovies.append(movie.serialize())
+    paginator = Paginator(serializedMovies,10)
+
+    currentpage = paginator.get_page(pagenum)
+    page = list(currentpage)
+
+    pagemeta = {}
+    pagemeta['count']= paginator.count
+    pagemeta['num_pages']= paginator.num_pages
+    pagemeta['has_next']= currentpage.has_next()
+    pagemeta['has_previous']= currentpage.has_previous()
+    pagemeta['page_num'] = pagenum
+    page.append(pagemeta)
+    print(page)
+    return JsonResponse(page,safe=False,status=200)
+
+
 def reviews(request):
     if request.method == "POST":
         if not request.user.is_authenticated:
             return HttpResponseRedirect(reverse('login'))
         print(request.POST["comment"])
+        print(request.POST["rating"])
+        print(request.POST["movieid"])
         user_ = User.objects.get(id=request.user.id)
-        review = Review(user = user_,content = request.POST["comment"])
+        movie_ = Movie.objects.get(id=request.POST["movieid"])
+        review = Review(user = user_,content = request.POST["comment"],movie = movie_,rating=int(request.POST["rating"]))
+        review.save()
         return HttpResponseRedirect(reverse('reviews'))
 
     movies = Movie.objects.all()
