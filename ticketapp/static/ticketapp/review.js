@@ -3,19 +3,19 @@ document.addEventListener('DOMContentLoaded', function(){
     ratingStars();
     setupMoviesToReview();
 })
-
+let numMovies = 0;
 function focusMovie(movieToFocus){
     console.log(movieToFocus);
     console.log('what');
 
     document.getElementById('reviewsubcontainer2').style.display = 'grid';
 
-    for (let i = 0; i < 5; i++){
+    for (let i = 0; i < numMovies; i++){
         if(i != movieToFocus){
-            document.getElementById(`star-${i}`).style.filter = 'grayscale(100%)';
+            document.getElementById(`mov-${i}`).style.filter = 'grayscale(100%)';
         }
         else{
-            document.getElementById(`star-${i}`).style.filter = '';
+            document.getElementById(`mov-${i}`).style.filter = '';
 
         }
     }
@@ -50,6 +50,10 @@ function ratingStars(){
     
 }
 
+function loadUserReviews(pagenum = 1){
+    fetch(``)
+}
+
 function setupMoviesToReview(pagenum = 1){
 
     fetch(`reviews/${pagenum}`)
@@ -59,22 +63,26 @@ function setupMoviesToReview(pagenum = 1){
     .then(response =>{
         pagemeta = response[response.length-1];
         response.pop();
+        numMovies = response.length;
         console.log(response)
         const container = document.getElementById('reviewsubcontainer');
         container.innerHTML = '';
-
+        movieCounter = 0;
         response.forEach(movie =>{
+            const thisMoviesCount = movieCounter;
             console.log(movie);
             const li = document.createElement('li');
             li.style.listStyle = 'none';
             const span = document.createElement('span');
             const posterimg = document.createElement('img');
             posterimg.addEventListener('click', ()=>{
-                focusMovie(movie.id);
+                focusMovie(thisMoviesCount);
                 document.getElementById('movieid').value = movie.id;
                 console.log(movie.id);
             })
             posterimg.setAttribute('class',"posters");
+            posterimg.setAttribute('id',`mov-${movieCounter}`);
+            movieCounter++;
             posterimg.setAttribute('src',movie.preview);
 
             const headerWithRating = document.createElement('h2');
