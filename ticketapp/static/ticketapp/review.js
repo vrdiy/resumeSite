@@ -2,23 +2,26 @@ document.addEventListener('DOMContentLoaded', function(){
     document.getElementById('reviewsubcontainer2').style.display = 'none';
     ratingStars();
     setupMoviesToReview();
+    loadUserReviews(1,1)
 })
-let numMovies = 0;
 function focusMovie(movieToFocus){
     console.log(movieToFocus);
     console.log('what');
 
     document.getElementById('reviewsubcontainer2').style.display = 'grid';
+    
 
-    for (let i = 0; i < numMovies; i++){
-        if(i != movieToFocus){
-            document.getElementById(`mov-${i}`).style.filter = 'grayscale(100%)';
+    const movieElements = document.getElementsByClassName('posters');
+    movieElements.forEach(poster =>{
+        if(parseInt((poster).getAttribute("id").slice(4)) != movieToFocus){
+            poster.style.filter = 'grayscale(100%)';
         }
         else{
-            document.getElementById(`mov-${i}`).style.filter = '';
-
+            poster.style.filter = '';
+            document.getElementById('movieTitle').innerHTML = poster.getAttribute("name");
+            //poster.getAttribute("name")
         }
-    }
+    })
 }
 function ratingStars(){
     const reviewstars = document.querySelector('#reviewstars');
@@ -50,8 +53,8 @@ function ratingStars(){
     
 }
 
-function loadUserReviews(showingid,pagenum = 1){
-    fetch(`reviews/user`)
+function loadUserReviews(movieid,pagenum = 1){
+    fetch(`reviews/user?movieid=${movieid}&page=${pagenum}`)
     .then(result => {
         return result.json()
     })
@@ -61,7 +64,8 @@ function loadUserReviews(showingid,pagenum = 1){
         reviews.pop()
         reviews.forEach(review_ =>{
             const p = document.createElement('p');
-            p.innerHTML = review_.comment;
+            p.setAttribute('class',"userReview");
+            p.innerHTML = review_.content;
             userReviewsDiv.append(p);
 
         })
@@ -81,23 +85,22 @@ function setupMoviesToReview(pagenum = 1){
         console.log(response)
         const container = document.getElementById('reviewsubcontainer');
         container.innerHTML = '';
-        movieCounter = 0;
         response.forEach(movie =>{
-            const thisMoviesCount = movieCounter;
             console.log(movie);
             const li = document.createElement('li');
             li.style.listStyle = 'none';
             const span = document.createElement('span');
             const posterimg = document.createElement('img');
             posterimg.addEventListener('click', ()=>{
-                focusMovie(thisMoviesCount);
+                focusMovie(movie.id);
+                loadUserReviews(movie.id);
                 document.getElementById('movieid').value = movie.id;
                 console.log(movie.id);
             })
             posterimg.setAttribute('class',"posters");
-            posterimg.setAttribute('id',`mov-${movieCounter}`);
-            movieCounter++;
+            posterimg.setAttribute('id',`mov-${movie.id}`);
             posterimg.setAttribute('src',movie.preview);
+            posterimg.setAttribute('name',movie.film);
 
             const headerWithRating = document.createElement('h2');
             headerWithRating.style.color = "white";

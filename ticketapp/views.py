@@ -58,10 +58,11 @@ def moviesRatings(request,pagenum):
     print(page)
     return JsonResponse(page,safe=False,status=200)
 
-def userreviews(request,pagenum):
-    reviews = Review.objects.all()
+def userreviews(request):
+    mov = Movie.objects.get(id=int(request.GET.get("movieid")))
+    pagenum = int(request.GET.get("page"))
     serializedReviews = []
-    for review in reviews:
+    for review in mov.reviews.all():
         serializedReviews.append(review.serialize())
     paginator = Paginator(serializedReviews,10)
 

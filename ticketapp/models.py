@@ -41,7 +41,7 @@ class Movie(models.Model):
             for i in self.reviews.all():
                 rating += i.rating
             
-            return rating/len(self.reviews.all())
+            return round(rating/len(self.reviews.all()),1)
         else:
             return 0
 
@@ -62,6 +62,13 @@ class Review(models.Model):
     content = models.TextField(default="No comment" ,max_length=500)
     rating = models.IntegerField(validators=[MaxValueValidator(5),MinValueValidator(0)])
 
+    def serialize(self):
+        return {
+            "id" : self.id,
+            "movie" : self.movie.film,
+            "content" : self.content,
+            "rating" : self.rating
+        }
 
 
 class Showing(models.Model):
