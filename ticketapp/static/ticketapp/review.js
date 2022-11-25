@@ -50,8 +50,22 @@ function ratingStars(){
     
 }
 
-function loadUserReviews(pagenum = 1){
-    fetch(``)
+function loadUserReviews(showingid,pagenum = 1){
+    fetch(`reviews/user`)
+    .then(result => {
+        return result.json()
+    })
+    .then(reviews =>{
+        const userReviewsDiv = document.getElementById('userReviews');
+        userReviewsDiv.innerHTML = '';
+        reviews.pop()
+        reviews.forEach(review_ =>{
+            const p = document.createElement('p');
+            p.innerHTML = review_.comment;
+            userReviewsDiv.append(p);
+
+        })
+    })
 }
 
 function setupMoviesToReview(pagenum = 1){

@@ -58,6 +58,26 @@ def moviesRatings(request,pagenum):
     print(page)
     return JsonResponse(page,safe=False,status=200)
 
+def userreviews(request,pagenum):
+    reviews = Review.objects.all()
+    serializedReviews = []
+    for review in reviews:
+        serializedReviews.append(review.serialize())
+    paginator = Paginator(serializedReviews,10)
+
+    currentpage = paginator.get_page(pagenum)
+    page = list(currentpage)
+
+    pagemeta = {}
+    pagemeta['count']= paginator.count
+    pagemeta['num_pages']= paginator.num_pages
+    pagemeta['has_next']= currentpage.has_next()
+    pagemeta['has_previous']= currentpage.has_previous()
+    pagemeta['page_num'] = pagenum
+    page.append(pagemeta)
+    print(page)
+    return JsonResponse(page,safe=False,status=200)
+
 
 def reviews(request):
     if request.method == "POST":
