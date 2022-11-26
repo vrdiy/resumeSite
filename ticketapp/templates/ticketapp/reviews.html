@@ -10,6 +10,7 @@
         var yellowstaricon = "{% static 'ticketapp/yellowstar.png' %}";
 
     </script>
+    <script src="{% static 'ticketapp/utils.js' %}"></script>
     <script src="{% static 'ticketapp/review.js' %}"></script>
     
 {% endblock %}
@@ -31,6 +32,7 @@
                 </li>
             {%endfor%}
     </div>
+    <div id="pageselect"></div>
     <div id="reviewsubcontainer2">
         <h1 id="movieTitle">Movie Title</h1>
         <div id="reviewstars">

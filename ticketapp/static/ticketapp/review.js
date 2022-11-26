@@ -2,7 +2,8 @@ document.addEventListener('DOMContentLoaded', function(){
     document.getElementById('reviewsubcontainer2').style.display = 'none';
     ratingStars();
     setupMoviesToReview();
-    loadUserReviews(1,1)
+    loadUserReviews(1,1);
+
 })
 function focusMovie(movieToFocus){
     console.log(movieToFocus);
@@ -80,6 +81,9 @@ function setupMoviesToReview(pagenum = 1){
     })
     .then(response =>{
         pagemeta = response[response.length-1];
+        const paginationUI = page_bootstrap(pagemeta,'setupMoviesToReview');
+        document.getElementById('pageselect').innerHTML = '';
+        document.getElementById('pageselect').append(paginationUI);
         response.pop();
         numMovies = response.length;
         console.log(response)

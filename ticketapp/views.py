@@ -38,13 +38,9 @@ def home(request):
         'tickets' : decodedtickets
     })
 
-def moviesRatings(request,pagenum):
-    movies = Movie.objects.all()
-    serializedMovies = []
-    for movie in movies:
-        serializedMovies.append(movie.serialize())
-    paginator = Paginator(serializedMovies,10)
-
+#paginates and appends page metadata to the end of a container
+def pagePack(array,pagesize,pagenum = 1):
+    paginator = Paginator(array,pagesize)
     currentpage = paginator.get_page(pagenum)
     page = list(currentpage)
 
@@ -55,8 +51,14 @@ def moviesRatings(request,pagenum):
     pagemeta['has_previous']= currentpage.has_previous()
     pagemeta['page_num'] = pagenum
     page.append(pagemeta)
-    print(page)
-    return JsonResponse(page,safe=False,status=200)
+    return page
+
+def moviesRatings(request,pagenum):
+    movies = Movie.objects.all()
+    serializedMovies = []
+    for movie in movies:
+        serializedMovies.append(movie.serialize())
+    return JsonResponse(pagePack(serializedMovies,10,pagenum),safe=False,status=200)
 
 def userreviews(request):
     mov = Movie.objects.get(id=int(request.GET.get("movieid")))
@@ -64,29 +66,13 @@ def userreviews(request):
     serializedReviews = []
     for review in mov.reviews.all():
         serializedReviews.append(review.serialize())
-    paginator = Paginator(serializedReviews,10)
-
-    currentpage = paginator.get_page(pagenum)
-    page = list(currentpage)
-
-    pagemeta = {}
-    pagemeta['count']= paginator.count
-    pagemeta['num_pages']= paginator.num_pages
-    pagemeta['has_next']= currentpage.has_next()
-    pagemeta['has_previous']= currentpage.has_previous()
-    pagemeta['page_num'] = pagenum
-    page.append(pagemeta)
-    print(page)
-    return JsonResponse(page,safe=False,status=200)
+    return JsonResponse(pagePack(serializedReviews,10,pagenum),safe=False,status=200)
 
 
 def reviews(request):
     if request.method == "POST":
         if not request.user.is_authenticated:
             return HttpResponseRedirect(reverse('login'))
-        print(request.POST["comment"])
-        print(request.POST["rating"])
-        print(request.POST["movieid"])
         user_ = User.objects.get(id=request.user.id)
         movie_ = Movie.objects.get(id=request.POST["movieid"])
         review = Review(user = user_,content = request.POST["comment"],movie = movie_,rating=int(request.POST["rating"]))
@@ -110,7 +96,7 @@ def sessionTicketsWithInfo(request):
             request.session["tickets"] = []
     except:
             request.session["tickets"] = []
-    #try:
+    
     for ticket in request.session["tickets"]:
         try:
             fullticket = json.loads(ticket)
@@ -119,14 +105,8 @@ def sessionTicketsWithInfo(request):
         except Showing.DoesNotExist:
             print("showing does not exist")
 
-    #print('decoded tickes')
-    #print(decodedtickets)
-   # print('decoded tickes')
-
     return decodedtickets
-#except:
-    print("exception sessionTicketsWithInfo")
-    return decodedtickets 
+
 
 #called from fetch api for p5 cart data.
 def cartTickets(request):
@@ -143,17 +123,11 @@ def validateCartTickets(request):
     user_ = User.objects.get(id=request.user.id)
     for ticket in tickets:
         ticket_ = json.loads(ticket)
-        #print("session---------")
-       # print(request.session["tickets"])
-       # print("session---------")
-
-        #try:
+       
         showing_ = Showing.objects.get(id=ticket_["showing"])
         # get_or_create() is almost a great solution but it saves the entry it creates...
         # which isn't wanted because you may only want to buy a set of seats if you can get them all
         # if a user wants to buy two seats side by side, and one is taken. They probably don't want the one available seat anymore.
-
-        #tempTicket, newTicketWasCreated = Ticket.objects.get_or_create(holder = user_,showing = showing_,tcolumn = ticket_["column"],trow = ticket_["row"])
         newTicketWasCreated = True
         try:
             tempTicket = Ticket.objects.get(holder = user_,showing = showing_,tcolumn = ticket_["column"],trow = ticket_["row"])
@@ -174,10 +148,7 @@ def validateCartTickets(request):
                 print(tempTicket.serialize())
                 validTickets.append(tempTicket.serialize())
         else:
-            invalidTickets.append(tempTicket.serialize())
-    #except:
-        print("validation failed")
-        
+            invalidTickets.append(tempTicket.serialize())   
     return JsonResponse({'invalidTickets': invalidTickets, 'validTickets': validTickets},safe=False,status=200)
 
     
@@ -198,10 +169,6 @@ def confirmpurchase(request):
                 showings_ = Showing.objects.all()
                 user_ = User.objects.get(id=request.user.id)
                 ticketObjs = json.loads(response.content)['validTickets']
-                #print("--------")
-                #print(ticketObjs)
-               # print("--------")
-
                 for ticket in ticketObjs:
                     showing_ = Showing.objects.get(id=ticket["showing"]["id"])
                     ticket = Ticket(holder = user_,showing = showing_,tcolumn = ticket["column"],trow = ticket["row"])
@@ -286,22 +253,8 @@ def get_showings_by_date(request):
                         showingsForThisMovieToday.append(showing.serialize())
                 if(len(showingsForThisMovieToday)):
                     showings.append(showingsForThisMovieToday)
-            #for i in allshowings:
-               # if((i.time.day == int(request.GET.get('day'))) and (i.time.month == int(request.GET.get('month'))) and (i.time.year == int(request.GET.get('year')))):
-                    #showings.append(i.serialize())
-            paginator = Paginator(showings,4)
-            currentpage = paginator.get_page(pagenum)
-            page = list(currentpage)
+            return JsonResponse(pagePack(showings,4,pagenum),safe = False,status = 200)
 
-            pagemeta = {}
-            pagemeta['count']= paginator.count
-            pagemeta['num_pages']= paginator.num_pages
-            pagemeta['has_next']= currentpage.has_next()
-            pagemeta['has_previous']= currentpage.has_previous()
-            pagemeta['page_num'] = pagenum
-            page.append(pagemeta)
-            print(page)
-            return JsonResponse(page,safe = False,status = 200)
         else:
             #date out of range
             showings = {}
