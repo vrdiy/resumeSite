@@ -109,7 +109,9 @@ let p5font;
 let p5fontsize = canvasHeight/20;
 
 function preload() {
-  p5font = loadFont('/static/ticketapp/MovieBill-M86w.ttf');
+  //p5font = loadFont('/static/ticketapp/MovieBill-M86w.ttf');
+  p5font = loadFont(fontpath);
+
   
 }
 //init 2d arrays, these are updated to match whichever showing the user has selected

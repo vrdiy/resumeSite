@@ -16,6 +16,7 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator
+from django.templatetags.static import static
 import html
 from django.shortcuts import render
 
@@ -27,6 +28,9 @@ from ticketapp.models import Showing, Movie, User, Ticket, Review
 
 def home(request):
     movieObjs = Movie.objects.all()
+    #need static path for p5 sketch:
+    fontpath = static('/ticketapp/MovieBill-M86w.ttf')
+    print(fontpath)
     #print(movieObjs)
     allShowings = []
     for title in movieObjs:
@@ -35,7 +39,8 @@ def home(request):
     return render(request,'ticketapp/index.html', {
         "movies" : movieObjs,
         "currentdatetime" : datetime.now(),
-        'tickets' : decodedtickets
+        'tickets' : decodedtickets,
+        'fontpath' : fontpath
     })
 
 #paginates and appends page metadata to the end of a container
