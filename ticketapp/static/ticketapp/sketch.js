@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
   timeselect.addEventListener('change', ()=>{
     document.querySelector('#banner').innerHTML = timeselect.value;
     let date = String(timeselect.value).split("-");
-    get_showings_by_date(new Date(parseInt(date[0]),parseInt(date[1]-1),parseInt(date[2])));
+    get_showings_by_date(1,new Date(parseInt(date[0]),parseInt(date[1]-1),parseInt(date[2])));
   });
   //call default which is the current day
   get_showings_by_date();
@@ -436,7 +436,7 @@ function get_seats(showingid = 0){
 
 }
 
-function get_showings_by_date(date= new Date(), pagenum = 1){
+function get_showings_by_date(pagenum = 1,date= new Date()){
 
   
   fetch(`/showings?day=${date.getDate()}&month=${date.getMonth()+1}&year=${date.getFullYear()}&page=${pagenum}`)
@@ -450,7 +450,7 @@ function get_showings_by_date(date= new Date(), pagenum = 1){
 		}
   })
   .then(response =>{
-    pageMeta = response[response.length-1];
+    const paginationUI = page_bootstrap(response[response.length-1]);
     response.pop();
     let moviesOnScreen = [];
     moviesdiv = document.querySelector("#subcontainer");
