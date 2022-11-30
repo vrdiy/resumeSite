@@ -117,34 +117,13 @@ h1{
     margin-right: 5vw;
 }
 .page-item{
-    background-color: rgb(151, 148, 148);
-    font-family: "M86w";
-    /*font-size: 50px;*/
-    color: white;
-    font-size: 5vh !important;
-    font-weight: bold;
 }
 .page-item:disabled{
-    color: red !important;
 
 }
 .page-link:disabled{
-    background-color: rgb(151, 148, 148) !important;
-    font-family: "M86w";
-    /*font-size: 50px;*/
-    font-size: 5vh;
-    
-    color: red !important;
-    font-weight: bold;
 }
 .page-link{
-    background-color: rgb(151, 148, 148) !important;
-    font-family: "M86w";
-    /*font-size: 50px;*/
-    font-size: 5vh;
-    
-    color: white !important;
-    font-weight: bold;
 }
 div img{
     
@@ -157,6 +136,10 @@ span{
 }
 .nav-item{
     padding-right: 10px;
+}
+.invalidTicket{
+    background-color: #f08d66;
+    border-top: 2px solid black;
 }
 #banner{
     text-align: center;

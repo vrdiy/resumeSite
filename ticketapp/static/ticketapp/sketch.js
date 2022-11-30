@@ -158,12 +158,14 @@ function setup() {
   //theaterScreen.hide();
 }
 
-let gif_url = undefined;
+let gif_url = null;
 function reloadTheaterScreen(){
   console.log("reloadgif")
   try{
-    if(gif_url != undefined){
-      theaterScreen = loadImage(gif_url);
+    if(gif_url != null){
+      theaterScreen = loadImage(gif_url, result =>{},error =>{
+        theaterScreen = loadImage(video);
+      });
     }
   }
   catch (error){
@@ -404,6 +406,8 @@ function get_seats(showingid = 0){
 	})
 	.then(showing => {
     console.log(showing)
+    console.log(showing.gif)
+    gif_url = null;
     if(showing.gif != null){
       gif_url = showing.gif;
       //reloadTheaterScreen(showing.gif);
@@ -450,7 +454,9 @@ function get_showings_by_date(pagenum = 1,date= new Date()){
 		}
   })
   .then(response =>{
-    const paginationUI = page_bootstrap(response[response.length-1]);
+    const paginationUI = page_bootstrap(response[response.length-1],'get_showings_by_date');
+    document.getElementById('paginationUI').innerHTML = '';
+    document.getElementById('paginationUI').append(paginationUI);
     response.pop();
     let moviesOnScreen = [];
     moviesdiv = document.querySelector("#subcontainer");

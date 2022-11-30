@@ -152,6 +152,9 @@ def validateCartTickets(request):
             if(not isDuplicate):
                 print(tempTicket.serialize())
                 validTickets.append(tempTicket.serialize())
+                #for testing, remove line below!
+                invalidTickets.append(tempTicket.serialize())   
+
         else:
             invalidTickets.append(tempTicket.serialize())   
     return JsonResponse({'invalidTickets': invalidTickets, 'validTickets': validTickets},safe=False,status=200)

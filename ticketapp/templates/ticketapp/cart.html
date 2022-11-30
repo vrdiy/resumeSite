@@ -14,8 +14,14 @@
 {% endblock %}
 
 {% block body %}
+{% if invalidTickets != empty %}
+<h1>The following tickets are no longer available:</h1>
+{% endif %}
 {% for ticket in invalidTickets %}
-<h1>{{ticket}}</h1>
+<li class="invalidTicket">
+    <h1 class="moviename">{{ticket.showing.movie.film}}</h1><h1> {{ticket.showing.date}},{{ticket.showing.time}}</h1>
+    <h2>Column: {{ticket.column}}, Row: {{ticket.row}}</h2>
+</li>
 {% endfor %}
 <form action="{% url 'confirmpurchase' %}" method="post">
     {% csrf_token %}
