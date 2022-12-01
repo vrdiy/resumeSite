@@ -17,6 +17,7 @@ function loadTickets(){
         emptyCart.setAttribute("class","ticketlist");
         emptyCart.innerHTML = "Oh no! Your cart is empty!";
         cartlist.append(emptyCart);
+        document.getElementById('forms').style.display = 'none';
         return
     }
     for (let i = 0; i < tickets.length; i++) {

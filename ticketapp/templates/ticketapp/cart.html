@@ -23,21 +23,23 @@
     <h2>Column: {{ticket.column}}, Row: {{ticket.row}}</h2>
 </li>
 {% endfor %}
-<form action="{% url 'confirmpurchase' %}" method="post">
-    {% csrf_token %}
-    
-<input type="submit" value="Purchase">
-</form>
 
-<form action="{% url 'emptyCart' %}" method="post">
-    {% csrf_token %}
-    
-<input type="submit" value="Empty Cart" style="background-color: red;">
-</form>
 
 <h1>Your Cart</h1>
 <p style="padding-left: 10px;" class="warning">These tickets are not reserved until purchased, purchase soon to ensure your seat</p>
 <ol id="cart">
-
+    
 </ol>
+<div id="forms">
+    <form action="{% url 'confirmpurchase' %}" method="post">
+        {% csrf_token %}
+        <input class="cartbuttons" type="submit" value="Purchase Cart" style="background-color: rgb(136, 233, 119);">
+    </form>
+
+    <form action="{% url 'emptyCart' %}" method="post">
+        {% csrf_token %}
+        
+    <input class="cartbuttons" type="submit" value="Empty Cart" style="background-color: rgb(219, 63, 63);">
+    </form>
+</div>
 {% endblock %}

@@ -141,6 +141,19 @@ span{
     background-color: #f08d66;
     border-top: 2px solid black;
 }
+.cartbuttons{
+    text-align: center;
+    align-items: center;
+    width: 90%;
+    height: 7vh;
+    margin:auto;
+    display: grid;
+    font-family: 'M86w','Palatino';
+    background-color: beige;
+    font-size: 5vh;
+    border-radius: 3px;
+
+}
 #banner{
     text-align: center;
     font-family: 'M86w','Palatino';
