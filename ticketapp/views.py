@@ -292,8 +292,10 @@ def get_seats(request,id):
         return JsonResponse("showing does not exist",safe=False,status=400)
         
 
-
 def account_view(request):
+    return render(request,"ticketapp/account.html")
+
+def account_tickets(request):
     if(request.user.is_authenticated):
         user_ = User.objects.get(id=request.user.id)
         ownedTickets = Ticket.objects.filter(holder=user_)
@@ -302,19 +304,27 @@ def account_view(request):
 
         try:
             pagenum = request.GET.get('page')
-        except KeyError: 
-            pagenum = 1
+            paginator = Paginator(ownedTickets,10)
+            currentpage = paginator.get_page(pagenum)
+            for ticket in currentpage:
+                ticket.checkExpiration()
+                serializedTickets.append(ticket.serialize())
+            
+            #same operation as pagePack function but done seperate because of ticket expiration check. Otherwise would check all tickets or have to parse them out of paginated list.
+            pagemeta = {}
+            pagemeta['count']= paginator.count
+            pagemeta['num_pages']= paginator.num_pages
+            pagemeta['has_next']= currentpage.has_next()
+            pagemeta['has_previous']= currentpage.has_previous()
+            pagemeta['page_num'] = pagenum
 
-        ownedTickets = Paginator(ownedTickets,10)
-        ownedTickets = ownedTickets.get_page(pagenum)
-        for ticket in ownedTickets:
-            #ticket.makeUnexpired()
-            ticket.checkExpiration()
-            serializedTickets.append(ticket.serialize())
-        return render(request, "ticketapp/account.html", {
-            "ownedTickets" : serializedTickets
-        })
-    pass
+            serializedTickets.append(pagemeta)
+            print(serializedTickets)
+            return JsonResponse(serializedTickets,safe=False,status=200)
+        
+        except KeyError:
+            return JsonResponse("Server Error",safe=False,status=500)
+
 
 
 def login_view(request):

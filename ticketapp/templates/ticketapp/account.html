@@ -4,22 +4,16 @@
 {% block script %}
     <script src="https://cdn.jsdelivr.net/npm/p5@1.4.2/lib/p5.js"></script>
     <script src="{% static 'ticketapp/utils.js' %}"></script>
+    <script>
+
+        var reviewURL = "{% url 'reviews' %}";
+    </script>
     <script src="{% static 'ticketapp/account.js' %}"></script>
 {% endblock %}
 
 {% block body %}
 <h1>Purchased Tickets</h1>
-{% for ticket in ownedTickets %}
-<li class="ticketlist"
-    {% if ticket.expired == 1 %}
-        style="color: red;"
-    {% endif %}
->
-<i class="moviename">{{ticket.showing.movie.film}}</i>{{ticket.showing.date}}, {{ticket.showing.time}}<br>
-    <p style="padding-left: 10vw;">Seat: Column {{ticket.column}}, Row {{ticket.row}}</p>
-    {% if ticket.expired == 1 %}
-        <a  href="{% url 'reviews' %}">Review this Movie</a>
-    {% endif %}
-</li>
-{% endfor %}
+<div id="accountTickets">
+    
+</div>
 {% endblock %}

@@ -22,6 +22,7 @@ class Ticket(models.Model):
             "column" : self.tcolumn,
             "row" : self.trow
         }
+        
     def serialize(self):
         return {
             "column" : self.tcolumn,
@@ -29,18 +30,14 @@ class Ticket(models.Model):
             "showing" : self.showing.serialize(),
             "expired" : self.expired
         }
-    def makeUnexpired(self):
-            self.expired = False
-            self.save()
+
     def checkExpiration(self):
-        print("saved stamp:")
-        print(self.timestamp.timestamp())
-        print("----------")
-        print('now:')
-        print(datetime.now().timestamp())
-        if datetime.now().date() > self.timestamp.date():
-            self.expired = True
-            self.save()
+        if datetime.now().date() > self.showing.time.date():
+            self.expired = True   
+        else:
+            self.expired = False
+        self.save()
+
     class Meta:
         unique_together = ('showing','trow','tcolumn')
     

@@ -30,17 +30,23 @@ function page_bootstrap(currentpage,stringNameOfFunctionToCall){
         paginationunorderedlist.append(li);
     }
     
-    for(let i = 1; i <= Number(currentpage.num_pages); i++){
-        const li = document.createElement('li');
-        li.setAttribute('class',`page-item ${(i === Number(currentpage.page_num)? 'active' : '')}`);
+    for(let i = Number(currentpage.page_num)-4; i <= Number(currentpage.page_num)+4; i++){
+        if((i <= 0)||(i > Number(currentpage.num_pages))){
+            
+        }
+        else{
 
-        const a = document.createElement('a');
-        a.setAttribute('class','page-link');
-        a.setAttribute('href',`javascript:${stringNameOfFunctionToCall}(${i})`);
-        a.innerHTML = i;
-
-        li.append(a);
-        paginationunorderedlist.append(li);
+            const li = document.createElement('li');
+            li.setAttribute('class',`page-item ${(i === Number(currentpage.page_num)? 'active' : '')}`);
+            
+            const a = document.createElement('a');
+            a.setAttribute('class','page-link');
+            a.setAttribute('href',`javascript:${stringNameOfFunctionToCall}(${i})`);
+            a.innerHTML = i;
+            
+            li.append(a);
+            paginationunorderedlist.append(li);
+        }
     }
     
     if(currentpage.has_next){
