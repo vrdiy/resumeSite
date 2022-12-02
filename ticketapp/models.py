@@ -2,6 +2,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
+from datetime import datetime, timedelta
 THEATER_COLUMNS = 8
 THEATER_ROWS = 10
 
@@ -14,6 +15,7 @@ class Ticket(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     tcolumn = models.IntegerField(validators=[MaxValueValidator(THEATER_COLUMNS), MinValueValidator(1)])
     trow = models.IntegerField(validators=[MaxValueValidator(THEATER_ROWS),MinValueValidator(1)])
+    expired = models.BooleanField(default=False)
 
     def anonymizedSeat(self):
         return {
@@ -24,8 +26,21 @@ class Ticket(models.Model):
         return {
             "column" : self.tcolumn,
             "row" : self.trow,
-            "showing" : self.showing.serialize()
+            "showing" : self.showing.serialize(),
+            "expired" : self.expired
         }
+    def makeUnexpired(self):
+            self.expired = False
+            self.save()
+    def checkExpiration(self):
+        print("saved stamp:")
+        print(self.timestamp.timestamp())
+        print("----------")
+        print('now:')
+        print(datetime.now().timestamp())
+        if datetime.now().date() > self.timestamp.date():
+            self.expired = True
+            self.save()
     class Meta:
         unique_together = ('showing','trow','tcolumn')
     

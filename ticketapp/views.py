@@ -153,7 +153,7 @@ def validateCartTickets(request):
                 print(tempTicket.serialize())
                 validTickets.append(tempTicket.serialize())
                 #for testing, remove line below!
-                invalidTickets.append(tempTicket.serialize())   
+                #invalidTickets.append(tempTicket.serialize())   
 
         else:
             invalidTickets.append(tempTicket.serialize())   
@@ -211,6 +211,13 @@ def emptyCart(request):
             request.session["tickets"] = []
             return HttpResponseRedirect(reverse('confirmpurchase'))
 
+#sorting predicate for cart tickets, kind of jank~
+def showingDate(sessionShowingObj):
+    ticket = json.loads(sessionShowingObj)
+    showingObj = Showing.objects.get(id=ticket['showing'])
+    
+    return showingObj.time
+
 #Adds tickets from P5 sketch to cart
 @csrf_exempt
 def addToCart(request):
@@ -227,6 +234,7 @@ def addToCart(request):
             for ticket in selectedTickets:
                 tdata = {"showing" : selectedShowing, "column" : ticket['column'], "row" : ticket['row']}
                 request.session["tickets"].append(json.dumps(tdata))
+                request.session["tickets"].sort(key=showingDate)
                 request.session.modified = True
         print(request.session["tickets"])
     return JsonResponse(selectedTickets,safe = False,status = 200)
@@ -291,7 +299,17 @@ def account_view(request):
         ownedTickets = Ticket.objects.filter(holder=user_)
         ownedTickets = ownedTickets.order_by("-showing")
         serializedTickets = []
+
+        try:
+            pagenum = request.GET.get('page')
+        except KeyError: 
+            pagenum = 1
+
+        ownedTickets = Paginator(ownedTickets,10)
+        ownedTickets = ownedTickets.get_page(pagenum)
         for ticket in ownedTickets:
+            #ticket.makeUnexpired()
+            ticket.checkExpiration()
             serializedTickets.append(ticket.serialize())
         return render(request, "ticketapp/account.html", {
             "ownedTickets" : serializedTickets
