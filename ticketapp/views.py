@@ -30,8 +30,6 @@ def home(request):
     movieObjs = Movie.objects.all()
     #need static path for p5 sketch:
     fontpath = static('/ticketapp/MovieBill-M86w.ttf')
-    print(fontpath)
-    #print(movieObjs)
     allShowings = []
     for title in movieObjs:
             allShowings.append(title.serialize())
@@ -152,8 +150,6 @@ def validateCartTickets(request):
             if(not isDuplicate):
                 print(tempTicket.serialize())
                 validTickets.append(tempTicket.serialize())
-                #for testing, remove line below!
-                #invalidTickets.append(tempTicket.serialize())   
 
         else:
             invalidTickets.append(tempTicket.serialize())   
@@ -319,7 +315,6 @@ def account_tickets(request):
             pagemeta['page_num'] = pagenum
 
             serializedTickets.append(pagemeta)
-            print(serializedTickets)
             return JsonResponse(serializedTickets,safe=False,status=200)
         
         except KeyError:

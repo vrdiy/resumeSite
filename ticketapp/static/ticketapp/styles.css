@@ -116,21 +116,6 @@ h1{
     margin-left: 5vw;
     margin-right: 5vw;
 }
-.page-item{
-}
-.page-item:disabled{
-
-}
-.page-link:disabled{
-}
-.page-link{
-}
-div img{
-    
-}
-span{
-    
-}
 #navtop{
     flex-direction: row;
 }

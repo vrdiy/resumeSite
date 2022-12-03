@@ -6,8 +6,6 @@ document.addEventListener('DOMContentLoaded', function(){
 
 })
 function focusMovie(movieToFocus){
-    console.log(movieToFocus);
-    console.log('what');
 
     document.getElementById('reviewsubcontainer2').style.display = 'grid';
     
@@ -20,7 +18,6 @@ function focusMovie(movieToFocus){
         else{
             poster.style.filter = '';
             document.getElementById('movieTitle').innerHTML = poster.getAttribute("name");
-            //poster.getAttribute("name")
         }
     })
 }
@@ -36,13 +33,10 @@ function ratingStars(){
         const buttonNum = i;
         star.addEventListener('click',()=>{
             document.getElementById('ratingoption').value = buttonNum+1;
-            console.log(document.getElementById('ratingoption').value)
             for (let j = 0; j < 5; j++){
                 if(j<=buttonNum){
                     document.getElementById(`star-${j}`).setAttribute('src',yellowstaricon);
-                    // star.setAttribute('src',yellowstaricon); 
                 }else{
-                    //star.setAttribute('src',staricon);
                     document.getElementById(`star-${j}`).setAttribute('src',staricon);
                     
                 }
