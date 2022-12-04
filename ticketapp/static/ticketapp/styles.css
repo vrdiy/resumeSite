@@ -61,7 +61,7 @@ h1{
     grid-template-columns: 1fr 1fr ;
     grid-template-rows: 50% 50%;
 }
-#postercontainer{
+.postercontainer{
     display: grid;
     width:100%;
     height:100%;

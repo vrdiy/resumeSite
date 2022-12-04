@@ -470,6 +470,10 @@ function get_showings_by_date(pagenum = 1,date= new Date()){
             let appendSpanFlag = false;
             if (!isValueInArray(moviesOnScreen,showing.movie.id)){
               moviesOnScreen.push(showing.movie.id);
+              const container  = document.createElement("div");
+              container.setAttribute('class','postercontainer');
+              container.setAttribute('id',`container-${showing.movie.id}`);
+              
               span = document.createElement("span");
               span.setAttribute('id',`mov-${showing.movie.id}`);
               span.setAttribute('class',"showings");
@@ -483,23 +487,25 @@ function get_showings_by_date(pagenum = 1,date= new Date()){
               movimg.setAttribute('src', showing.movie.preview);
               movimg.setAttribute('alt', showing.movie.film);
               span.append(movimg);
+              container.append(span);
               appendSpanFlag = true;
 
             }else{
               span = document.querySelector(`#mov-${showing.movie.id}`);
+              const container = document.querySelector(`container-${showing.movie.id}`);
             }
             
               button = document.createElement("button");
               button.setAttribute('class','showingselect');
               button.setAttribute('id',`showing-${showing.id}`);
               button.innerHTML = `${showing.time}`;
-              if(span != undefined){
+              if(container != undefined){
 
-                span.append(button);
+                container.append(button);
               }
 
             if(appendSpanFlag){
-              moviesdiv.append(span);
+              moviesdiv.append(container);
               appendSpanFlag = false;
             }
           })
