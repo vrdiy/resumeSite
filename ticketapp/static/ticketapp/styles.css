@@ -63,13 +63,14 @@ h1{
 }
 .postercontainer{
     display: grid;
+    
     width:100%;
     height:100%;
     grid-column-start: 1;
     grid-column-end: 1;
 
     grid-template-columns: 1fr;
-    grid-template-rows: 80% 20%;
+    grid-template-rows: 60% 40%;
 }
 #reviewcontainer{
     background-image: url('../../static/ticketapp/curtains.jpg');
@@ -208,7 +209,8 @@ input{
 .showingselect{
     user-select: none;
     font-size: 3vh;
-    float: left;
+    text-align: center;
+
 
 }
 .showings{

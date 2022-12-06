@@ -470,38 +470,46 @@ function get_showings_by_date(pagenum = 1,date= new Date()){
             let appendSpanFlag = false;
             if (!isValueInArray(moviesOnScreen,showing.movie.id)){
               moviesOnScreen.push(showing.movie.id);
-              const container  = document.createElement("div");
+              container  = document.createElement("div");
               container.setAttribute('class','postercontainer');
               container.setAttribute('id',`container-${showing.movie.id}`);
               
-              span = document.createElement("span");
+              span = document.createElement("div");
               span.setAttribute('id',`mov-${showing.movie.id}`);
               span.setAttribute('class',"showings");
               
 
               movimg = document.createElement("img");
               movimg.setAttribute('class',"posters");
-              movimg.setAttribute('style',"width: auto; height: 80%; margin-top: 5px;text-align: center;");
+              movimg.setAttribute('style',"width: auto; height: 100%; margin-top: 5px;text-align: center;");
 
               
               movimg.setAttribute('src', showing.movie.preview);
               movimg.setAttribute('alt', showing.movie.film);
+
+              buttoncontainer = document.createElement('div');
+              buttoncontainer.setAttribute('id',`buttoncontainer-${showing.movie.id}`);
+              buttoncontainer.setAttribute('style',"width: auto; height: 100%; margin-top: 2px;text-align: center; align-items: center;display: flex; flex: 0 0 5vw; justify-content: center;");
+              
               span.append(movimg);
               container.append(span);
+              container.append(buttoncontainer);
               appendSpanFlag = true;
 
             }else{
               span = document.querySelector(`#mov-${showing.movie.id}`);
-              const container = document.querySelector(`container-${showing.movie.id}`);
+              container = document.querySelector(`#container-${showing.movie.id}`);
+              buttoncontainer = document.querySelector(`#buttoncontainer-${showing.movie.id}`);
+
             }
             
               button = document.createElement("button");
               button.setAttribute('class','showingselect');
               button.setAttribute('id',`showing-${showing.id}`);
               button.innerHTML = `${showing.time}`;
-              if(container != undefined){
+              if(buttoncontainer != undefined){
 
-                container.append(button);
+                buttoncontainer.append(button);
               }
 
             if(appendSpanFlag){
