@@ -489,7 +489,7 @@ function get_showings_by_date(pagenum = 1,date= new Date()){
 
               buttoncontainer = document.createElement('div');
               buttoncontainer.setAttribute('id',`buttoncontainer-${showing.movie.id}`);
-              buttoncontainer.setAttribute('style',"width: auto; height: 100%; margin-top: 2px;text-align: center; align-items: center;display: flex; flex: 0 0 5vw; justify-content: center;");
+              buttoncontainer.setAttribute('style',"width: 100%; height: 100%; margin-top: 2px;text-align: center; align-items: center;display:grid; justify-content: center;");
               
               span.append(movimg);
               container.append(span);
