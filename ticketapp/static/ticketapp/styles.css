@@ -80,7 +80,7 @@ h1{
     height:100%;
     user-select: none;
     grid-template-columns: 1fr;
-    grid-template-rows: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 14% 1fr;
     display: grid;
 }
 #reviewsubcontainer{

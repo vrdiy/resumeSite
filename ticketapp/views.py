@@ -69,7 +69,11 @@ def userreviews(request):
     serializedReviews = []
     for review in mov.reviews.all():
         serializedReviews.append(review.serialize())
-    return JsonResponse(pagePack(serializedReviews,10,pagenum),safe=False,status=200)
+
+    if request.user.is_authenticated:
+        user_ = User.objects.get(id=request.user.id)
+        userreview_ = mov.reviews.filter(user=user_).first().serialize()
+    return JsonResponse({"reviews" : pagePack(serializedReviews,10,pagenum),"userreview" : userreview_},safe=False,status=200)
 
 
 def reviews(request):

@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function(){
-    document.getElementById('reviewsubcontainer2').style.display = 'none';
+    //document.getElementById('reviewsubcontainer2').style.display = 'none';
     ratingStars();
     setupMoviesToReview();
     loadUserReviews(1,1);
@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function(){
 })
 function focusMovie(movieToFocus){
 
-    document.getElementById('reviewsubcontainer2').style.display = 'grid';
+    //document.getElementById('reviewsubcontainer2').style.display = 'grid';
     
 
     const movieElements = document.getElementsByClassName('posters');
@@ -29,23 +29,25 @@ function ratingStars(){
         star.setAttribute('class','reviewstar');
         star.setAttribute('id',`star-${i}`);
         star.setAttribute('src',staricon);
-        let starstate = false;
         const buttonNum = i;
         star.addEventListener('click',()=>{
-            document.getElementById('ratingoption').value = buttonNum+1;
-            for (let j = 0; j < 5; j++){
-                if(j<=buttonNum){
-                    document.getElementById(`star-${j}`).setAttribute('src',yellowstaricon);
-                }else{
-                    document.getElementById(`star-${j}`).setAttribute('src',staricon);
-                    
-                }
-            }
+            setStarValue(buttonNum);
         })
         reviewstars.append(star);
     }
     
-    
+}
+
+function setStarValue(val){
+    document.getElementById('ratingoption').value = val+1;
+        for (let j = 0; j < 5; j++){
+            if(j<=val){
+                document.getElementById(`star-${j}`).setAttribute('src',yellowstaricon);
+            }else{
+                document.getElementById(`star-${j}`).setAttribute('src',staricon);
+                
+            }
+        }
 }
 
 function loadUserReviews(movieid,pagenum = 1){
@@ -56,8 +58,8 @@ function loadUserReviews(movieid,pagenum = 1){
     .then(reviews =>{
         const userReviewsDiv = document.getElementById('userReviews');
         userReviewsDiv.innerHTML = '';
-        reviews.pop()
-        reviews.forEach(review_ =>{
+        reviews.reviews.pop()
+        reviews.reviews.forEach(review_ =>{
             const p = document.createElement('p');
             p.setAttribute('class',"userReview");
             p.innerHTML = review_.content;
