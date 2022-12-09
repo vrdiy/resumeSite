@@ -1,13 +1,12 @@
 document.addEventListener('DOMContentLoaded', function(){
-    //document.getElementById('reviewsubcontainer2').style.display = 'none';
+    document.getElementById('reviewsubcontainer2').style.display = 'none';
     ratingStars();
     setupMoviesToReview();
-    loadUserReviews(1,1);
 
 })
 function focusMovie(movieToFocus){
 
-    //document.getElementById('reviewsubcontainer2').style.display = 'grid';
+    document.getElementById('reviewsubcontainer2').style.display = 'grid';
     
 
     const movieElements = document.getElementsByClassName('posters');
@@ -31,7 +30,7 @@ function ratingStars(){
         star.setAttribute('src',staricon);
         const buttonNum = i;
         star.addEventListener('click',()=>{
-            setStarValue(buttonNum);
+            setStarValue(buttonNum+1);
         })
         reviewstars.append(star);
     }
@@ -39,6 +38,8 @@ function ratingStars(){
 }
 
 function setStarValue(val){
+   // val = val -1;
+
     document.getElementById('ratingoption').value = val+1;
         for (let j = 0; j < 5; j++){
             if(j<=val){
@@ -58,6 +59,16 @@ function loadUserReviews(movieid,pagenum = 1){
     .then(reviews =>{
         const userReviewsDiv = document.getElementById('userReviews');
         userReviewsDiv.innerHTML = '';
+        console.log(reviews.userreview)
+        if(reviews.userreview != ''){
+
+            document.getElementById('text-content').value = reviews.userreview.content;
+            setStarValue(parseInt(reviews.userreview.rating)-1)
+        }
+        else{
+            document.getElementById('text-content').value = '';
+            setStarValue(0);
+        }
         reviews.reviews.pop()
         reviews.reviews.forEach(review_ =>{
             const p = document.createElement('p');

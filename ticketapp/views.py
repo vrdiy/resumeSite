@@ -72,8 +72,15 @@ def userreviews(request):
 
     if request.user.is_authenticated:
         user_ = User.objects.get(id=request.user.id)
-        userreview_ = mov.reviews.filter(user=user_).first().serialize()
-    return JsonResponse({"reviews" : pagePack(serializedReviews,10,pagenum),"userreview" : userreview_},safe=False,status=200)
+        thisUsersReviews = mov.reviews.filter(user=user_)
+        
+
+        try:
+            userreview_ = mov.reviews.get(user=user_).serialize()
+        except Review.DoesNotExist:
+            userreview_ = ''
+            
+        return JsonResponse({"reviews" : pagePack(serializedReviews,10,pagenum),"userreview" : userreview_},safe=False,status=200)
 
 
 def reviews(request):
@@ -82,8 +89,23 @@ def reviews(request):
             return HttpResponseRedirect(reverse('login'))
         user_ = User.objects.get(id=request.user.id)
         movie_ = Movie.objects.get(id=request.POST["movieid"])
-        review = Review(user = user_,content = request.POST["comment"],movie = movie_,rating=int(request.POST["rating"]))
-        review.save()
+        #review = Review(user = user_,content = request.POST["comment"],movie = movie_,rating=int(request.POST["rating"]))
+
+
+        try:
+            review_ = Review.objects.get(user = user_,movie = movie_)
+            reviewCreated = False
+        except Ticket.DoesNotExist:
+            review_ = Review(user = user_,content = request.POST["comment"],movie = movie_,rating=int(request.POST["rating"]))
+            reviewCreated = True
+
+        if reviewCreated:
+            review_.save()
+        else:
+            review_.content = request.POST["comment"]
+            review_.rating = int(request.POST["rating"])
+            review_.save()
+
         return HttpResponseRedirect(reverse('reviews'))
 
     movies = Movie.objects.all()

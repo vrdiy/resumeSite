@@ -81,6 +81,9 @@ class Review(models.Model):
             "content" : self.content,
             "rating" : self.rating
         }
+    class Meta:
+        unique_together = ('user','movie')
+    
 
 
 class Showing(models.Model):
