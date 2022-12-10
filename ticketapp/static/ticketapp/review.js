@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', function(){
     document.getElementById('reviewsubcontainer2').style.display = 'none';
+    document.getElementById('commentsdiv').style.display = 'none';
+
     ratingStars();
     setupMoviesToReview();
 
@@ -7,6 +9,8 @@ document.addEventListener('DOMContentLoaded', function(){
 function focusMovie(movieToFocus){
 
     document.getElementById('reviewsubcontainer2').style.display = 'grid';
+    document.getElementById('commentsdiv').style.display = 'block';
+
     
 
     const movieElements = document.getElementsByClassName('posters');
@@ -23,14 +27,14 @@ function focusMovie(movieToFocus){
 function ratingStars(){
     const reviewstars = document.querySelector('#reviewstars');
     console.log(staricon)
-    for (let i = 0; i < 5; i++){
+    for (let i = 1; i <= 5; i++){
         const star = document.createElement('img');
         star.setAttribute('class','reviewstar');
         star.setAttribute('id',`star-${i}`);
         star.setAttribute('src',staricon);
         const buttonNum = i;
         star.addEventListener('click',()=>{
-            setStarValue(buttonNum+1);
+            setStarValue(buttonNum);
         })
         reviewstars.append(star);
     }
@@ -38,10 +42,10 @@ function ratingStars(){
 }
 
 function setStarValue(val){
-   // val = val -1;
-
-    document.getElementById('ratingoption').value = val+1;
-        for (let j = 0; j < 5; j++){
+    
+    document.getElementById('ratingoption').value = val;
+    
+        for (let j = 1; j <= 5; j++){
             if(j<=val){
                 document.getElementById(`star-${j}`).setAttribute('src',yellowstaricon);
             }else{
@@ -63,7 +67,7 @@ function loadUserReviews(movieid,pagenum = 1){
         if(reviews.userreview != ''){
 
             document.getElementById('text-content').value = reviews.userreview.content;
-            setStarValue(parseInt(reviews.userreview.rating)-1)
+            setStarValue(parseInt(reviews.userreview.rating))
         }
         else{
             document.getElementById('text-content').value = '';
@@ -77,6 +81,9 @@ function loadUserReviews(movieid,pagenum = 1){
             userReviewsDiv.append(p);
 
         })
+        if(reviews.reviews.length == 0 ){
+            document.getElementById('commentsdiv').style.display = 'none';
+        }
     })
 }
 

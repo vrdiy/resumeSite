@@ -95,7 +95,7 @@ def reviews(request):
         try:
             review_ = Review.objects.get(user = user_,movie = movie_)
             reviewCreated = False
-        except Ticket.DoesNotExist:
+        except Review.DoesNotExist:
             review_ = Review(user = user_,content = request.POST["comment"],movie = movie_,rating=int(request.POST["rating"]))
             reviewCreated = True
 
