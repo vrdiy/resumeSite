@@ -51,12 +51,19 @@ h1{
     grid-template-rows: 70vh;
     display: grid;
 }
+@media (max-width: 1100px) {
+    #container{
+        
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr 1fr;
+        display: flex;
+        flex-direction: column;
+    }
+}
 #subcontainer{
     display: grid;
     width:100%;
     height:100%;
-    grid-column-start: 1;
-    grid-column-end: 1;
 
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 50% 50%;
@@ -66,8 +73,6 @@ h1{
     
     width:100%;
     height:100%;
-    grid-column-start: 1;
-    grid-column-end: 1;
 
     grid-template-columns: 100%;
     grid-template-rows: 60% 40%;
@@ -88,7 +93,7 @@ h1{
     width:100%;
     height:100%;
     grid-column-start: 1;
-    grid-column-end: 1;
+    grid-column-end: 5;
 
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
     grid-template-rows: 50% 50%;
@@ -188,6 +193,10 @@ input{
     font-size: 5vh;
     border-radius: 3px;
 }
+#paginationUI{
+    position:fixed;
+    bottom: 120px;
+}
 .ticketlist{
     background-color: #c0cac0;
     border-bottom: 2px solid black;
@@ -208,14 +217,16 @@ input{
 }
 .showingselect{
     user-select: none;
-    font-size: 3vh;
+    width: auto;
+    height: 50px;
+    font-size: 35px;
     text-align: center;
 
 
 }
 .showings{
 
-    width: 100%;
+    width: 220px;
     height: 100%;
     text-align: center;
 }

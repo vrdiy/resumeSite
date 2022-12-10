@@ -12,7 +12,7 @@ function page_bootstrap(currentpage,stringNameOfFunctionToCall){
 
         const a = document.createElement('a');
         a.setAttribute('class','page-link');
-        a.setAttribute('href',`javascript:${stringNameOfFunctionToCall}(${currentpage.page_num -1})`);
+        a.setAttribute('href',`javascript:${stringNameOfFunctionToCall}(${parseInt(currentpage.page_num) -1})`);
         a.innerHTML = 'Previous';
         li.append(a);
         paginationunorderedlist.append(li);
@@ -55,7 +55,7 @@ function page_bootstrap(currentpage,stringNameOfFunctionToCall){
 
         const a = document.createElement('a');
         a.setAttribute('class','page-link');
-        a.setAttribute('href',`javascript:${stringNameOfFunctionToCall}(${currentpage.page_num +1})`);
+        a.setAttribute('href',`javascript:${stringNameOfFunctionToCall}(${parseInt(currentpage.page_num) +1})`);
         a.innerHTML = 'Next';
         li.append(a);
         paginationunorderedlist.append(li);

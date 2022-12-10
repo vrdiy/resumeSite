@@ -157,28 +157,27 @@ def validateCartTickets(request):
         # get_or_create() is almost a great solution but it saves the entry it creates...
         # which isn't wanted because you may only want to buy a set of seats if you can get them all
         # if a user wants to buy two seats side by side, and one is taken. They probably don't want the one available seat anymore.
-        newTicketWasCreated = True
+        #newTicketWasCreated = True
         try:
-            tempTicket = Ticket.objects.get(holder = user_,showing = showing_,tcolumn = ticket_["column"],trow = ticket_["row"])
+            tempTicket = Ticket.objects.get(showing = showing_,tcolumn = ticket_["column"],trow = ticket_["row"])
             newTicketWasCreated = False
+            print('ticket found, invalid')
         except Ticket.DoesNotExist:
+            print('no ticket found, good to create')
             tempTicket = Ticket(holder = user_,showing = showing_,tcolumn = ticket_["column"],trow = ticket_["row"])
             newTicketWasCreated = True
 
         if(newTicketWasCreated):
             isDuplicate = False
             for i in validTickets:
-                print(f'{i["showing"]["id"]} === {tempTicket.showing.id}')
                 if(i["showing"]["id"] == tempTicket.showing.id):
                     if(i["column"] == tempTicket.tcolumn):
                         if(i["row"] == tempTicket.trow):
                             isDuplicate = True       
             if(not isDuplicate):
-                print(tempTicket.serialize())
                 validTickets.append(tempTicket.serialize())
-
         else:
-            invalidTickets.append(tempTicket.serialize())   
+            invalidTickets.append(tempTicket.serialize()) 
     return JsonResponse({'invalidTickets': invalidTickets, 'validTickets': validTickets},safe=False,status=200)
 
     
@@ -199,6 +198,7 @@ def confirmpurchase(request):
                 showings_ = Showing.objects.all()
                 user_ = User.objects.get(id=request.user.id)
                 ticketObjs = json.loads(response.content)['validTickets']
+                
                 for ticket in ticketObjs:
                     showing_ = Showing.objects.get(id=ticket["showing"]["id"])
                     ticket = Ticket(holder = user_,showing = showing_,tcolumn = ticket["column"],trow = ticket["row"])

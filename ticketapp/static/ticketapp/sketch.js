@@ -455,6 +455,7 @@ function get_showings_by_date(pagenum = 1,date= new Date()){
   })
   .then(response =>{
     const paginationUI = page_bootstrap(response[response.length-1],'get_showings_by_date');
+    paginationUI.style.position = 'absolute';
     document.getElementById('paginationUI').innerHTML = '';
     document.getElementById('paginationUI').append(paginationUI);
     response.pop();
@@ -489,7 +490,7 @@ function get_showings_by_date(pagenum = 1,date= new Date()){
 
               buttoncontainer = document.createElement('div');
               buttoncontainer.setAttribute('id',`buttoncontainer-${showing.movie.id}`);
-              buttoncontainer.setAttribute('style',"width: 100%; height: 100%; margin-top: 2px;text-align: center; align-items: center;display:grid; justify-content: center;");
+              buttoncontainer.setAttribute('style',"width: 100%; height: 100%; margin-top: 2px; display:grid;");
               
               span.append(movimg);
               container.append(span);
