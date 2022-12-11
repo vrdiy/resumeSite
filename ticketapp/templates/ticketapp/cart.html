@@ -8,7 +8,11 @@
         {% if invalidTickets %}
         var badTickets = {{invalidTickets|safe}};
         {% endif %}
+        //var garbageCan = '{% static "ticketapp/garbagecan.png" %}';
+    </script>
+    <script>
         var garbageCan = '{% static "ticketapp/garbagecan.png" %}';
+
     </script>
     <script src="{% static 'ticketapp/cart.js' %}"></script>
 {% endblock %}
@@ -25,7 +29,7 @@
 {% endfor %}
 
 
-<h1>Your Cart</h1>
+<h1 style="color: white;">Your Cart</h1>
 <p style="padding-left: 10px;" class="warning">These tickets are not reserved until purchased, purchase soon to ensure your seat</p>
 <ol id="cart">
     

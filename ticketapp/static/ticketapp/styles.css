@@ -1,6 +1,6 @@
 @font-face {
     font-family: "M86w";
-    src: url('/static/ticketapp/MovieBill-M86w.ttf');
+    src: url('MovieBill-M86w.ttf');
 }
 
 @keyframes shrinkCart {
@@ -22,11 +22,13 @@
 }
 
 body {
+    background-image: url('curtains.jpg');
     background-color: rgb(151, 148, 148);
     font-family: "M86w";
     /*font-size: 50px;*/
     font-size: 5vh;
     font-weight: bold;
+    padding: 5px;
 }
 h1{
     padding-left: 10px;
@@ -41,7 +43,7 @@ h1{
     height: 86vh;
 }
 #container{
-    background-image: url('../../static/ticketapp/curtains.jpg');
+    background-image: url('curtains.jpg');
     background-size: cover;
     
     width:100vw;
@@ -51,6 +53,17 @@ h1{
     grid-template-rows: 70vh;
     display: grid;
 }
+.form-control{
+    font-size: 2.5vh;
+    text-align: center;
+}
+.showingselect{
+    user-select: none;
+    width: 80%;
+    height: 50px;
+    font-size: 35px;
+    text-align: center;
+}
 @media (max-width: 1100px) {
     #container{
         
@@ -58,6 +71,11 @@ h1{
         grid-template-rows: 1fr 1fr;
         display: flex;
         flex-direction: column;
+    }
+    .form-control{
+        font-size: 12vh;
+    }
+    .showingselect{
     }
 }
 #subcontainer{
@@ -78,7 +96,7 @@ h1{
     grid-template-rows: 60% 40%;
 }
 #reviewcontainer{
-    background-image: url('../../static/ticketapp/curtains.jpg');
+    background-image: url('curtains.jpg');
     background-size: cover;
     
     width:100%;
@@ -179,12 +197,8 @@ h1{
     -webkit-text-stroke-color: rgb(39, 182, 122);
     padding-right: 15px;
 }
-.form-control{
-    font-size: 2.5vh;
-    text-align: center;
-}
 .btn{
-    font-size: 2.5vh;
+    font-size: 5vh;
 }
 input{
     text-align: center;
@@ -214,15 +228,6 @@ input{
     margin: 5px;
     text-align: center;
     border: 2px solid blue;
-}
-.showingselect{
-    user-select: none;
-    width: auto;
-    height: 50px;
-    font-size: 35px;
-    text-align: center;
-
-
 }
 .showings{
 

@@ -24,6 +24,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 
 from ticketapp.models import Showing, Movie, User, Ticket, Review
+from ticketapp.helpers import pagePack
 
 
 def home(request):
@@ -40,21 +41,6 @@ def home(request):
         'tickets' : decodedtickets,
         'fontpath' : fontpath
     })
-
-#paginates and appends page metadata to the end of a container
-def pagePack(array,pagesize,pagenum = 1):
-    paginator = Paginator(array,pagesize)
-    currentpage = paginator.get_page(pagenum)
-    page = list(currentpage)
-
-    pagemeta = {}
-    pagemeta['count']= paginator.count
-    pagemeta['num_pages']= paginator.num_pages
-    pagemeta['has_next']= currentpage.has_next()
-    pagemeta['has_previous']= currentpage.has_previous()
-    pagemeta['page_num'] = pagenum
-    page.append(pagemeta)
-    return page
 
 def moviesRatings(request,pagenum):
     movies = Movie.objects.all()
@@ -161,9 +147,7 @@ def validateCartTickets(request):
         try:
             tempTicket = Ticket.objects.get(showing = showing_,tcolumn = ticket_["column"],trow = ticket_["row"])
             newTicketWasCreated = False
-            print('ticket found, invalid')
         except Ticket.DoesNotExist:
-            print('no ticket found, good to create')
             tempTicket = Ticket(holder = user_,showing = showing_,tcolumn = ticket_["column"],trow = ticket_["row"])
             newTicketWasCreated = True
 
@@ -191,7 +175,6 @@ def confirmpurchase(request):
         else:
             response = validateCartTickets(request)
             if(len(json.loads(response.content)['invalidTickets'])):
-                print("invalidtickets")
                 return render(request,"ticketapp/cart.html", {'invalidTickets' : json.loads(response.content)['invalidTickets'], 'tickets' : decodedtickets})
             else:
                 
@@ -233,7 +216,7 @@ def emptyCart(request):
             request.session["tickets"] = []
             return HttpResponseRedirect(reverse('confirmpurchase'))
 
-#sorting predicate for cart tickets, kind of jank~
+#sorting predicate for cart tickets, used only by views.addToCart, kind of jank~
 def showingDate(sessionShowingObj):
     ticket = json.loads(sessionShowingObj)
     showingObj = Showing.objects.get(id=ticket['showing'])
@@ -258,7 +241,6 @@ def addToCart(request):
                 request.session["tickets"].append(json.dumps(tdata))
                 request.session["tickets"].sort(key=showingDate)
                 request.session.modified = True
-        print(request.session["tickets"])
     return JsonResponse(selectedTickets,safe = False,status = 200)
 
 
