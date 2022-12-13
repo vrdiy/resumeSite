@@ -87,8 +87,8 @@ class Review(models.Model):
 
 
 class Showing(models.Model):
-    movie = models.ForeignKey(Movie,on_delete=models.CASCADE,related_name="showings")
-    time = models.DateTimeField()
+    movie = models.ForeignKey(Movie,on_delete=models.CASCADE,related_name="showings",primary_key=False)
+    time = models.DateTimeField(primary_key=False)
 
     def showingTime(self):
         #get rid of leading zero and just return hour/minute of showing
@@ -97,6 +97,8 @@ class Showing(models.Model):
             return self.time.strftime("%I:%M %p")[1:] 
         else:
             return self.time.strftime("%I:%M %p") 
+
+
 
     def serialize(self):
         return{

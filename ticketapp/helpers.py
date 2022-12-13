@@ -1,6 +1,7 @@
 from django.core.paginator import Paginator
 from ticketapp.models import Showing, Movie, User, Ticket, Review
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+from random import random
 
 #paginates and appends page metadata to the end of a container
 def pagePack(array,pagesize,pagenum = 1):
@@ -17,10 +18,27 @@ def pagePack(array,pagesize,pagenum = 1):
     page.append(pagemeta)
     return page
 
-#creates 3 showings for each film that day.
-def createShowings(date):
+#creates 3 showings for each film for the next week(if not already created).
+def createShowings():
+    today = datetime.now()
+    #weekfromtoday = today + timedelta(days=7)
+
     movies = Movie.objects.all()
-    date_ = datetime(date.date)
     for movie in movies:
-        Showing(movie=movie,time=date_)
-        
+        showings = movie.showings.all()
+       # Showing(movie=movie,time=date_)
+        for day in range(8):
+            i = today + timedelta(days=day)
+            showingsOnThisDay = []
+            for showing in showings:
+                if (showing.time.date() == i.date()):
+                    showingsOnThisDay.append(showing)
+            for x in range(3 - len(showingsOnThisDay)):
+                randomTime = datetime(i.year,i.month,i.day,6*(x+1),30 if random()>0.5 else 0,0,0,tzinfo=timezone.utc)
+                newShowing_ = Showing(time=randomTime,movie=movie)
+                newShowing_.save()
+    return
+
+
+
+                

@@ -20,15 +20,17 @@ from django.templatetags.static import static
 import html
 from django.shortcuts import render
 
+
 # Create your views here.
 from django.http import HttpResponse
 
 from ticketapp.models import Showing, Movie, User, Ticket, Review
-from ticketapp.helpers import pagePack
+from ticketapp.helpers import pagePack, createShowings
 
 
 def home(request):
     movieObjs = Movie.objects.all()
+    createShowings()
     #need static path for p5 sketch:
     fontpath = static('/ticketapp/MovieBill-M86w.ttf')
     allShowings = []
@@ -129,7 +131,9 @@ def cartTickets(request):
 
 def validateCartTickets(request):
     #loop through all cart tickets and make sure there are no duplicates. And that they are all available.
+    
     tickets = request.session["tickets"]
+
     showings_ = Showing.objects.all()
     #try to create all tickets
     validTickets = []
@@ -219,19 +223,34 @@ def emptyCart(request):
 #sorting predicate for cart tickets, used only by views.addToCart, kind of jank~
 def showingDate(sessionShowingObj):
     ticket = json.loads(sessionShowingObj)
+    
     showingObj = Showing.objects.get(id=ticket['showing'])
+    
     
     return showingObj.time
 
 #Adds tickets from P5 sketch to cart
 @csrf_exempt
 def addToCart(request):
-    try:
-        if request.session["tickets"] == None:
-            request.session["tickets"] = []
-    except:
-            request.session["tickets"] = []
     if request.method == "POST":
+        try:
+            if request.session["tickets"] == None:
+                request.session["tickets"] = []
+        except:
+            request.session["tickets"] = []
+
+        #make sure the showing still exists, old tickets in cart for example would be an issue
+        ticketlist = []
+        for i in request.session["tickets"]:
+            try:
+                showing_ = Showing.objects.get(id=i["showing"])
+                ticketlist.append(i)
+            except:
+                pass
+        request.session["tickets"] = ticketlist
+        request.session.modified = True
+
+        print(request.session["tickets"])
         data = json.loads(request.body)
         selectedTickets = data.get("selectedTickets_",None)
         selectedShowing = data.get("showingid",0)

@@ -49,6 +49,7 @@ function setButtonSelected(element){
   element.style.textDecoration = "underline";
   element.style.backgroundColor = "#AACCCC";
   element.style.fontWeight = "bolder";
+  console.log(parseInt((element).getAttribute("id").slice(8)))
   showingSelectedID = parseInt((element).getAttribute("id").slice(8));
 }
 //function for stylizing and event handling for buttons
