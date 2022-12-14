@@ -18,9 +18,12 @@ def pagePack(array,pagesize,pagenum = 1):
     page.append(pagemeta)
     return page
 
+def timezoneEST():
+    return timezone(timedelta(hours=-5),'est')
 #creates 3 showings for each film for the next week(if not already created).
 def createShowings():
     today = datetime.now()
+    #tz = timezone(timedelta(hours=-5),'est')
     #weekfromtoday = today + timedelta(days=7)
 
     movies = Movie.objects.all()
@@ -34,7 +37,7 @@ def createShowings():
                 if (showing.time.date() == i.date()):
                     showingsOnThisDay.append(showing)
             for x in range(3 - len(showingsOnThisDay)):
-                randomTime = datetime(i.year,i.month,i.day,6*(x+1),30 if random()>0.5 else 0,0,0,tzinfo=timezone.utc)
+                randomTime = datetime(i.year,i.month,i.day,6*(x+1),30 if random()>0.5 else 0,0,0,tzinfo=timezoneEST())
                 newShowing_ = Showing(time=randomTime,movie=movie)
                 newShowing_.save()
     return

@@ -25,7 +25,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 
 from ticketapp.models import Showing, Movie, User, Ticket, Review
-from ticketapp.helpers import pagePack, createShowings
+from ticketapp.helpers import pagePack, createShowings, timezoneEST
 
 
 def home(request):
@@ -264,7 +264,7 @@ def addToCart(request):
 
 
 def get_showings_by_date(request):
-    today = datetime.now()
+    today = datetime.now(timezoneEST())
     weekfromtoday = today + timedelta(days=7)
     showings = []
     allshowings = Showing.objects.all()
@@ -288,7 +288,7 @@ def get_showings_by_date(request):
                 showingsForThisMovieToday = []
                 thisMoviesShowings = movie.showings.all()
                 for showing in thisMoviesShowings:
-                    if((showing.time.day == int(request.GET.get('day'))) and (showing.time.month == int(request.GET.get('month'))) and (showing.time.year == int(request.GET.get('year')))):
+                    if((showing.time.day == int(request.GET.get('day'))) and (showing.time.month == int(request.GET.get('month'))) and (showing.time.year == int(request.GET.get('year'))) and (showing.time.timestamp() > today.timestamp())):
                         showingsForThisMovieToday.append(showing.serialize())
                 if(len(showingsForThisMovieToday)):
                     showings.append(showingsForThisMovieToday)
