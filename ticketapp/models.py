@@ -2,7 +2,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 THEATER_COLUMNS = 8
 THEATER_ROWS = 10
 
@@ -89,6 +89,7 @@ class Review(models.Model):
 class Showing(models.Model):
     movie = models.ForeignKey(Movie,on_delete=models.CASCADE,related_name="showings",primary_key=False)
     time = models.DateTimeField(primary_key=False)
+    expired = models.BooleanField(default=False)
 
     def showingTime(self):
         #get rid of leading zero and just return hour/minute of showing
@@ -105,7 +106,8 @@ class Showing(models.Model):
             "id" : self.id,
             "movie" : self.movie.serialize(),
             "time" : self.showingTime(),
-            "date" : self.time.strftime("%B %e")
+            "date" : self.time.strftime("%B %e"),
+            "expired" : self.expired
             }
             
         #split from serialize to be more scalable and only send seats when requested
@@ -116,6 +118,15 @@ class Showing(models.Model):
         return{
             "seats_taken" : seats_taken
         }
+
+    def checkExpiration(self):
+        today = datetime.now(tz=timezone.utc)
+        today = today + timedelta(hours=-5)
+        if today.timestamp() > self.time.timestamp():
+            self.expired = True   
+        else:
+            self.expired = False
+        self.save()
 
         
 

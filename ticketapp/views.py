@@ -26,6 +26,7 @@ from django.http import HttpResponse
 
 from ticketapp.models import Showing, Movie, User, Ticket, Review
 from ticketapp.helpers import pagePack, createShowings, timezoneEST
+from datetime import datetime, timedelta, timezone
 
 
 def home(request):
@@ -144,6 +145,7 @@ def validateCartTickets(request):
         ticket_ = json.loads(ticket)
        
         showing_ = Showing.objects.get(id=ticket_["showing"])
+        
         # get_or_create() is almost a great solution but it saves the entry it creates...
         # which isn't wanted because you may only want to buy a set of seats if you can get them all
         # if a user wants to buy two seats side by side, and one is taken. They probably don't want the one available seat anymore.
@@ -155,17 +157,21 @@ def validateCartTickets(request):
             tempTicket = Ticket(holder = user_,showing = showing_,tcolumn = ticket_["column"],trow = ticket_["row"])
             newTicketWasCreated = True
 
-        if(newTicketWasCreated):
-            isDuplicate = False
-            for i in validTickets:
-                if(i["showing"]["id"] == tempTicket.showing.id):
-                    if(i["column"] == tempTicket.tcolumn):
-                        if(i["row"] == tempTicket.trow):
-                            isDuplicate = True       
-            if(not isDuplicate):
-                validTickets.append(tempTicket.serialize())
-        else:
+        showing_.checkExpiration()
+        if(showing_.expired):
             invalidTickets.append(tempTicket.serialize()) 
+        else:
+            if(newTicketWasCreated):
+                isDuplicate = False
+                for i in validTickets:
+                    if(i["showing"]["id"] == tempTicket.showing.id):
+                        if(i["column"] == tempTicket.tcolumn):
+                            if(i["row"] == tempTicket.trow):
+                                isDuplicate = True       
+                if(not isDuplicate):
+                    validTickets.append(tempTicket.serialize())
+            else:
+                invalidTickets.append(tempTicket.serialize()) 
     return JsonResponse({'invalidTickets': invalidTickets, 'validTickets': validTickets},safe=False,status=200)
 
     
@@ -264,7 +270,8 @@ def addToCart(request):
 
 
 def get_showings_by_date(request):
-    today = datetime.now(timezoneEST())
+    today = datetime.now(tz=timezone.utc)
+    today = today + timedelta(hours=-5)
     weekfromtoday = today + timedelta(days=7)
     showings = []
     allshowings = Showing.objects.all()
@@ -288,6 +295,9 @@ def get_showings_by_date(request):
                 showingsForThisMovieToday = []
                 thisMoviesShowings = movie.showings.all()
                 for showing in thisMoviesShowings:
+                    print((showing.time))
+                    print(today)
+
                     if((showing.time.day == int(request.GET.get('day'))) and (showing.time.month == int(request.GET.get('month'))) and (showing.time.year == int(request.GET.get('year'))) and (showing.time.timestamp() > today.timestamp())):
                         showingsForThisMovieToday.append(showing.serialize())
                 if(len(showingsForThisMovieToday)):
