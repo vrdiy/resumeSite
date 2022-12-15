@@ -71,6 +71,10 @@ h1{
         grid-template-rows: 1fr 1fr;
         display: flex;
         flex-direction: column;
+        
+    }
+    #p5app{
+        padding-bottom: 120px;
     }
     .form-control{
         font-size: 12vh;

@@ -34,4 +34,8 @@ helpers.py has two important functions, pagePack and createShowings. pagePack is
 
 admin.py has basic implementation of each model for manipulation on the admin page.
 
+--------Running the app--------
+p5 is included in my static files, there is no need to go get it elsewhere but it is available online https://cdn.jsdelivr.net/npm/p5/lib/
+You run it as you would any other django project, I've included my database but if you do not have it, for showings to be created there needs to be movies, these can be added through the admin portal. From there everything should be very intuitive.
+
 Lastly I do want to thank whoever you are for reading this, and I am grateful for this class because I believe this will be a stepping stone for my life. Thank you -Anthony
