@@ -32,7 +32,9 @@ class Ticket(models.Model):
         }
 
     def checkExpiration(self):
-        if datetime.now().date() > self.showing.time.date():
+        today = datetime.now(tz=timezone.utc)
+        today = today + timedelta(hours=-5)
+        if today.timestamp() > self.showing.time.timestamp():
             self.expired = True   
         else:
             self.expired = False

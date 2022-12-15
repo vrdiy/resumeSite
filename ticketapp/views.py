@@ -248,15 +248,15 @@ def addToCart(request):
         #make sure the showing still exists, old tickets in cart for example would be an issue
         ticketlist = []
         for i in request.session["tickets"]:
+            ticket_ = json.loads(i)
             try:
-                showing_ = Showing.objects.get(id=i["showing"])
+                showing_ = Showing.objects.get(id=ticket_["showing"])
                 ticketlist.append(i)
+                print("appended ticket")
             except:
-                pass
+                print("showing does not exist")
         request.session["tickets"] = ticketlist
         request.session.modified = True
-
-        print(request.session["tickets"])
         data = json.loads(request.body)
         selectedTickets = data.get("selectedTickets_",None)
         selectedShowing = data.get("showingid",0)
@@ -295,8 +295,6 @@ def get_showings_by_date(request):
                 showingsForThisMovieToday = []
                 thisMoviesShowings = movie.showings.all()
                 for showing in thisMoviesShowings:
-                    print((showing.time))
-                    print(today)
 
                     if((showing.time.day == int(request.GET.get('day'))) and (showing.time.month == int(request.GET.get('month'))) and (showing.time.year == int(request.GET.get('year'))) and (showing.time.timestamp() > today.timestamp())):
                         showingsForThisMovieToday.append(showing.serialize())

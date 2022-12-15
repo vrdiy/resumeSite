@@ -42,14 +42,13 @@ let isAnyShowings = false;
 let buttonSelected = '';
 let showingSelectedID = 0;
 let movieGifs = {};
-let pageMeta = {};
 
 function setButtonSelected(element){
   buttonSelected = (element).getAttribute("id");
   element.style.textDecoration = "underline";
   element.style.backgroundColor = "#AACCCC";
   element.style.fontWeight = "bolder";
-  console.log(parseInt((element).getAttribute("id").slice(8)))
+  //console.log(parseInt((element).getAttribute("id").slice(8)))
   showingSelectedID = parseInt((element).getAttribute("id").slice(8));
 }
 //function for stylizing and event handling for buttons
@@ -88,7 +87,6 @@ function setButtonEvents(){
 //----------------------- P5 CANVAS STARTS HERE -----------------------------------------------
 
 let img;
-let overBox = false;
 let numCols = 8; //need to be the same as THEATER_COLUMNS in models.py
 let numRows = 10; //need to be the same as THEATER_ROWS in models.py
 let mouseDown = false;
@@ -98,12 +96,10 @@ let boxRadius = canvasWidth/numCols*0.35;
 let theaterSeats = canvasHeight*0.6;
 let theaterScreen;
 let THEATERSCREENPADDING = 7.5; //pixels
-let submitted = false;
 let revealUI = false;
 let mouseDownOverButton = false;
 
 let buttonHeight = parseFloat(((canvasHeight- theaterSeats)-canvasWidth*9/16));
-let playing = false;
 let vidLoaded = true;
 
 let p5font;
@@ -143,30 +139,24 @@ function setup() {
   canvdiv = document.querySelector('#p5app');
   textFont(p5font);
   textSize(p5fontsize);
- // textAlign(CENTER, CENTER);
-  //canv.style('background-image',curtainsimg);
-  //canv.style('top','5px');
   canv.style('border','5px solid grey');
-  //canv.style('border-radius', '3px');
   rectMode(RADIUS);
   strokeWeight(1);
-  //theaterScreen = createVideo([video],vidLoad);
   theaterScreen = loadImage(video)
   mouseicon = loadImage(ticketicon);
-  //theaterScreen.size(canvasWidth-15,canvasWidth*9/16);
-  //theaterScreen.size(100,100);
-  //theaterScreen.parent('p5app');
-  //theaterScreen.hide();
 }
 
 let gif_url = null;
 function reloadTheaterScreen(){
-  console.log("reloadgif")
+  //console.log("reloadgif")
   try{
     if(gif_url != null){
       theaterScreen = loadImage(gif_url, result =>{},error =>{
         theaterScreen = loadImage(video);
       });
+    }else{
+    theaterScreen = loadImage(video);
+
     }
   }
   catch (error){
@@ -178,10 +168,6 @@ function mousePressed() {
     revealUI = true;
   }
     mouseDown = true;
-    if(vidLoaded){
-      //theaterScreen.loop();
-      //theaterScreen.volume(0);
-    }
 }
 
 function mouseReleased() {
@@ -221,9 +207,7 @@ function draw() {
     text('Loading...',(canvasWidth/6),canvasHeight/2);
     return;
   }
-  if(submitted){
-    //return;
-  }
+  
   background(255);
   noCursor();
   for (let i = 1; i <= numCols; i++){
@@ -246,7 +230,7 @@ function draw() {
             fill(83, 83, 158);
             mouseDownOverButton = false;
             if(canSelect){
-              if(!cartSeats[i-1][j-1])
+              if((!cartSeats[i-1][j-1]) && (!occupiedSeats[i-1][j-1]))
               selectedSeats[i-1][j-1] = !selectedSeats[i-1][j-1];
               //canSelect = false;
             }
@@ -282,24 +266,21 @@ function draw() {
       }
     }
       fill(255,0,0);
-      //filter(OPAQUE);
       if(vidLoaded){
         image(theaterScreen,THEATERSCREENPADDING,THEATERSCREENPADDING,canvasWidth-15,canvasWidth*9/16);
         image(theaterScreen,THEATERSCREENPADDING,THEATERSCREENPADDING,canvasWidth-15,canvasWidth*9/16);
 
-        //filter(POSTERIZE,4);
-        //filter(GRAY);
       }
       
       submitRect();
       image(mouseicon,mouseX,mouseY);
-      //rect(0,canvasWidth*9/16 + button.height/2 + THEATERSCREENPADDING, canvasWidth, button.height/2.5);
+      
   }
   
   
   function submitRect(){
   //rect( x, y, w, h, tl, tr, br, bl )
-  //rectangles are also drawn from the center
+  //rectangles are also drawn from the center, I think?
   this.x = 0;
   this.y = (canvasWidth*9/16) + (buttonHeight/2) + THEATERSCREENPADDING;
   this.w = canvasWidth;
@@ -314,7 +295,6 @@ function draw() {
       if(mouseDown){
         if(canSelect){
           addToCart(selectedSeats,showingSelectedID);
-          submitted = true;
           canSelect = false;
         }
       }
@@ -361,7 +341,7 @@ function addToCart(tickets_, showingid = 0){
       counter++;
     }
   }
-      console.log(JSON.stringify({'selectedTickets_': selectedTickets}));
+      //console.log(JSON.stringify({'selectedTickets_': selectedTickets}));
   fetch(`/cart/add`,{
     credentials : 'same-origin',
     method: "POST",
@@ -380,12 +360,12 @@ function addToCart(tickets_, showingid = 0){
         }
         )
         .then(cartTickets =>{
-          console.log(cartTickets.cartTickets)
-          console.log(tickets)
+          //console.log(cartTickets.cartTickets)
+          //console.log(tickets)
           tickets = cartTickets["cartTickets"];
         })
         .then(result =>{
-          console.log(`get seats for showing: ${showingid}`);
+          //console.log(`get seats for showing: ${showingid}`);
           get_seats(showingid);
         })
 			return response.json();
@@ -406,9 +386,10 @@ function get_seats(showingid = 0){
 		}
 	})
 	.then(showing => {
-    console.log(showing)
-    console.log(showing.gif)
+    //console.log(showing)
+    //console.log(showing.gif)
     gif_url = null;
+    //console.log(showing.gif)
     if(showing.gif != null){
       gif_url = showing.gif;
       //reloadTheaterScreen(showing.gif);
@@ -423,10 +404,10 @@ function get_seats(showingid = 0){
     if(tickets){
       for (let i = 0; i < tickets.length; i++) {
         formattedTicket = JSON.parse(tickets[i]);
-        console.log(formattedTicket.showing.id);
-        console.log(showingid);
+        //console.log(formattedTicket.showing.id);
+        //console.log(showingid);
         if(parseInt( formattedTicket.showing.id) === parseInt(showingid)){
-          console.log("matching")
+          //console.log("matching")
           cartSeats[formattedTicket.column-1][formattedTicket.row-1] = true;
         }
       }
@@ -464,7 +445,7 @@ function get_showings_by_date(pagenum = 1,date= new Date()){
     moviesdiv = document.querySelector("#subcontainer");
     moviesdiv.innerHTML = '';
     //console.log(movieGifs[5])
-    console.log(response)
+    //console.log(response)
     if(response){
       response.forEach(showings =>{
           showings.forEach(showing =>{
