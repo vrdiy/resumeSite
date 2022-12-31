@@ -1,10 +1,10 @@
 services:
   db:
-    image: postgres
+    image: postgres:13.0-alpine
     volumes:
-      - ./data/db:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data/
     environment:
-      - POSTGRES_DB=postgres
+      - POSTGRES_DB=postgresdb
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
   web:
@@ -13,10 +13,10 @@ services:
     volumes:
       - .:/code
     ports:
-      - "8000:8000"
-    environment:
-      - POSTGRES_NAME=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - 8000:8000
+    env_file:
+      - ./.env.dev
     depends_on:
       - db
+volumes:
+  postgres_data:

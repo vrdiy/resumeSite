@@ -2,7 +2,6 @@
 from datetime import datetime, timedelta
 from email.policy import default
 import json
-from msilib.schema import Error
 from queue import Empty
 from re import U
 from telnetlib import STATUS

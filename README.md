@@ -34,7 +34,7 @@ helpers.py has two important functions, pagePack and createShowings. pagePack is
 
 admin.py has basic implementation of each model for manipulation on the admin page.
 
---------Running the app--------
+#--------Running the app--------
 p5 is included in my static files, there is no need to go get it elsewhere but it is available online https://cdn.jsdelivr.net/npm/p5/lib/
 To run simply:
 python manage.py makemigrations
@@ -44,3 +44,26 @@ python manage.py runserver
 The tables need to be created for the app to work, but they can be empty. I've included my database but if you do not have it, for showings to be created there needs to be movies, these can be added through the admin portal. From there everything should be very intuitive.
 
 Lastly I do want to thank whoever you are for reading this, and I am grateful for this class because I believe this will be a stepping stone for my life. Thank you -Anthony
+
+#----Running the container--------
+This project has been changed to run on Docker with Postgres, using gunicorn, nginx, and letsencrypt. The implementation is almost identical to that from this blogpost:
+https://testdriven.io/blog/dockerizing-django-with-postgres-gunicorn-and-nginx/
+
+Production and staging configurations are held in a private google drive, but the concepts are the same as the dev version.
+
+in .env.BUILDOFCHOICE make sure to change the secret key, and make sure allowed hosts aren't * (wildcarded)
+
+To spin up a given configuration use the following pattern:
+
+`docker-compose -f docker-compose.BUILDOFCHOICE.yml up -d --build`
+
+make migrations:
+`docker-compose -f docker-compose.BUILDOFCHOICE.yml exec WEBAPPSERVICE python manage.py makemigrations APPNAME`
+Create tables:
+`docker-compose -f docker-compose.BUILDOFCHOICE.yml exec WEBAPPSERVICE python manage.py migrate --noinput --run-syncdb`
+
+Move all app static files into one directory to be served:
+`docker-compose -f docker-compose.BUILDOFCHOICE.yml exec WEBAPPSERVICE python manage.py collectstatic --noinput --clear`
+
+
+

@@ -6,3 +6,5 @@ ticketproj/__pycache__/
 *.prod*
 *.staging*
 staticfiles/
+mediafiles/
+
