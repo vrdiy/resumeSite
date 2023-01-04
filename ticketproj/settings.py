@@ -9,6 +9,9 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
+from ticketapp.settings import *
+from network.settings import *
+
 
 from pathlib import Path
 import os
@@ -37,6 +40,8 @@ ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
 INSTALLED_APPS = [
     'ticketapp',
     'upload',
+    'network',
+    'hub',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -78,15 +83,25 @@ WSGI_APPLICATION = 'ticketproj.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
+DATABASE_ROUTERS = ['ticketproj.routers.TicketAppRouter','ticketproj.routers.NetworkRouter']
 
 DATABASES = {
-    'default': {
-        "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.sqlite3"),
-        "NAME": os.environ.get("SQL_DATABASE", BASE_DIR / "db.sqlite3"),
-        "USER": os.environ.get("SQL_USER", "user"),
-        "PASSWORD": os.environ.get("SQL_PASSWORD", "password"),
-        "HOST": os.environ.get("SQL_HOST", "localhost"),
-        "PORT": os.environ.get("SQL_PORT", "5432"),
+    'default' : {},
+    'ticketapp': {
+        "ENGINE": os.environ.get("SQL_ENGINE_TICKETAPP", "django.db.backends.sqlite3"),
+        "NAME": os.environ.get("SQL_DATABASE_TICKETAPP", BASE_DIR / "db.sqlite3"),
+        "USER": os.environ.get("SQL_USER_TICKETAPP", "user"),
+        "PASSWORD": os.environ.get("SQL_PASSWORD_TICKETAPP", "password"),
+        "HOST": os.environ.get("SQL_HOST_TICKETAPP", "localhost"),
+        "PORT": os.environ.get("SQL_PORT_TICKETAPP", "5432"),
+    },
+    'network': {
+        "ENGINE": os.environ.get("SQL_ENGINE_NETWORK", "django.db.backends.sqlite3"),
+        "NAME": os.environ.get("SQL_DATABASE_NETWORK", BASE_DIR / "db.sqlite3"),
+        "USER": os.environ.get("SQL_USER_NETWORK", "user"),
+        "PASSWORD": os.environ.get("SQL_PASSWORD_NETWORK", "password"),
+        "HOST": os.environ.get("SQL_HOST_NETWORK", "localhost"),
+        "PORT": os.environ.get("SQL_PORT_NETWORK", "5431"),
     }
 }
 
@@ -138,4 +153,4 @@ MEDIA_ROOT = BASE_DIR / "mediafiles"
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-AUTH_USER_MODEL = 'ticketapp.User'
+AUTH_USER_MODEL = 'auth.User'

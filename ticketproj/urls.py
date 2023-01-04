@@ -21,7 +21,9 @@ from django.conf.urls.static import static
 from upload.views import image_upload
 
 urlpatterns = [
-    path("", include("ticketapp.urls")),
+    path("", include("hub.urls")),
+    path("ticketapp/", include("ticketapp.urls")),
+    path("network/",include('network.urls')),
     path("upload",image_upload, name="upload"),
     path('admin/', admin.site.urls),
 ]

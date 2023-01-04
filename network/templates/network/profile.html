@@ -1,0 +1,53 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block title %}
+{{userinfo.username}}
+{% endblock %}
+{%block pageid%}
+{{userinfo.id}}
+{%endblock%}
+{% block body %}
+<div id="compose-post">
+    <button id="showposts">Back to Posts</button>
+<form id="post-form">
+    
+    <textarea id="text-content" type="textarea" placeholder="What's new?"></textarea>
+    <input id="submit-post" type="submit" value="Post" style="font-size: 25px;">
+</form>
+</div>
+<div id="profile">
+    <p style="margin-bottom: 0px;"><strong style="font-size: 35px; color: #b5b399;">{{ userinfo.username }}</strong></p>
+        <span>Followers: </span><span id="followercount">{{ userinfo.followers }}</span>
+        <span>Following: </span><span id="followingcount">{{ userinfo.following }}</span>
+        {% if user.is_authenticated %}
+        {% if user.id != userinfo.id %}
+        <button id="followbutton">
+        {% if userinfo.isfollowing %}
+        Unfollow
+        {% else %}
+        Follow
+        {%endif%}
+    </button>
+    {% endif %}
+    {% endif %}
+    
+</div>
+
+<div id="posts">
+    Posts here!
+</div>
+{% endblock %}
+
+
+{% block script %}
+    <script>
+        var likebuttonimg  = "{% static 'network/likebutton.png' %}";
+        var haventlikedbuttonimg  = "{% static 'network/haventlikedbutton.png' %}";
+        var editbuttonimg = "{% static 'network/editbutton.png' %}";
+    
+    </script>
+    <script src="{% static 'network/logic.js' %}">
+    </script>
+{% endblock script %}
+

@@ -1,0 +1,35 @@
+body{
+
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+
+}
+
+h1{
+    text-align: center;
+    padding-top: 2vh;
+    margin-right: 2vw;
+    margin-left: 2vw;
+    border-bottom: 2px solid black;
+
+}
+ul{
+    text-align: center;
+    margin-top: 10px;
+}
+.about{
+    margin: 25px;
+    border: 1px solid black;
+    font-size: 2vh;
+    text-align: center;
+}
+.bar{
+    padding: 5px;
+    border-collapse: collapse;
+    border-right: 2px solid black;
+    text-align: center;
+    display: inline;
+    padding: 10px;
+}
+.bar:last-child{
+    border-width: 0px;
+}

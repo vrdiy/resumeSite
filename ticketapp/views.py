@@ -23,7 +23,7 @@ from django.shortcuts import render
 # Create your views here.
 from django.http import HttpResponse
 
-from ticketapp.models import Showing, Movie, User, Ticket, Review
+from ticketapp.models import Showing, Movie, TicketUser, Ticket, Review
 from ticketapp.helpers import pagePack, createShowings, timezoneEST
 from datetime import datetime, timedelta, timezone
 

@@ -1,0 +1,42 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>{% block title %}Home{% endblock %}</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <link href="{% static 'styles.css' %}" rel="stylesheet">
+        {% block script %}
+        {% endblock %}
+    </head>
+    <body>
+        <div class="banner">
+            <h1>anthonyverdi(.com)</h1>
+            <h2>
+
+                <ul>
+                    <li class="bar">
+                        <a href="{% url 'about' %}">about me</a>
+                    </li>
+                    <li class="bar">
+                        gallery
+                    </li>
+                    <li class="bar">
+                        <a href="{% url 'ticketapp:index' %}">ticketapp</a>
+                    </li>
+                    <li class="bar">
+                        network
+                    </li>
+                    
+                    
+                </ul>
+            </h2>
+        </div>
+        
+        
+        <div class="body">
+            {% block body %}
+            {% endblock %}
+        </div>
+    </body>
+</html>

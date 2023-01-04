@@ -1,12 +1,21 @@
 services:
-  db:
+  ticketapp:
     image: postgres:13.0-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-    environment:
-      - POSTGRES_DB=postgresdb
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+    env_file:
+      - ./.env.dev.ticketapp
+  network:
+    image: postgres:13.0-alpine
+    volumes:
+      - postgres2_data:/var/lib/postgresql2/data/
+    env_file:
+      - ./.env.dev.network
+    expose:
+      - '5431'
+    ports:
+      - '5431:5431'
+    command: -p 5431
   web:
     build: .
     command: python manage.py runserver 0.0.0.0:8000
@@ -17,6 +26,8 @@ services:
     env_file:
       - ./.env.dev
     depends_on:
-      - db
+      - ticketapp
+      - network
 volumes:
   postgres_data:
+  postgres2_data:

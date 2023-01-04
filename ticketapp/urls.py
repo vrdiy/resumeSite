@@ -1,6 +1,6 @@
-from django.urls import path
+from django.urls import include, path
 from ticketapp import views
-
+app_name = 'ticketapp'
 urlpatterns = [
     path("", views.home, name="index"),
     path("seats/<int:id>",views.get_seats, name="get_seats"),
@@ -17,5 +17,5 @@ urlpatterns = [
     path("account/tickets", views.account_tickets, name="accounttickets"),
     path("login", views.login_view, name="login"),
     path("logout", views.logout_view, name="logout"),
-    path("register", views.register, name="register")
+    path("register", views.register, name="register"),
 ]

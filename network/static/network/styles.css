@@ -1,0 +1,53 @@
+.body{
+    padding: 15px;
+}
+#compose-post{
+    color: red;
+    border-top: 1px solid grey;
+    background-color: beige !important;
+}
+#text-content {
+    width: 40vw;
+    height:20vh;
+    font-size: 25px;
+    background-color: beige !important;
+}
+
+.post{
+    border: 1px solid grey;
+    border-radius: 5px;
+    background-color: beige;
+    margin: 5px;
+    padding: 10px;
+    white-space: pre-wrap;
+}
+
+.postinnercontent{
+
+    font-size:25px;
+    font-family: sans-serif;
+    
+}
+textarea{
+    text-align: justify;
+    border-radius: 5px;
+    font-family: sans-serif;
+    margin: 5px;
+    background-color: beige;
+}
+button{
+
+    text-align: justify;
+    border-radius: 5px;
+    font-family: sans-serif;
+    margin: 5px;
+    background-color: beige;
+}
+#submit-post{
+
+    text-align: justify;
+    border-radius: 5px;
+    font-family: sans-serif;
+    margin: 5px;
+    background-color: beige;
+}

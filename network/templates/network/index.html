@@ -1,0 +1,40 @@
+{% extends "network/layout.html" %}
+{% load static %}
+{%block pageid%}
+0
+{%endblock%}
+{% block body %}
+<div id="compose-post">
+    <button id="showposts">Back to Posts</button>
+<form id="post-form">
+    
+    <textarea id="text-content" type="textarea" placeholder="What's new?"></textarea>
+    <input id="submit-post" type="submit" value="Post" style="font-size: 25px;">
+</form>
+</div>
+
+<div id="profile">
+</div>
+
+{% if user.is_authenticated %}
+<div id="following">
+
+</div>
+{% endif %}
+<div id="posts">
+    Posts here!
+</div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        var profileid = "{{stuff}}";
+        var likebuttonimg  = "{% static 'network/likebutton.png' %}";
+        var haventlikedbuttonimg  = "{% static 'network/haventlikedbutton.png' %}";
+        var editbuttonimg = "{% static 'network/editbutton.png' %}";
+    
+    </script>
+    <script src="{% static 'network/logic.js' %}">
+    </script>
+{% endblock script %}
+
