@@ -11,7 +11,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator
 import html
-from .models import User, Post
+from .models import NetworkUser, Post
 
 
 
@@ -22,8 +22,8 @@ def index(request):
 
 def load_profile(request,id):
     try: 
-        User.objects.get(id=id)
-        profile = User.objects.get(id=id)
+        NetworkUser.objects.get(id=id)
+        profile = NetworkUser.objects.get(id=id)
         followers = profile.followers.all()
         follower = followers.filter(id=request.user.id)
         if not follower:
@@ -31,7 +31,7 @@ def load_profile(request,id):
         else:
             follows = True
         userinfo = {"username": profile.username,"id": profile.id, "followers": profile.follower_count(),"following": profile.following_count(), "isfollowing": follows}
-    except User.DoesNotExist:
+    except NetworkUser.DoesNotExist:
         
         return JsonResponse({"error": "Profile could not be found."}, status=400)
 
@@ -44,7 +44,7 @@ def follow_user(request,userid):
     if request.method != "POST":
         return JsonResponse({"error": "POST request required."}, status=400)
 
-    usertofollow = User.objects.get(id=userid)
+    usertofollow = NetworkUser.objects.get(id=userid)
     
     for followers in usertofollow.followers.all():
         if followers == request.user:
@@ -112,13 +112,13 @@ def editpost(request):
 def getposts(request,id):
     if(id != 0):
         try:
-            user_ = User.objects.get(id=id)
+            user_ = NetworkUser.objects.get(id=id)
             posts = Post.objects.filter(user=user_)
-        except User.DoesNotExist:
+        except NetworkUser.DoesNotExist:
             return JsonResponse({"error": "User does not exist."}, status=400)
 
     elif(request.GET.get('following') == "true"):
-        user_ = User.objects.get(id=request.user.id)
+        user_ = NetworkUser.objects.get(id=request.user.id)
         posts = Post.objects.filter(user__in=user_.following.all())
 
     else:
@@ -204,7 +204,7 @@ def register(request):
 
         # Attempt to create new user
         try:
-            user = User.objects.create_user(username, email, password)
+            user = NetworkUser.objects.create_user(username, email, password)
             user.save()
         except IntegrityError:
             return render(request, "network/register.html", {

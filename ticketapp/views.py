@@ -59,7 +59,7 @@ def userreviews(request):
         serializedReviews.append(review.serialize())
 
     if request.user.is_authenticated:
-        user_ = User.objects.get(id=request.user.id)
+        user_ = TicketUser.objects.get(id=request.user.id)
         thisUsersReviews = mov.reviews.filter(user=user_)
         
 
@@ -75,7 +75,7 @@ def reviews(request):
     if request.method == "POST":
         if not request.user.is_authenticated:
             return HttpResponseRedirect(reverse('login'))
-        user_ = User.objects.get(id=request.user.id)
+        user_ = TicketUser.objects.get(id=request.user.id)
         movie_ = Movie.objects.get(id=request.POST["movieid"])
         #review = Review(user = user_,content = request.POST["comment"],movie = movie_,rating=int(request.POST["rating"]))
 
@@ -139,7 +139,7 @@ def validateCartTickets(request):
     validTickets = []
     invalidTickets = []
     invalidAdjacentTickets = []
-    user_ = User.objects.get(id=request.user.id)
+    user_ = TicketUser.objects.get(id=request.user.id)
     for ticket in tickets:
         ticket_ = json.loads(ticket)
        
@@ -188,7 +188,7 @@ def confirmpurchase(request):
             else:
                 
                 showings_ = Showing.objects.all()
-                user_ = User.objects.get(id=request.user.id)
+                user_ = TicketUser.objects.get(id=request.user.id)
                 ticketObjs = json.loads(response.content)['validTickets']
                 
                 for ticket in ticketObjs:
@@ -327,7 +327,7 @@ def account_view(request):
 
 def account_tickets(request):
     if(request.user.is_authenticated):
-        user_ = User.objects.get(id=request.user.id)
+        user_ = TicketUser.objects.get(id=request.user.id)
         ownedTickets = Ticket.objects.filter(holder=user_)
         ownedTickets = ownedTickets.order_by("-showing")
         serializedTickets = []
@@ -396,7 +396,7 @@ def register(request):
 
         # Attempt to create new user
         try:
-            user = User.objects.create_user(username, email, password)
+            user = TicketUser.objects.create_user(username, email, password)
             user.save()
         except IntegrityError:
             return render(request, "ticketapp/register.html", {

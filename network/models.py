@@ -1,8 +1,10 @@
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.db import models
 
 
 class NetworkUser(AbstractUser):
+    groups = models.ManyToManyField(Group,related_name='network_users')
+    user_permissions = models.ManyToManyField(Permission,related_name='permissions')
     following = models.ManyToManyField("NetworkUser", related_name="followers")
     def follower_count(self):
         return self.followers.all().count()

@@ -1,5 +1,5 @@
 from django.core.paginator import Paginator
-from ticketapp.models import Showing, Movie, User, Ticket, Review
+from ticketapp.models import Showing, Movie, TicketUser, Ticket, Review
 from datetime import datetime, timedelta, timezone
 from random import random
 

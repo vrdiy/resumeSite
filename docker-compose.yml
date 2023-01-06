@@ -1,21 +1,37 @@
 services:
-  ticketapp:
+  users:
     image: postgres:13.0-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
-      - ./.env.dev.ticketapp
-  network:
+      - ./.env.dev.users
+    expose:
+      - '5432'
+    ports:
+      - '5432:5432'
+    command: -p 5432
+  ticketapp:
     image: postgres:13.0-alpine
     volumes:
       - postgres2_data:/var/lib/postgresql2/data/
     env_file:
-      - ./.env.dev.network
+      - ./.env.dev.ticketapp
     expose:
       - '5431'
     ports:
       - '5431:5431'
     command: -p 5431
+  network:
+    image: postgres:13.0-alpine
+    volumes:
+      - postgres3_data:/var/lib/postgresql3/data/
+    env_file:
+      - ./.env.dev.network
+    expose:
+      - '5430'
+    ports:
+      - '5430:5430'
+    command: -p 5430
   web:
     build: .
     command: python manage.py runserver 0.0.0.0:8000
@@ -26,8 +42,10 @@ services:
     env_file:
       - ./.env.dev
     depends_on:
+      - users
       - ticketapp
       - network
 volumes:
   postgres_data:
   postgres2_data:
+  postgres3_data:

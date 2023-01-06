@@ -1,6 +1,6 @@
 
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.core.validators import MaxValueValidator, MinValueValidator
 from datetime import datetime, timedelta, timezone
 THEATER_COLUMNS = 8
@@ -10,6 +10,7 @@ class TicketUser(AbstractUser):
     pass
 
 class Ticket(models.Model):
+    email = models.EmailField(verbose_name='email address', max_length=255)
     holder = models.ForeignKey("TicketUser",on_delete=models.CASCADE,related_name="tickets")
     showing = models.ForeignKey("Showing",on_delete=models.CASCADE,related_name="seats_taken")
     timestamp = models.DateTimeField(auto_now_add=True)
