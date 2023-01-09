@@ -2,8 +2,41 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 # Create your models here.
 
+class SiteUserAccountManager(BaseUserManager):
+    def create_user(self, email, name, password=None):
+        if not email:
+            raise ValueError('Users must provide email')
+
+        email = self.normalize_email(email)
+        email = email.lower()
+
+        user = self.model(
+            email=email,
+            name=name
+        )
+
+        user.set_password(password)
+        user.save(using=self._db)
+
+        return user
+
+    def create_superuser(self, email, name, password=None):
+        user = self.create_user(email, name, password)
+
+        user.is_superuser = True
+        user.is_admin = True
+
+        user.save(using=self._db)
+
+        return user
+
+
 class SiteUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(verbose_name='email address', max_length=255,unique=True)
     date_of_birth = models.DateField()
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
+
+
+    def __str__(self):
+        return self.email

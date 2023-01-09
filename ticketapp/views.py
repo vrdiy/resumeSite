@@ -1,32 +1,22 @@
 
 from datetime import datetime, timedelta
-from email.policy import default
 import json
-from queue import Empty
-from re import U
-from telnetlib import STATUS
-from django import forms
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.forms import ModelForm
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator
 from django.templatetags.static import static
-import html
 from django.shortcuts import render
 
-
-# Create your views here.
-from django.http import HttpResponse
-
 from ticketapp.models import Showing, Movie, TicketUser, Ticket, Review
-from ticketapp.helpers import pagePack, createShowings, timezoneEST
+from ticketapp.helpers import pagePack, createShowings
 from datetime import datetime, timedelta, timezone
 
+from user.models import SiteUser
 
 def home(request):
     movieObjs = Movie.objects.all()
@@ -396,7 +386,7 @@ def register(request):
 
         # Attempt to create new user
         try:
-            user = TicketUser.objects.create_user(username, email, password)
+            user = SiteUser.objects.create_user(username, email, password)
             user.save()
         except IntegrityError:
             return render(request, "ticketapp/register.html", {

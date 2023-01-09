@@ -1,10 +1,7 @@
 import json
-from telnetlib import STATUS
-from django import forms
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.forms import ModelForm
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
@@ -12,6 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator
 import html
 from .models import NetworkUser, Post
+from user.models import SiteUser
 
 
 
@@ -204,7 +202,7 @@ def register(request):
 
         # Attempt to create new user
         try:
-            user = NetworkUser.objects.create_user(username, email, password)
+            user = SiteUser.objects.create_user(username, email, password)
             user.save()
         except IntegrityError:
             return render(request, "network/register.html", {
