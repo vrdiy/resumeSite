@@ -38,5 +38,10 @@ class SiteUser(AbstractBaseUser, PermissionsMixin):
     is_admin = models.BooleanField(default=False)
 
 
+    objects = SiteUserAccountManager()
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['name']
+
     def __str__(self):
         return self.email

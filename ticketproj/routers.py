@@ -4,11 +4,12 @@ class UserRouter:
     A router to control all database operations on models in the
     user application
     """
+    route_app_labels = {'user', 'admin', 'contenttypes','sessions',}
     def db_for_read(self, model, **hints):
         """
         Attempts to read user models go to user database.
         """
-        if model._meta.app_label == 'user':
+        if model._meta.app_label in self.route_app_labels:
             return 'users'
         return None
 
@@ -16,7 +17,7 @@ class UserRouter:
         """
         Attempts to write user models go to user database.
         """
-        if model._meta.app_label == 'user':
+        if model._meta.app_label in self.route_app_labels:
             return 'users'
         return None
 
@@ -24,8 +25,8 @@ class UserRouter:
         """
         Allow relations if a model in the user app is involved.
         """
-        if obj1._meta.app_label == 'user' or \
-            obj2._meta.app_label == 'user':
+        if obj1._meta.app_label in self.route_app_labels or \
+            obj2._meta.app_label in self.route_app_labels:
             return True
         return None
 
@@ -34,7 +35,7 @@ class UserRouter:
         Make sure the user app only appears in the 'user'
         database.
         """
-        if app_label == 'user':
+        if app_label in self.route_app_labels:
             return db == 'users'
         return None
 
@@ -43,11 +44,12 @@ class TicketAppRouter:
     A router to control all database operations on models in the
     ticketapp application
     """
+    route_app_labels = {'ticketapp'}
     def db_for_read(self, model, **hints):
         """
         Attempts to read ticketapp models go to ticketapp database.
         """
-        if model._meta.app_label == 'ticketapp':
+        if model._meta.app_label in self.route_app_labels:
             return 'ticketapp'
         return None
 
@@ -55,7 +57,7 @@ class TicketAppRouter:
         """
         Attempts to write ticketapp models go to ticketapp database.
         """
-        if model._meta.app_label == 'ticketapp':
+        if model._meta.app_label in self.route_app_labels:
             return 'ticketapp'
         return None
 
@@ -63,8 +65,8 @@ class TicketAppRouter:
         """
         Allow relations if a model in the ticketapp app is involved.
         """
-        if obj1._meta.app_label == 'ticketapp' or \
-           obj2._meta.app_label == 'ticketapp':
+        if obj1._meta.app_label in self.route_app_labels or \
+           obj2._meta.app_label in self.route_app_labels:
            return True
         return None
 
@@ -73,7 +75,7 @@ class TicketAppRouter:
         Make sure the ticketapp app only appears in the 'ticketapp'
         database.
         """
-        if app_label == 'ticketapp':
+        if app_label in self.route_app_labels:
             return db == 'ticketapp'
         return None
 
