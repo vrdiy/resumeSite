@@ -17,6 +17,8 @@ from ticketapp.helpers import pagePack, createShowings
 from datetime import datetime, timedelta, timezone
 
 from user.models import SiteUser
+from network.models import NetworkProfile
+
 
 def home(request):
     movieObjs = Movie.objects.all()
@@ -143,7 +145,7 @@ def validateCartTickets(request):
             tempTicket = Ticket.objects.get(showing = showing_,tcolumn = ticket_["column"],trow = ticket_["row"])
             newTicketWasCreated = False
         except Ticket.DoesNotExist:
-            tempTicket = Ticket(holder = user_,showing = showing_,tcolumn = ticket_["column"],trow = ticket_["row"])
+            tempTicket = Ticket(email = user_.email,showing = showing_,tcolumn = ticket_["column"],trow = ticket_["row"])
             newTicketWasCreated = True
 
         showing_.checkExpiration()
@@ -178,12 +180,12 @@ def confirmpurchase(request):
             else:
                 
                 showings_ = Showing.objects.all()
-                user_ = TicketUser.objects.get(id=request.user.id)
+                user_ = SiteUser.objects.get(id=request.user.id)
                 ticketObjs = json.loads(response.content)['validTickets']
                 
                 for ticket in ticketObjs:
                     showing_ = Showing.objects.get(id=ticket["showing"]["id"])
-                    ticket = Ticket(holder = user_,showing = showing_,tcolumn = ticket["column"],trow = ticket["row"])
+                    ticket = Ticket(email = user_.email,showing = showing_,tcolumn = ticket["column"],trow = ticket["row"])
                     ticket.save()
                     request.session["tickets"] = []
                     request.session.modified = True
@@ -318,7 +320,7 @@ def account_view(request):
 def account_tickets(request):
     if(request.user.is_authenticated):
         user_ = TicketUser.objects.get(id=request.user.id)
-        ownedTickets = Ticket.objects.filter(holder=user_)
+        ownedTickets = Ticket.objects.filter(email=user_.email)
         ownedTickets = ownedTickets.order_by("-showing")
         serializedTickets = []
 
@@ -330,7 +332,8 @@ def account_tickets(request):
                 ticket.checkExpiration()
                 serializedTickets.append(ticket.serialize())
             
-            #same operation as pagePack function but done seperate because of ticket expiration check. Otherwise would check all tickets or have to parse them out of paginated list.
+            #same operation as pagePack function but done seperate because of ticket expiration check.
+            #Otherwise would check all tickets instead of just this page, or have to parse them out of paginated list.
             pagemeta = {}
             pagemeta['count']= paginator.count
             pagemeta['num_pages']= paginator.num_pages
@@ -393,6 +396,15 @@ def register(request):
             return render(request, "ticketapp/register.html", {
                 "message": "Username already taken."
             })
+        try:
+            user = SiteUser.objects.get(email=(request.POST["email"]).lower())
+        except IntegrityError:
+            return render(request, "ticketapp/register.html", {
+                "message": "Account Not Found"
+            })
+            
+        networkAccount = NetworkProfile(id=user.id,email=user.email,username = user.username)
+        networkAccount.save()
         login(request, user)
         return HttpResponseRedirect(reverse("index"))
     else:

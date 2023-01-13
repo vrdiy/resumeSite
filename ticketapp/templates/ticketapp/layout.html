@@ -12,31 +12,31 @@
     <body>
 
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <a class="navbar-brand" href="{% url 'index' %}">TicketPal</a>
+            <a class="navbar-brand" href="{% url 'ticketapp:index' %}">TicketPal</a>
           
             <div>
               <ul class="navbar-nav" id="navtop">
                 {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'account' %}"><strong>My Tickets</strong></a>
+                        <a class="nav-link" href="{% url 'ticketapp:account' %}"><strong>My Tickets</strong></a>
                     </li>
                 {% endif %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'confirmpurchase' %}"><strong>Cart</strong></a>
+                    <a class="nav-link" href="{% url 'ticketapp:confirmpurchase' %}"><strong>Cart</strong></a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="{% url 'reviews' %}">Movies</a>
+                  <a class="nav-link" href="{% url 'ticketapp:reviews' %}">Movies</a>
                 </li>
                 {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
+                        <a class="nav-link" href="{% url 'ticketapp:logout' %}">Log Out</a>
                     </li>
                 {% else %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'login' %}">Log In</a>
+                        <a class="nav-link" href="{% url 'ticketapp:login' %}">Log In</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'register' %}">Register</a>
+                        <a class="nav-link" href="{% url 'ticketapp:register' %}">Register</a>
                     </li>
                 {% endif %}
               </ul>

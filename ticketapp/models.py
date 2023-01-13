@@ -7,9 +7,8 @@ from user.models import SiteUser
 THEATER_COLUMNS = 8
 THEATER_ROWS = 10
 
-class TicketUser(SiteUser):
+class TicketUser(models.Model):
     email = models.EmailField(max_length=255,unique=True)
-    tickets = models.ManyToOneRel
 
 
 class Ticket(models.Model):
@@ -89,7 +88,7 @@ class Review(models.Model):
             "rating" : self.rating
         }
     class Meta:
-        unique_together = ('user','movie')
+        unique_together = ('email','movie')
     
 
 
