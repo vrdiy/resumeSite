@@ -85,7 +85,7 @@ WSGI_APPLICATION = 'ticketproj.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 DATABASE_ROUTERS = ['ticketproj.routers.UserRouter','ticketproj.routers.TicketAppRouter','ticketproj.routers.NetworkRouter']
-
+SITE_ID = 1
 DATABASES = {
     'default' : {},
     'users' : {

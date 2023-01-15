@@ -360,7 +360,7 @@ def login_view(request):
         # Check if authentication successful
         if user is not None:
             login(request, user)
-            return HttpResponseRedirect(reverse("index"))
+            return HttpResponseRedirect(reverse("ticketapp:index"))
         else:
             return render(request, "ticketapp/login.html", {
                 "message": "Invalid username and/or password."
@@ -371,7 +371,7 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    return HttpResponseRedirect(reverse("index"))
+    return HttpResponseRedirect(reverse("ticketapp:index"))
 
 
 def register(request):
@@ -397,7 +397,7 @@ def register(request):
                 "message": "Username already taken."
             })
         try:
-            user = SiteUser.objects.get(email=(request.POST["email"]).lower())
+            user = SiteUser.objects.get(email=(request.POST["email"].lower()))
         except IntegrityError:
             return render(request, "ticketapp/register.html", {
                 "message": "Account Not Found"
