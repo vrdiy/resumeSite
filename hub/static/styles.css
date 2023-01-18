@@ -2,6 +2,7 @@ body{
 
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 
+    background-image: url('aiwebsitebackground.png');
 }
 
 h1{
@@ -18,9 +19,20 @@ ul{
 }
 .about{
     margin: 25px;
-    border: 1px solid black;
+    border: 1px solid  white;
     font-size: 2vh;
+    
     text-align: center;
+    background-color: lightgray;
+}
+footer{
+    color: lightgray;
+    font-size: small;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    text-shadow: 2px 2px black;
 }
 .bar{
     padding: 5px;

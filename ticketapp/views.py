@@ -405,6 +405,8 @@ def register(request):
             
         networkAccount = NetworkProfile(id=user.id,email=user.email,username = user.username)
         networkAccount.save()
+        ticketAccount = TicketUser(id=user.id,email=user.email)
+        ticketAccount.save()
         login(request, user)
         return HttpResponseRedirect(reverse("index"))
     else:

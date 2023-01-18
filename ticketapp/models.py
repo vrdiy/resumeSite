@@ -13,7 +13,7 @@ class TicketUser(models.Model):
 
 class Ticket(models.Model):
     email = models.EmailField(max_length=255)
-    #holder = models.ForeignKey("TicketUser",on_delete=models.CASCADE,related_name="tickets")
+    holder = models.ForeignKey("TicketUser",on_delete=models.CASCADE,related_name="tickets")
     showing = models.ForeignKey("Showing",on_delete=models.CASCADE,related_name="seats_taken")
     timestamp = models.DateTimeField(auto_now_add=True)
     tcolumn = models.IntegerField(validators=[MaxValueValidator(THEATER_COLUMNS), MinValueValidator(1)])
@@ -75,7 +75,7 @@ class Movie(models.Model):
 
 class Review(models.Model):
     email = models.EmailField(max_length=255)
-   # user = models.ForeignKey(TicketUser,on_delete=models.CASCADE,related_name="reviews")
+    holder = models.ForeignKey(TicketUser,on_delete=models.CASCADE,related_name="reviews")
     movie = models.ForeignKey(Movie,on_delete=models.CASCADE,related_name="reviews")
     content = models.TextField(default="No comment" ,max_length=500)
     rating = models.IntegerField(validators=[MaxValueValidator(5),MinValueValidator(0)])
