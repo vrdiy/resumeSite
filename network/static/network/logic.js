@@ -83,7 +83,7 @@ function page_bootstrap(id,currentpage){
 //-----------------------------------------
 
 function like_post(id){
-    fetch(`/likepost/${id}`,{
+    fetch(`likepost/${id}`,{
         method: 'POST',
         body: ""
         })
@@ -137,7 +137,7 @@ function edit_post(id){
 
 function try_edit(postid, textcontent){
     
-    fetch('/editpost',{
+    fetch('editpost',{
         method: 'POST',
         body: JSON.stringify({
             textcontent: textcontent,
@@ -168,7 +168,7 @@ function try_edit(postid, textcontent){
 }
 
 function follow_user(id){
-    fetch(`/followuser/${id}`,{
+    fetch(`followuser/${id}`,{
         method: 'POST',
         body: ""
         })
@@ -203,7 +203,8 @@ function show_posts(userid=0,pagenum=1,following = false){
     postsdiv.style.display = 'block';
     postsdiv.innerHTML = '';
 
-    if(following){history.replaceState("","","/");
+    if(following){
+        //history.replaceState("","","/");
         followingheader = document.createElement('strong');
         followingheader.innerHTML = "Following";
         followingheader.setAttribute("style","font-size: 35px; color: #b5b399;");
@@ -226,7 +227,7 @@ function show_posts(userid=0,pagenum=1,following = false){
         profilediv.innerHTML = '';
     }
 
-    fetch(`/getposts/${userid}?page_number=${pagenum}&following=${following}`)
+    fetch(`getposts/${userid}?page_number=${pagenum}&following=${following}`)
     .then(response => {
         if(response.status != 201){return false;}
         else{
@@ -265,7 +266,7 @@ function show_posts(userid=0,pagenum=1,following = false){
             const namelink = document.createElement('a');
             namelink.innerHTML = `${element.user}`;
             namelink.setAttribute("id",`nameButton-${element.user}`);
-            namelink.setAttribute("href",`/profile/${element.userid}`);
+            namelink.setAttribute("href",`profile/${element.userid}`);
            // namelink.addEventListener('click', () => load_profile(element.userid));
 
             const meta = document.createElement('p');
@@ -325,7 +326,7 @@ function compose_post(){
 function try_post(){
     const posttext = document.querySelector('#text-content').value;
 
-    fetch('/newpost',{
+    fetch('newpost',{
         method: 'POST',
         body: JSON.stringify({
             textcontent: posttext

@@ -22,8 +22,8 @@ from upload.views import image_upload
 
 urlpatterns = [
     path("", include("hub.urls")),
-    path("ticketapp/", include("ticketapp.urls")),
-    path("network/",include('network.urls')),
+    path("ticketapp/", include("ticketapp.urls",namespace="ticketapp")),
+    path("network/",include('network.urls', namespace="network")),
     path("upload",image_upload, name="upload"),
     path('admin/', admin.site.urls),
 ]

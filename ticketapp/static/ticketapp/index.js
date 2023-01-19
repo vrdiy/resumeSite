@@ -342,7 +342,7 @@ function addToCart(tickets_, showingid = 0){
     }
   }
       //console.log(JSON.stringify({'selectedTickets_': selectedTickets}));
-  fetch(`/cart/add`,{
+  fetch(`cart/add`,{
     credentials : 'same-origin',
     method: "POST",
     body: JSON.stringify(
@@ -354,7 +354,7 @@ function addToCart(tickets_, showingid = 0){
 		if(response.status != 200){return false;}
 		else{
       
-        fetch('/cart/data')
+        fetch('cart/data')
         .then(data =>{
           return data.json();
         }
@@ -378,7 +378,7 @@ function addToCart(tickets_, showingid = 0){
 function get_seats(showingid = 0){
 
 	
-	fetch(`/seats/${showingid}`)
+	fetch(`seats/${showingid}`)
 	.then(response => {
 		if(response.status != 200){return false;}
 		else{
@@ -425,7 +425,7 @@ function get_seats(showingid = 0){
 function get_showings_by_date(pagenum = 1,date= new Date()){
 
   
-  fetch(`/showings?day=${date.getDate()}&month=${date.getMonth()+1}&year=${date.getFullYear()}&page=${pagenum}`)
+  fetch(`showings?day=${date.getDate()}&month=${date.getMonth()+1}&year=${date.getFullYear()}&page=${pagenum}`)
   .then(response => {
     if(response.status == 400){
       console.log("just use the ui bro....")
@@ -514,7 +514,6 @@ function get_showings_by_date(pagenum = 1,date= new Date()){
 
     }
     if(response.length === 0){
-      print("why false")
       isAnyShowings = false;
     }
     else{

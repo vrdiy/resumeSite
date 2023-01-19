@@ -43,13 +43,14 @@ def follow_user(request,userid):
         return JsonResponse({"error": "POST request required."}, status=400)
 
     usertofollow = NetworkProfile.objects.get(id=userid)
-    
+    user = NetworkProfile.objects.get(id=request.user.id)
+
     for followers in usertofollow.followers.all():
-        if followers == request.user:
-            usertofollow.followers.remove(request.user)
+        if followers == user:
+            usertofollow.followers.remove(user)
             usertofollow.save()
             return JsonResponse({"message": "You've unfollowed this user", "followstatus": "0"}, status=201)
-    usertofollow.followers.add(request.user)
+    usertofollow.followers.add(user)
     usertofollow.save()
     return JsonResponse({"message": "User Followed.", "followstatus": "1"}, status=201)
 
@@ -61,13 +62,14 @@ def likepost(request,postid):
         return JsonResponse({"error": "POST request required."}, status=400)
 
     posttocheck = Post.objects.get(id=postid)
-    
+    user = NetworkProfile.objects.get(id=request.user.id)
+
     for liker in posttocheck.likes.all():
-        if liker == request.user:
-            posttocheck.likes.remove(request.user)
+        if liker == user:
+            posttocheck.likes.remove(user)
             posttocheck.save()
             return JsonResponse({"message": "You've unliked this post", "likestatus": "0"}, status=201)
-    posttocheck.likes.add(request.user)
+    posttocheck.likes.add(user)
     posttocheck.save()
     return JsonResponse({"message": "Post Liked.", "likestatus": "1"}, status=201)
 
@@ -82,7 +84,8 @@ def newpost(request):
     data = json.loads(request.body)
     postcontent = data.get("textcontent", "")
     postcontent = html.escape(postcontent)
-    post = Post(user=request.user,textcontent=postcontent)
+    user = NetworkProfile.objects.get(id=request.user.id)
+    post = Post(user=user,textcontent=postcontent)
     post.save()
     return JsonResponse({"message": "Post uploaded successfully."}, status=201)
 
@@ -97,8 +100,10 @@ def editpost(request):
     postcontent = data.get("textcontent", "")
     postcontent = html.escape(postcontent)
     postid = data.get("postid","")
+    user = NetworkProfile.objects.get(id=request.user.id)
+
     posttoedit = Post.objects.get(id=postid)
-    if(posttoedit.user == request.user):
+    if(posttoedit.user == user):
         posttoedit.textcontent = postcontent
         posttoedit.updatePost(postcontent)
         posttoedit.save()
@@ -116,10 +121,11 @@ def getposts(request,id):
             return JsonResponse({"error": "User does not exist."}, status=400)
 
     elif(request.GET.get('following') == "true"):
-        user_ = NetworkProfile.objects.get(id=request.user.id)
         posts = Post.objects.filter(user__in=user_.following.all())
+        user_ = NetworkProfile.objects.get(id=request.user.id)
 
     else:
+        user_ = NetworkProfile.objects.get(id=request.user.id)
         posts = Post.objects.all()
 
 
@@ -128,13 +134,13 @@ def getposts(request,id):
     for post in posts:
         initial = post.serialize()
         initial["userhasliked"] = False
-        if(request.user == post.user):
+        if(user_ == post.user):
             initial["ownpost"] = True
         else:
             initial["ownpost"] = False
 
         for liker in post.likes.all():
-            if liker == request.user:
+            if liker == user_:
                 initial["userhasliked"] = True
         serializedposts.append(initial)
     #print(serializedposts)
@@ -173,7 +179,7 @@ def login_view(request):
         # Check if authentication successful
         if user is not None:
             login(request, user)
-            return HttpResponseRedirect(reverse("index"))
+            return HttpResponseRedirect(reverse("network:index"))
         else:
             return render(request, "network/login.html", {
                 "message": "Invalid username and/or password."
@@ -184,7 +190,7 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    return HttpResponseRedirect(reverse("index"))
+    return HttpResponseRedirect(reverse("network:index"))
 
 
 def register(request):
@@ -209,6 +215,6 @@ def register(request):
                 "message": "Username already taken."
             })
         login(request, user)
-        return HttpResponseRedirect(reverse("index"))
+        return HttpResponseRedirect(reverse("network:index"))
     else:
         return render(request, "network/register.html")

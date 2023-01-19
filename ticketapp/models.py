@@ -3,7 +3,6 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.core.validators import MaxValueValidator, MinValueValidator
 from datetime import datetime, timedelta, timezone
-from user.models import SiteUser
 THEATER_COLUMNS = 8
 THEATER_ROWS = 10
 
@@ -54,7 +53,7 @@ class Movie(models.Model):
 
     def getRating(self):
         rating = 0
-        if(len(self.reviews.all())):
+        if(self.reviews.exists()):
             for i in self.reviews.all():
                 rating += i.rating
             

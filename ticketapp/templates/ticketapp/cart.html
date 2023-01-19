@@ -35,12 +35,12 @@
     
 </ol>
 <div id="forms">
-    <form action="{% url 'confirmpurchase' %}" method="post">
+    <form action="{% url 'ticketapp:confirmpurchase' %}" method="post">
         {% csrf_token %}
         <input class="cartbuttons" type="submit" value="Purchase Cart" style="background-color: rgb(136, 233, 119);">
     </form>
 
-    <form action="{% url 'emptyCart' %}" method="post">
+    <form action="{% url 'ticketapp:emptyCart' %}" method="post">
         {% csrf_token %}
         
     <input class="cartbuttons" type="submit" value="Empty Cart" style="background-color: rgb(219, 63, 63);">

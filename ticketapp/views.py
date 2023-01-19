@@ -66,7 +66,7 @@ def userreviews(request):
 def reviews(request):
     if request.method == "POST":
         if not request.user.is_authenticated:
-            return HttpResponseRedirect(reverse('login'))
+            return HttpResponseRedirect(reverse('ticketapp:login'))
         user_ = TicketUser.objects.get(id=request.user.id)
         movie_ = Movie.objects.get(id=request.POST["movieid"])
         #review = Review(user = user_,content = request.POST["comment"],movie = movie_,rating=int(request.POST["rating"]))
@@ -86,7 +86,7 @@ def reviews(request):
             review_.rating = int(request.POST["rating"])
             review_.save()
 
-        return HttpResponseRedirect(reverse('reviews'))
+        return HttpResponseRedirect(reverse('ticketapp:reviews'))
 
     movies = Movie.objects.all()
     serializedMovies = []
@@ -172,7 +172,7 @@ def confirmpurchase(request):
     decodedtickets = sessionTicketsWithInfo(request)
     if request.method == "POST":
         if not request.user.is_authenticated:
-            return HttpResponseRedirect(reverse('login'))
+            return HttpResponseRedirect(reverse('ticketapp:login'))
         else:
             response = validateCartTickets(request)
             if(len(json.loads(response.content)['invalidTickets'])):
@@ -181,15 +181,16 @@ def confirmpurchase(request):
                 
                 showings_ = Showing.objects.all()
                 user_ = SiteUser.objects.get(id=request.user.id)
+                ticketuser_ = TicketUser.objects.get(id=request.user.id)
                 ticketObjs = json.loads(response.content)['validTickets']
                 
                 for ticket in ticketObjs:
                     showing_ = Showing.objects.get(id=ticket["showing"]["id"])
-                    ticket = Ticket(email = user_.email,showing = showing_,tcolumn = ticket["column"],trow = ticket["row"])
+                    ticket = Ticket(email = user_.email,holder=ticketuser_,showing = showing_,tcolumn = ticket["column"],trow = ticket["row"])
                     ticket.save()
                     request.session["tickets"] = []
                     request.session.modified = True
-        return HttpResponseRedirect(reverse('index'))
+        return HttpResponseRedirect(reverse('ticketapp:index'))
 
     return render(request,"ticketapp/cart.html", {'tickets' : decodedtickets})
 
@@ -212,10 +213,10 @@ def removeFromCart(request):
 def emptyCart(request):
     if request.method == "POST":
         if not request.user.is_authenticated:
-            return HttpResponseRedirect(reverse('login'))
+            return HttpResponseRedirect(reverse('ticketapp:login'))
         else:
             request.session["tickets"] = []
-            return HttpResponseRedirect(reverse('confirmpurchase'))
+            return HttpResponseRedirect(reverse('ticketapp:confirmpurchase'))
 
 #sorting predicate for cart tickets, used only by views.addToCart, kind of jank~
 def showingDate(sessionShowingObj):
@@ -392,22 +393,16 @@ def register(request):
         try:
             user = SiteUser.objects.create_user(username, email, password)
             user.save()
+            networkAccount = NetworkProfile(id=user.id,email=user.email,username = user.name)
+            networkAccount.save()
+            ticketAccount = TicketUser(id=user.id,email=user.email)
+            ticketAccount.save()
         except IntegrityError:
             return render(request, "ticketapp/register.html", {
                 "message": "Username already taken."
             })
-        try:
-            user = SiteUser.objects.get(email=(request.POST["email"].lower()))
-        except IntegrityError:
-            return render(request, "ticketapp/register.html", {
-                "message": "Account Not Found"
-            })
             
-        networkAccount = NetworkProfile(id=user.id,email=user.email,username = user.username)
-        networkAccount.save()
-        ticketAccount = TicketUser(id=user.id,email=user.email)
-        ticketAccount.save()
         login(request, user)
-        return HttpResponseRedirect(reverse("index"))
+        return HttpResponseRedirect(reverse("ticketapp:index"))
     else:
         return render(request, "ticketapp/register.html")
