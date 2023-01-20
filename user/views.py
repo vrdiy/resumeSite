@@ -14,7 +14,6 @@ def login_view(request):
         # Attempt to sign user in
         email = request.POST["email"]
         email = email.lower()
-        print(email)
         password = request.POST["password"]
         try:
             user_ = SiteUser.objects.get(email=email)
@@ -59,15 +58,25 @@ def register(request):
         # Attempt to create new user
         try:
             user = SiteUser.objects.create_user(email, username, password)
-            user.save()
-            networkAccount = NetworkProfile(id=user.id,email=user.email,username = user.name)
-            networkAccount.save()
-            ticketAccount = TicketUser(id=user.id,email=user.email)
-            ticketAccount.save()
-        except IntegrityError:
+        except:
             return render(request, "user/register.html", {
-                "message": "Username already taken."
+                "message": "Something went wrong creating Site User"
             })
+        try:
+            networkAccount = NetworkProfile(id=user.id,email=user.email,username = user.name)
+        except:
+            return render(request, "user/register.html", {
+                "message": "Something went wrong creating Network Profile"
+            })
+        try:
+            ticketAccount = TicketUser(id=user.id,email=user.email)
+        except:
+            return render(request, "user/register.html", {
+                "message": "Something went wrong creating TicketApp User"
+            })
+        user.save()
+        networkAccount.save()
+        ticketAccount.save()
             
         login(request, user)
         return HttpResponseRedirect(reverse("hub:home"))

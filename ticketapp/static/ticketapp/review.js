@@ -55,21 +55,32 @@ function setStarValue(val){
         }
 }
 
-function loadUserReviews(movieid,pagenum = 1){
+function loadUserReviews(movieid,pagenum = 1)
+{
     fetch(`reviews/user?movieid=${movieid}&page=${pagenum}`)
     .then(result => {
-        return result.json()
+        if(result.status != 200)
+        {
+            const error = new Error("Internal Error");
+            error.name = 'StatusNotOk'
+            throw error;
+        }
+        else
+        {
+            return result.json();
+        }
     })
     .then(reviews =>{
         const userReviewsDiv = document.getElementById('userReviews');
         userReviewsDiv.innerHTML = '';
         console.log(reviews.userreview)
-        if(reviews.userreview != ''){
-
+        if(reviews.userreview != '')
+        {
             document.getElementById('text-content').value = reviews.userreview.content;
             setStarValue(parseInt(reviews.userreview.rating))
         }
-        else{
+        else
+        {
             document.getElementById('text-content').value = '';
             setStarValue(0);
         }
@@ -79,11 +90,14 @@ function loadUserReviews(movieid,pagenum = 1){
             p.setAttribute('class',"userReview");
             p.innerHTML = review_.content;
             userReviewsDiv.append(p);
-
         })
-        if(reviews.reviews.length == 0 ){
+        if(reviews.reviews.length == 0 )
+        {
             document.getElementById('commentsdiv').style.display = 'none';
         }
+    })
+    .catch(error =>{
+        console.log(error)
     })
 }
 

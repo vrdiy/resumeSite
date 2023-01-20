@@ -9,3 +9,7 @@ def home(request):
 def about(request):
     return render(request,"hub/about.html",{
 })
+
+def contact(request):
+    return render(request,"hub/contact.html",{
+})

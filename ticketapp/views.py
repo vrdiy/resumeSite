@@ -51,7 +51,13 @@ def userreviews(request):
         serializedReviews.append(review.serialize())
 
     if request.user.is_authenticated:
-        user_ = TicketUser.objects.get(id=request.user.id)
+        try:
+            user_ = TicketUser.objects.get(id=70)
+
+            user_ = TicketUser.objects.get(id=request.user.id)
+        except:
+            return JsonResponse({"error":"Ticket User could not be found."},safe=False,status=500)
+
         thisUsersReviews = mov.reviews.filter(holder=user_)
         
 

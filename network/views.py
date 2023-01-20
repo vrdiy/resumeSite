@@ -20,18 +20,17 @@ def index(request):
 
 def load_profile(request,id):
     try: 
-        NetworkProfile.objects.get(id=id)
         profile = NetworkProfile.objects.get(id=id)
-        followers = profile.followers.all()
-        follower = followers.filter(id=request.user.id)
-        if not follower:
-            follows = False
-        else:
-            follows = True
-        userinfo = {"username": profile.username,"id": profile.id, "followers": profile.follower_count(),"following": profile.following_count(), "isfollowing": follows}
     except NetworkProfile.DoesNotExist:
-        
         return JsonResponse({"error": "Profile could not be found."}, status=400)
+
+    followers = profile.followers.all()
+    follower = followers.filter(id=request.user.id)
+    if not follower:
+        follows = False
+    else:
+        follows = True
+    userinfo = {"username": profile.username,"id": profile.id, "followers": profile.follower_count(),"following": profile.following_count(), "isfollowing": follows}
 
     return render(request,"network/profile.html",{"userinfo":userinfo})
     
@@ -91,7 +90,7 @@ def newpost(request):
 
 @csrf_exempt
 def editpost(request):
-    if(request.user.is_authenticated != True):
+    if(not request.user.is_authenticated):
         return JsonResponse({"error": "User is not logged in."}, status=401)
     if request.method != "POST":
         return JsonResponse({"error": "POST request required."}, status=400)
@@ -111,29 +110,29 @@ def editpost(request):
     else:
         return JsonResponse({"error": "You are not the owner of this post."}, status=401)
 
-
+#gets a specific profile's posts, a query for posts only from users the requester follows, or all posts in the db.
 def getposts(request,id):
+
+    if request.user.is_authenticated:
+            user_ = NetworkProfile.objects.get(id=request.user.id)
+    else:
+        user_ = None
+
+    #if any id other than 0 is passed to this view, we search for a specific account's posts
     if(id != 0):
         try:
             userToSearch = NetworkProfile.objects.get(id=id)
             posts = Post.objects.filter(user=userToSearch)
-            user_ = NetworkProfile.objects.get(id=request.user.id)
-
         except NetworkProfile.DoesNotExist:
             return JsonResponse({"error": "User does not exist."}, status=400)
 
-    elif(request.GET.get('following') == "true"):
-        user_ = NetworkProfile.objects.get(id=request.user.id)
+    #the following parameter means to get all the posts of users that the request user is following
+    elif((request.GET.get('following') == "true") and (user_ != None)):
         posts = Post.objects.filter(user__in=user_.following.all())
-        print(posts)
 
+    #if none of the above just get all posts from the website
     else:
-        try:
-            user_ = NetworkProfile.objects.get(id=request.user.id)
-        except NetworkProfile.DoesNotExist:
-            user_ = None
         posts = Post.objects.all()
-
 
     posts = posts.order_by("-timestamp").all()
     serializedposts = []
@@ -146,12 +145,9 @@ def getposts(request,id):
             initial["ownpost"] = False
 
         for liker in post.likes.all():
-            print(liker.username)
             if liker == user_:
-                print("user likes")
                 initial["userhasliked"] = True
         serializedposts.append(initial)
-    #print(serializedposts)
     
     paginator = Paginator(serializedposts,10)
     

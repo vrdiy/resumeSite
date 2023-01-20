@@ -36,17 +36,20 @@
     <div id="reviewsubcontainer2">
         <h1 id="movieTitle">Movie Title</h1>
         <div id="reviewstars">
-
         </div>
-        <form id="post-form" method="post">
-            <p hidden>{% csrf_token %}</p>
-            
-            <input hidden value="1" name="rating" id="ratingoption"></input>
-            <input hidden name="movieid" id="movieid"></input>
 
-            <textarea id="text-content" type="textarea" placeholder="How was the movie?" name="comment" maxlength="499" style="font-size: 5vw; height: 11vw; width: 80%; text-align: center; display: block; margin-left: auto; margin-right: auto;"></textarea>
-            <input id="submit-post" type="submit" value="Post Review" style="font-size: 5vw; width: 80%; text-align: center; display: block; margin-left: auto; margin-right: auto;">
-        </form>
+        <div>
+            <form id="post-form" method="post">
+                <p hidden>{% csrf_token %}</p>
+                
+                <input hidden value="1" name="rating" id="ratingoption"></input>
+                <input hidden name="movieid" id="movieid"></input>
+                
+                <textarea id="text-content" type="textarea" placeholder="How was the movie?" name="comment" maxlength="499" style="font-size: 2rem; height: 2.5rem; width: 80%; text-align: center; display: flex; margin-left: auto; margin-right: auto;"></textarea>
+                <input id="submit-post" type="submit" value="Post Review" style="font-size: 2rem; width: 80%; text-align: center; display: flex; margin-left: auto; margin-right: auto;">
+            </form>
+        </div>
+
     </div>
 </div>
 <div id="commentsdiv" class="generic" style="color: white;">
