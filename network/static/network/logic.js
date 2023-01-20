@@ -83,7 +83,7 @@ function page_bootstrap(id,currentpage){
 //-----------------------------------------
 
 function like_post(id){
-    fetch(`likepost/${id}`,{
+    fetch(`/network/likepost/${id}`,{
         method: 'POST',
         body: ""
         })
@@ -137,7 +137,7 @@ function edit_post(id){
 
 function try_edit(postid, textcontent){
     
-    fetch('editpost',{
+    fetch('/network/editpost',{
         method: 'POST',
         body: JSON.stringify({
             textcontent: textcontent,
@@ -168,7 +168,7 @@ function try_edit(postid, textcontent){
 }
 
 function follow_user(id){
-    fetch(`followuser/${id}`,{
+    fetch(`/network/followuser/${id}`,{
         method: 'POST',
         body: ""
         })
@@ -227,7 +227,7 @@ function show_posts(userid=0,pagenum=1,following = false){
         profilediv.innerHTML = '';
     }
 
-    fetch(`getposts/${userid}?page_number=${pagenum}&following=${following}`)
+    fetch(`/network/getposts/${userid}?page_number=${pagenum}&following=${following}`)
     .then(response => {
         if(response.status != 201){return false;}
         else{
@@ -266,12 +266,16 @@ function show_posts(userid=0,pagenum=1,following = false){
             const namelink = document.createElement('a');
             namelink.innerHTML = `${element.user}`;
             namelink.setAttribute("id",`nameButton-${element.user}`);
-            namelink.setAttribute("href",`profile/${element.userid}`);
+            namelink.setAttribute("href",`/network/profile/${element.userid}`);
            // namelink.addEventListener('click', () => load_profile(element.userid));
 
             const meta = document.createElement('p');
-            meta.append("Posted by ");
-            meta.innerHTML += `\n<span id="post-${element.id}-likes">${counter}</span> likes\n${element.timestamp}\n`;
+            meta.innerHTML = "Posted by \n";
+            const span = document.createElement('span');
+            span.setAttribute("id",`post-${element.id}-likes`);
+            span.innerHTML = counter;
+            meta.append(span);
+            meta.innerHTML += ` likes\n${element.timestamp}\n`
 
             
             meta.style.borderBottom = '1px solid grey';

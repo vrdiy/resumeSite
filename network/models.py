@@ -14,7 +14,7 @@ class NetworkProfile(models.Model):
     id = models.SmallIntegerField(verbose_name="id",unique=True, primary_key=True)
     email = models.EmailField(max_length=255, unique=True)
     username = models.CharField(max_length=20, unique=True)
-    following = models.ManyToManyField("NetworkProfile",related_name="followers")
+    following = models.ManyToManyField("NetworkProfile",related_name="followers", blank=True)
     def follower_count(self):
         return self.followers.all().count()
     def following_count(self):

@@ -7,4 +7,5 @@ ticketproj/__pycache__/
 *.staging*
 staticfiles/
 mediafiles/
+External/
 

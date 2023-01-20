@@ -52,11 +52,11 @@ def userreviews(request):
 
     if request.user.is_authenticated:
         user_ = TicketUser.objects.get(id=request.user.id)
-        thisUsersReviews = mov.reviews.filter(user=user_)
+        thisUsersReviews = mov.reviews.filter(holder=user_)
         
 
         try:
-            userreview_ = mov.reviews.get(user=user_).serialize()
+            userreview_ = mov.reviews.get(holder=user_).serialize()
         except Review.DoesNotExist:
             userreview_ = ''
             
@@ -73,10 +73,10 @@ def reviews(request):
 
 
         try:
-            review_ = Review.objects.get(user = user_,movie = movie_)
+            review_ = Review.objects.get(holder = user_,movie = movie_)
             reviewCreated = False
         except Review.DoesNotExist:
-            review_ = Review(user = user_,content = request.POST["comment"],movie = movie_,rating=int(request.POST["rating"]))
+            review_ = Review(holder = user_,content = request.POST["comment"],movie = movie_,rating=int(request.POST["rating"]))
             reviewCreated = True
 
         if reviewCreated:

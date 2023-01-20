@@ -32,7 +32,7 @@ class SiteUserAccountManager(BaseUserManager):
 
 class SiteUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(verbose_name='email address', max_length=255,unique=True)
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
     date_of_birth = models.DateField(null=True)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)

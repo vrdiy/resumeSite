@@ -115,17 +115,23 @@ def editpost(request):
 def getposts(request,id):
     if(id != 0):
         try:
-            user_ = NetworkProfile.objects.get(id=id)
-            posts = Post.objects.filter(user=user_)
+            userToSearch = NetworkProfile.objects.get(id=id)
+            posts = Post.objects.filter(user=userToSearch)
+            user_ = NetworkProfile.objects.get(id=request.user.id)
+
         except NetworkProfile.DoesNotExist:
             return JsonResponse({"error": "User does not exist."}, status=400)
 
     elif(request.GET.get('following') == "true"):
-        posts = Post.objects.filter(user__in=user_.following.all())
         user_ = NetworkProfile.objects.get(id=request.user.id)
+        posts = Post.objects.filter(user__in=user_.following.all())
+        print(posts)
 
     else:
-        user_ = NetworkProfile.objects.get(id=request.user.id)
+        try:
+            user_ = NetworkProfile.objects.get(id=request.user.id)
+        except NetworkProfile.DoesNotExist:
+            user_ = None
         posts = Post.objects.all()
 
 
@@ -140,7 +146,9 @@ def getposts(request,id):
             initial["ownpost"] = False
 
         for liker in post.likes.all():
+            print(liker.username)
             if liker == user_:
+                print("user likes")
                 initial["userhasliked"] = True
         serializedposts.append(initial)
     #print(serializedposts)
