@@ -44,7 +44,11 @@ def moviesRatings(request,pagenum):
     return JsonResponse(pagePack(serializedMovies,10,pagenum),safe=False,status=200)
 
 def userreviews(request):
-    mov = Movie.objects.get(id=int(request.GET.get("movieid")))
+    try:
+        mov = Movie.objects.get(id=int(request.GET.get("movieid")))
+    except Movie.DoesNotExist:
+        return JsonResponse({"error" :"Movie does not exist"},safe=False,status=404)
+
     pagenum = int(request.GET.get("page"))
     serializedReviews = []
     for review in mov.reviews.all():
@@ -52,32 +56,30 @@ def userreviews(request):
 
     if request.user.is_authenticated:
         try:
-            user_ = TicketUser.objects.get(id=70)
-
             user_ = TicketUser.objects.get(id=request.user.id)
         except:
-            return JsonResponse({"error":"Ticket User could not be found."},safe=False,status=500)
-
-        thisUsersReviews = mov.reviews.filter(holder=user_)
-        
+            return JsonResponse({"error":"Ticket User could not be found."},safe=False,status=404)
 
         try:
             userreview_ = mov.reviews.get(holder=user_).serialize()
         except Review.DoesNotExist:
             userreview_ = ''
-            
+
         return JsonResponse({"reviews" : pagePack(serializedReviews,10,pagenum),"userreview" : userreview_},safe=False,status=200)
+    return JsonResponse({"reviews" : pagePack(serializedReviews,10,pagenum),"userreview" : ''},safe=False,status=200)
 
 
 def reviews(request):
     if request.method == "POST":
         if not request.user.is_authenticated:
             return HttpResponseRedirect(reverse('ticketapp:login'))
-        user_ = TicketUser.objects.get(id=request.user.id)
+        try:
+            user_ = TicketUser.objects.get(id=request.user.id)
+        except TicketUser.DoesNotExist:
+            return JsonResponse({"error": "Ticket User could not be found."},safe=False,status=404)
+            
         movie_ = Movie.objects.get(id=request.POST["movieid"])
-        #review = Review(user = user_,content = request.POST["comment"],movie = movie_,rating=int(request.POST["rating"]))
-
-
+            
         try:
             review_ = Review.objects.get(holder = user_,movie = movie_)
             reviewCreated = False
